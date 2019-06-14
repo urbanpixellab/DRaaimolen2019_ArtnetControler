@@ -77,11 +77,14 @@ void ofApp::draw(){
     shader.begin();
     shader.setUniform1f("width", ledStripe.getWidth());
     shader.setUniform1f("freqR", 1);
+    shader.setUniform1f("ampR", 0.55);
     shader.setUniform1f("phaseshiftR", fmod(sin(ofGetElapsedTimef()),0.5));
     // the values are now controlled the offsets
     shader.setUniform1f("freqG", 1);
+    shader.setUniform1f("ampG", 1);
     shader.setUniform1f("phaseshiftG", sin(fmod(ofGetElapsedTimef(),3)));
     shader.setUniform1f("freqB", 1);
+    shader.setUniform1f("ampB", 1);
     shader.setUniform1f("phaseshiftB", fmod(ofGetElapsedTimef(),4));
     ofDrawRectangle(0, 0, ledStripe.getWidth(),ledStripe.getHeight());
     shader.end();
@@ -94,7 +97,7 @@ void ofApp::draw(){
     ofDrawBitmapString(ofToString(pix.getNumChannels()),10,220);
     ofDrawBitmapString(ofToString(pix.getColor(10)),10,240);
     
-    writeToLedArray(pix,1);
+    //writeToLedArray(pix,1);
 }
 
 void ofApp::writeToLedArray(ofPixels & p,int len)//maybe a mapping from to
