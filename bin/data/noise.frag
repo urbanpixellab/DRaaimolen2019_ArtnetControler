@@ -24,7 +24,7 @@ void main(){
 	float green = sin(freqG * (xVal+phaseshiftG) * 6.2814);
 	float blue = sin(freqB * (xVal+phaseshiftB) * 6.2814);
 
-	gl_FragColor = vec4(red,green,blue,1);    
+	gl_FragColor = vec4(red*ampR,green*ampG,blue*ampB,1);    
 	/*
 	//we use the mod function to only draw pixels if they are every 2 in x or every 4 in y
 	if( mod(xVal, 2.0) == 0.1 && mod(yVal, 4.0) == 0.5 ){
