@@ -1,0 +1,5 @@
+ofxAnimator
+ofxArtnet
+ofxNetwork
+ofxOsc
+ofxXmlSettings
