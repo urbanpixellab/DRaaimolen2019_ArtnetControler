@@ -10,6 +10,9 @@ uniform float phaseshiftG;//frquency(0.1 ... 100) and phase(0...1)
 uniform float freqB;//frquency(0.1 ... 100) and phase(0...1) 
 uniform float ampB;//frquency(0.1 ... 100) and phase(0...1) 
 uniform float phaseshiftB;//frquency(0.1 ... 100) and phase(0...1) 
+uniform float bright;
+
+
 
 void main(){
 	//this is the fragment shader
@@ -24,7 +27,8 @@ void main(){
 	float green = sin(freqG * (xVal+phaseshiftG) * 6.2814);
 	float blue = sin(freqB * (xVal+phaseshiftB) * 6.2814);
 
-	gl_FragColor = vec4(red*ampR,green*ampG,blue*ampB,1);    
+	//quad the bright
+	gl_FragColor = vec4(red*ampR*bright,green*ampG*bright,blue*ampB*bright,1);    
 	/*
 	//we use the mod function to only draw pixels if they are every 2 in x or every 4 in y
 	if( mod(xVal, 2.0) == 0.1 && mod(yVal, 4.0) == 0.5 ){

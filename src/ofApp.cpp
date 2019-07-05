@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    ofSetFrameRate(30);
+    ofSetFrameRate(10);
     for(int i = 0;i < universes;i++)
     {
         ofxArtnetSender *art = new ofxArtnetSender();
@@ -86,6 +86,7 @@ void ofApp::draw(){
     shader.setUniform1f("freqB", 1);
     shader.setUniform1f("ampB", 1);
     shader.setUniform1f("phaseshiftB", fmod(ofGetElapsedTimef(),4));
+    shader.setUniform1f("bright", pow(0.5 + sin(ofGetElapsedTimef() * TWO_PI)* 0.5,2));
     ofDrawRectangle(0, 0, ledStripe.getWidth(),ledStripe.getHeight());
     shader.end();
     ledStripe.end();
@@ -97,7 +98,7 @@ void ofApp::draw(){
     ofDrawBitmapString(ofToString(pix.getNumChannels()),10,220);
     ofDrawBitmapString(ofToString(pix.getColor(10)),10,240);
     
-    //writeToLedArray(pix,1);
+    writeToLedArray(pix,1);
 }
 
 void ofApp::writeToLedArray(ofPixels & p,int len)//maybe a mapping from to
