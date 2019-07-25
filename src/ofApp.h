@@ -9,6 +9,13 @@
 class ofApp : public ofBaseApp{
 
 public:
+    struct UNIVERSE
+    {
+        //holds the outgoing
+        int outArray[450];// exactly for our purpose
+        
+    };
+    
     struct ADDRESS
     {
         string path;
@@ -17,8 +24,32 @@ public:
         float f_Value;
     };
     
+    struct LEDSEGMENT
+    {
+        ofFbo fbo;
+        //the states
+        bool reverse; //to shgader
+        int length; //to shader
+        int artnetnode;// or ip
+    };
+    
+    struct STEP
+    {
+        //for the stepsequencer, holds all settings
+        //for drawing
+        int color[2] = {0,255}; // color in hsb, only one value as fader red to red
+        bool brightness;// zeichen mich, ja nein
+        int frequenz;
+        int curveSelect;
+        int offset2PI;
+        
+        ofRectangle drawarea;
+        
+    };
     
     void setup();
+    void createStepSequencer();
+    void updateStepSequencer(int steps = 16);
     void update();
     void draw();
 
@@ -34,7 +65,7 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 
-    void writeToLedArray(ofPixels & p, int length);
+    void writeToLedArray(ofPixels & p);
     void exit();
 
     void receiveOSC(ofxOscReceiver &receiver);
@@ -44,6 +75,8 @@ private:
     ofShader    shader;
     ofFbo       ledStripe;
     vector<ofxArtnetSender*> artnets;
+
+    vector<ofApp::STEP> step;
 
     
     ofxOscReceiver  _oscReceiver;

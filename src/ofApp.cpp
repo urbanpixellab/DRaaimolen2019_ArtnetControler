@@ -10,18 +10,42 @@ void ofApp::setup(){
         
         artnets.push_back(art);
         //every artnet object consists of an ip and an universe
-        art->setup("192.168.12.200",i);
+        art->setup("192.168.12.31",i);
     }
 
     shader.load("noise.vert", "noise.frag");
     //set ledlengthe per shader as fbo length
-    ledStripe.allocate(150, 1,GL_RGB);
+    ledStripe.allocate(150, 1,GL_RGB);//this is our max resolution where we draw in, from this array
     ledStripe.begin();
     ofClear(0,0,0);
     ledStripe.end();
     
     _oscReceiver.setup(7001);
     
+    
+    //
+    createStepSequencer();
+
+
+}
+
+void ofApp::createStepSequencer()
+{
+    int maxsteps = 16;//maybe also 32 or 64, if digital dan weel, and also an multiplayer video chanel
+    int w = 100;
+    int h = 50;
+    ofRectangle drawArea(0,0,100,50);
+    
+    
+    for (int i = 0; i < 16; i++)
+    {
+        //i - 1 maybe
+        ofApp::STEP S;
+        S.color[0] = 0;
+        S.color[1] = 255;
+        S.drawarea = ofRectangle(i * w,ofGetWidth()/3,100, h);
+        step.push_back(S);
+    }
     
 }
 
@@ -87,25 +111,45 @@ void ofApp::draw(){
     shader.setUniform1f("ampB", 1);
     shader.setUniform1f("phaseshiftB", fmod(ofGetElapsedTimef(),4));
     shader.setUniform1f("bright", pow(0.5 + sin(ofGetElapsedTimef() * TWO_PI)* 0.5,2));
-    ofDrawRectangle(0, 0, ledStripe.getWidth(),ledStripe.getHeight());
+    ofDrawRectangle(0, 0, ledStripe.getWidth(),1);
     shader.end();
     ledStripe.end();
 
     ledStripe.draw(0,0,100,100);
     ofPixels pix;
     ledStripe.readToPixels(pix);
+    // do this for every ledstripe segment
+    // draw the corresponding shader
+    // with the settings/mapping setup (like reverse)
+    // to the segment fbo and pixels
+    
     ofDrawBitmapString(ofToString(pix.getWidth()),10,200);
     ofDrawBitmapString(ofToString(pix.getNumChannels()),10,220);
     ofDrawBitmapString(ofToString(pix.getColor(10)),10,240);
     
-    writeToLedArray(pix,1);
+    writeToLedArray(pix);
+    //ok make a sequencer // with left control is the PATRON WELCHE SIND WIE AN
+    /*
+      **                                    **       **      **
+****     ****   left /// sequencer bis 16 ////  right ****     ****    ****
+ **       **                                    **       **      **
+     
+drehregler * on/off * welches segment  // sequenzer        drehregler farbe a und b kurve
+     */
+    for (int i = 0; i < 16; i++)
+    {
+        //i - 1 maybe
+        ofSetColor(step[i].color[0] * (i/16.));
+        ofDrawRectangle(step[i].drawarea);
+    }
 }
 
-void ofApp::writeToLedArray(ofPixels & p,int len)//maybe a mapping from to
+void ofApp::writeToLedArray(ofPixels & p)//maybe a mapping from to
 {
     //write to all
     for(int i = 0;i < universes;i++)
     {
+        //check what has to been send, ann array of 450 values or less also working?
        artnets[i]->sendArtnet(p);
     }
 
@@ -113,7 +157,7 @@ void ofApp::writeToLedArray(ofPixels & p,int len)//maybe a mapping from to
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
 }
 
 //--------------------------------------------------------------
@@ -133,7 +177,14 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+    for (int i = 0; i < step.size(); i++)
+    {
+        if (step[i].drawarea.inside(x,y) == true)
+        {
+            
+            step[i].color[0] = ofRandom(255);
+        }
+    }
 }
 
 //--------------------------------------------------------------
