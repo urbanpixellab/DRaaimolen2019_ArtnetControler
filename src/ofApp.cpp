@@ -10,7 +10,7 @@ void ofApp::setup(){
         
         artnets.push_back(art);
         //every artnet object consists of an ip and an universe
-        art->setup("192.168.12.31",i);
+        art->setup("192.168.12.33",i);
     }
 
     shader.load("noise.vert", "noise.frag");
