@@ -2,164 +2,135 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    steplength = 0.0625;
+    timer = 0;
+    menueFont.load("verdana.ttf", 8);
+    editSelect = 0;
+    liveSelect = 0;
+    preview.allocate(100, 100);
     
-    ofSetFrameRate(10);
-    for(int i = 0;i < universes;i++)
+    for(int i = 0;i < 16 ;i++)
     {
-        ofxArtnetSender *art = new ofxArtnetSender();
-        
-        artnets.push_back(art);
-        //every artnet object consists of an ip and an universe
-        art->setup("192.168.12.33",i);
+        patEditors.push_back(new PatternEditor(PatternEditor(ofRectangle(0,300,800,500),&dataControl,&menueFont)));
     }
-
-    shader.load("noise.vert", "noise.frag");
-    //set ledlengthe per shader as fbo length
-    ledStripe.allocate(150, 1,GL_RGB);//this is our max resolution where we draw in, from this array
-    ledStripe.begin();
-    ofClear(0,0,0);
-    ledStripe.end();
+    //LIVE = new PatternEditor();
     
-    _oscReceiver.setup(7001);
-    
-    
-    //
-    createStepSequencer();
-
-
-}
-
-void ofApp::createStepSequencer()
-{
-    int maxsteps = 16;//maybe also 32 or 64, if digital dan weel, and also an multiplayer video chanel
-    int w = 100;
-    int h = 50;
-    ofRectangle drawArea(0,0,100,50);
-    
-    
-    for (int i = 0; i < 16; i++)
+    //testwise preview buttons
+    previewBTNs.clear();
+    int w = ofGetWidth() / 32;
+    for(int i = 0;i < patEditors.size();i++)
     {
-        //i - 1 maybe
-        ofApp::STEP S;
-        S.color[0] = 0;
-        S.color[1] = 255;
-        S.drawarea = ofRectangle(i * w,ofGetWidth()/3,100, h);
-        step.push_back(S);
+        previewBTNs.push_back(ofRectangle(i*2*w,0,w,w));
     }
     
+    //mapping test
+    arTest.getOutArray()[0] = 25;
+//    cout << "out0 should been 25:" << arTest.getOutArray()[0] << endl;
+    arTest.getReverseArray()[4] = 5;
+//    cout << "out0 should been 5:" << arTest.getOutArray()[0]<< " " << arTest.getReverseArray()[4] << endl;
+    artnet = new ArtnetData();
+    
+    patEditors[editSelect]->isVisible(true);
+    LIVE = patEditors[liveSelect];
+
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-    receiveOSC(_oscReceiver);
-}
-
-void ofApp::receiveOSC(ofxOscReceiver &receiver)
+void ofApp::update()
 {
-    //check for messages
-    //and add new addresses to the existing osc addres routing vector
-    //which is a struct counting also the amount of calls
-    while(receiver.hasWaitingMessages() > 0)
+    float now = ofGetElapsedTimef();
+    if(now > timer + steplength)
     {
-        ofxOscMessage msg;
-        receiver.getNextMessage(msg);
-        string adr = msg.getAddress();
-        bool isNew = true;
-        for(int i = 0;i < _oscMessages.size();i++)
+        timer = now + steplength;
+        //update all
+        for (int i = 0; i < patEditors.size(); i++)
         {
-            if(_oscMessages[i].getAddress() == adr)
-            {
-                // we have an existing message
-                isNew = false;
-                //replace the values
-                int numAttr = msg.getNumArgs();
-                for (int id = 0; id < numAttr; id++)
-                {
-                    // check the type
-                    _oscMessages[i] = msg;//check if possible
-                    
-                }
-            }
+            //patEditors[editSelect]->nextStep();
         }
-        if(isNew == true)
-        {
-            //a dd this addres and value
-            _oscMessages.push_back(ofxOscMessage(msg));
-            cout << "added osc address " << _oscMessages.back().getAddress() <<  " now in total " << _oscMessages.size() << endl;
-        }
+        patEditors[editSelect]->nextStep();
+        if(editSelect != liveSelect) LIVE->nextStep(); // onl;y if they are not the same update them
     }
+    else
+    {
+        for (int i = 0; i < patEditors.size(); i++)
+        {
+        //    patEditors[editSelect]->nextStep();
+        }
+        patEditors[editSelect]->update();
+        LIVE->update();
+    }
+    // now create the graphic
+    gfx.draw(preview,LIVE->getCurve());
+    // now write to artnet
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    //create graphics for this stripe with this shader
-    
     ofSetColor(255);
-    ledStripe.begin();
-    ofClear(0,0,0);
-    
-    shader.begin();
-    shader.setUniform1f("width", ledStripe.getWidth());
-    shader.setUniform1f("freqR", 1);
-    shader.setUniform1f("ampR", 0.55);
-    shader.setUniform1f("phaseshiftR", fmod(sin(ofGetElapsedTimef()),0.5));
-    // the values are now controlled the offsets
-    shader.setUniform1f("freqG", 1);
-    shader.setUniform1f("ampG", 1);
-    shader.setUniform1f("phaseshiftG", sin(fmod(ofGetElapsedTimef(),3)));
-    shader.setUniform1f("freqB", 1);
-    shader.setUniform1f("ampB", 1);
-    shader.setUniform1f("phaseshiftB", fmod(ofGetElapsedTimef(),4));
-    shader.setUniform1f("bright", pow(0.5 + sin(ofGetElapsedTimef() * TWO_PI)* 0.5,2));
-    ofDrawRectangle(0, 0, ledStripe.getWidth(),1);
-    shader.end();
-    ledStripe.end();
-
-    ledStripe.draw(0,0,100,100);
-    ofPixels pix;
-    ledStripe.readToPixels(pix);
-    // do this for every ledstripe segment
-    // draw the corresponding shader
-    // with the settings/mapping setup (like reverse)
-    // to the segment fbo and pixels
-    
-    ofDrawBitmapString(ofToString(pix.getWidth()),10,200);
-    ofDrawBitmapString(ofToString(pix.getNumChannels()),10,220);
-    ofDrawBitmapString(ofToString(pix.getColor(10)),10,240);
-    
-    writeToLedArray(pix);
-    //ok make a sequencer // with left control is the PATRON WELCHE SIND WIE AN
-    /*
-      **                                    **       **      **
-****     ****   left /// sequencer bis 16 ////  right ****     ****    ****
- **       **                                    **       **      **
-     
-drehregler * on/off * welches segment  // sequenzer        drehregler farbe a und b kurve
-     */
-    for (int i = 0; i < 16; i++)
+    patEditors[editSelect]->drawGUI();
+    ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,600);
+    int id = 0;
+    ofImage img = artnet->getNode(id).universes[0];
+    img.draw(300, 500,150,50);
+    ofSetColor(255,128,0);
+    for(int i = 0;i < previewBTNs.size();i++)
     {
-        //i - 1 maybe
-        ofSetColor(step[i].color[0] * (i/16.));
-        ofDrawRectangle(step[i].drawarea);
+        ofDrawRectangle(previewBTNs[i]);
     }
+    ofSetColor(255);
+    preview.draw(0,0,100,100);
+    artnet->drawPreview(LIVE->getSegmentPattern());
 }
 
-void ofApp::writeToLedArray(ofPixels & p)//maybe a mapping from to
+void ofApp::setEditorID(int index)
 {
-    //write to all
-    for(int i = 0;i < universes;i++)
-    {
-        //check what has to been send, ann array of 450 values or less also working?
-       artnets[i]->sendArtnet(p);
-    }
+    patEditors[editSelect]->isVisible(false);
+    editSelect = index;
+    patEditors[editSelect]->isVisible(true);
+}
 
+void ofApp::setLiveID(int index)
+{
+    liveSelect = index;
+    LIVE = patEditors[liveSelect];
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+    if(key == ' ')
+    {
+//        seqA.resetToBegin();
+        
+    }
+    if(key == 'n')
+    {
+//        patCont.setPatternDirection(0);
+    }
+    if(key == 'm')
+    {
+//        patCont.setPatternDirection(1);
+    }
+    if(key == '0')
+    {
+        setEditorID(0);
+    }
+    if(key == '1')
+    {
+        setEditorID(1);
+    }
+    if(key == '2')
+    {
+        setEditorID(2);
+    }
 }
 
+void ofApp::exit()
+{
+    for(int i = 0;i < patEditors.size();i++)
+    {
+        delete patEditors[i];
+    }
+}
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 
@@ -177,14 +148,15 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    for (int i = 0; i < step.size(); i++)
+
+    for(int i = 0;i < previewBTNs.size();i++)
     {
-        if (step[i].drawarea.inside(x,y) == true)
+        if(previewBTNs[i].inside(x, y))
         {
-            
-            step[i].color[0] = ofRandom(255);
+            setEditorID(i);
         }
     }
+
 }
 
 //--------------------------------------------------------------
@@ -215,12 +187,4 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
-}
-void ofApp::exit()
-{
-    /*
-    for(int i = 0;i < universes;i++)
-    {
-        delete artnets[i];
-    }*/
 }

@@ -1,0 +1,102 @@
+//
+//  PatternGenerator.hpp
+//  Sequencer
+//
+//  Created by Enrico Becker on 05/08/2019.
+//
+
+#ifndef PatternGenerator_hpp
+#define PatternGenerator_hpp
+
+#include <stdio.h>
+#include "DataControler.hpp"
+
+class PatternGenerator
+{
+public:
+    enum PATTERNS//holds the different sequences
+    {
+        ALL_OFF = 0,
+        ALL_ON,
+        ON_OFF,
+        LAUFLICHT,
+        CROSS,
+        OUT_IN,
+        RANDOM,// has to been generic duss calculation on each step
+        TURING,// has to been generic duss calculation on each step
+        SECOND,
+        THIRD,
+        END
+        //OUT_IN_RND
+        //////add some more patterns
+    };
+    
+    enum SDIR // in which direction the sequence should go
+    {
+        FORWARD = 0,
+        REVERSE
+    };
+    
+    struct BUTTON
+    {
+        bool        pressed;
+        string      name;
+        ofRectangle drawarea;
+        ofFbo       fbo;
+        ofColor     color;
+        int         id;
+    };
+    
+    
+    
+    PatternGenerator(ofRectangle area, DataControler *d,int maxSeg, ofTrueTypeFont *f);
+    ~PatternGenerator();
+    
+    void updatePattern();// gets triggered by sequencer
+    void setPattern(int id);
+    void setPatternDirection(int d){seqDirection = d;};
+    vector<bool> &getPattern(){return patternOut;};
+    
+    void printSequence();
+    
+    void createGUI();
+    void drawGUI();
+    void addListener(){ofAddListener(ofEvents().mousePressed, this, &PatternGenerator::mousePressed);};
+    void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &PatternGenerator::mousePressed);};
+    void mousePressed(ofMouseEventArgs & arg);
+    void setDirButton(int i,bool pressed);
+    void setPatternButton(int i, bool pressed);
+    void setSegmentButton(int i, bool pressed);
+    
+    int &getPatternID(){return patternID;};
+    int &getSequenceDirection(){return seqDirection;};
+    
+    float getRightBorder(){return drawarea.getRight();};
+    
+    
+private:
+    DataControler   *data;
+    int maxSegment;//how many mirrors
+    int patternID;//the selected pattern
+    int sequenzerID; /// which sequenzer i belong to
+    //sequencing stuff
+    int sequenzCounter; //the counter for the sequenz which is used by the trigger
+    int seqDirection; // holds the sequence direction
+    int maxSeqCount;// holds the maximum lenth of the sequence
+    
+    vector<bool> patternOut;// thios holds the segments per step
+    
+    //gui
+    ofTrueTypeFont      *mFont;
+    ofRectangle         drawarea;
+    vector<BUTTON>      dirbuttons;//the buttons for the direction;
+    vector<BUTTON>      patternbuttons;//buttons for pattern
+    //vector<BUTTON>      segmentbuttons;//buttons for segment selection
+    ofColor             c[2] = {ofColor(0,0,255),ofColor(255,0,0)};
+    
+    string              patternnames[10] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
+        "RANDOM","TURING","SECOND","THIRD"};
+  
+};
+
+#endif /* PatternGenerator_hpp */

@@ -1,0 +1,63 @@
+//
+//  StepSequencer.hpp
+//  Sequencer
+//
+//  Created by Enrico Becker on 05/08/2019.
+//
+
+#ifndef StepSequencer_hpp
+#define StepSequencer_hpp
+
+#include <stdio.h>
+#include "DataControler.hpp"
+
+class StepSequencer
+{
+public:
+    struct STEP
+    {
+        ofRectangle drawarea;
+        bool pressed;
+        bool isStep;
+        int drawColorID;
+    };
+    
+    StepSequencer(ofRectangle drawarea,DataControler *data ,int maxStep,int id);
+    ~StepSequencer();
+    
+    void update();// do the
+    float &updateDelta();
+    void drawSequencer();
+    void nextStep();
+    void resetToBegin();
+    void mousePressed(ofMouseEventArgs & args);
+    ofEvent<int> trigger; //think about adding a listener
+    //add, remove listener
+    float &getDeltaTIme(){return delta;};
+    vector<bool> &getSteps();
+    void addListener(){ofAddListener(ofEvents().mousePressed, this, &StepSequencer::mousePressed);};
+    void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &StepSequencer::mousePressed);};
+    
+    
+private:
+    void createSequencer(ofRectangle drawarea,int maxStep);
+    
+    DataControler *data;
+    ofRectangle area;
+    vector<STEP> steps; // this
+    vector<bool> triggerSets;
+    ofFbo buttons[2];
+    ofColor color[3] = {ofColor(55),ofColor(255,255,0),ofColor(128,128,255)};
+    int myID;
+    int stepID; // holds the actual step
+    float lastStepTime;
+    float stepTime;//holds the time per step
+    float thisTriggerTime;
+    float nextTriggerTime;
+    float deltaTime;//holds the time when next trigger appears
+    float delta;// the delta
+    bool hasTrigger;//do we have a trigger?
+    int         radius;
+};
+
+#endif /* StepSequencer_hpp */

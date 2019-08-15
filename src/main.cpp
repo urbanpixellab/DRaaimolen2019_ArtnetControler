@@ -3,21 +3,11 @@
 
 //========================================================================
 int main( ){
-    
-    ofSetLogLevel(OF_LOG_VERBOSE);
-    int windowWidth = 1024;
-    int windowHeight = 500;
-    
-#ifdef TARGET_OPENGLES
-    ofGLESWindowSettings settings;
-    settings.width = windowWidth;
-    settings.height = windowHeight;
-    settings.setGLESVersion(2);
-    ofCreateWindow(settings);
-#else
-    ofSetupOpenGL(windowWidth, windowHeight, OF_WINDOW);
-#endif
-    
-    ofRunApp( new ofApp());
-    
+	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
+
+	// this kicks off the running of my app
+	// can be OF_WINDOW or OF_FULLSCREEN
+	// pass in width and height too:
+	ofRunApp(new ofApp());
+
 }

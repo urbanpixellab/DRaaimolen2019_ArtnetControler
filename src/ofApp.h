@@ -1,55 +1,17 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxArtnet.h"
-#include "ofxOsc.h"
+#include "ArrayMappingTest.hpp"
+#include "DataControler.hpp"
+#include "PatternEditor.hpp"
+#include "ArtnetData.hpp"
+#include "GraphicGenerator.hpp"
 
-#define universes 8
 
 class ofApp : public ofBaseApp{
 
 public:
-    struct UNIVERSE
-    {
-        //holds the outgoing
-        int outArray[450];// exactly for our purpose
-        
-    };
-    
-    struct ADDRESS
-    {
-        string path;
-        int counter;
-        int i_Value;
-        float f_Value;
-    };
-    
-    struct LEDSEGMENT
-    {
-        ofFbo fbo;
-        //the states
-        bool reverse; //to shgader
-        int length; //to shader
-        int artnetnode;// or ip
-    };
-    
-    struct STEP
-    {
-        //for the stepsequencer, holds all settings
-        //for drawing
-        int color[2] = {0,255}; // color in hsb, only one value as fader red to red
-        bool brightness;// zeichen mich, ja nein
-        int frequenz;
-        int curveSelect;
-        int offset2PI;
-        
-        ofRectangle drawarea;
-        
-    };
-    
     void setup();
-    void createStepSequencer();
-    void updateStepSequencer(int steps = 16);
     void update();
     void draw();
 
@@ -65,20 +27,36 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 
-    void writeToLedArray(ofPixels & p);
+    void setEditorID(int index);
+    void setLiveID(int index);
+    
     void exit();
 
-    void receiveOSC(ofxOscReceiver &receiver);
-    
-    
 private:
-    ofShader    shader;
-    ofFbo       ledStripe;
-    vector<ofxArtnetSender*> artnets;
-
-    vector<ofApp::STEP> step;
-
     
-    ofxOscReceiver  _oscReceiver;
-    vector<ofxOscMessage> _oscMessages;//damit sind die immer aktuell abrufbar!!! und die werte sind ueber pointer verlinkbar zu machen
+    DataControler           dataControl;
+    vector<PatternEditor*>  patEditors;
+    PatternEditor           *LIVE;
+
+    vector<ofRectangle>     previewBTNs;
+    
+    ArtnetData              *artnet;
+    ArrayMappingTest    arTest;
+    
+    ofTrueTypeFont      menueFont;
+    int liveSelect,editSelect = 0;
+    
+    float steplength;
+    float timer;
+    float seqDelta;
+  
+    ofFbo                   preview;
+    GraphicGenerator        gfx;
+    
 };
+
+// infos
+// the sequencer has a static selcetion of segments
+// the sequencer the runs through a preprogrammed segment animation
+// like lauflicht, an aus....
+// 3 step modes playmodes fw rv pingpong
