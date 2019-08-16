@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include "ofMain.h"
-#include "PatternData.hpp"
 #include "ofxXmlSettings.h"
 
 class DataControler
