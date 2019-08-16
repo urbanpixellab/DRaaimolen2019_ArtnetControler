@@ -17,11 +17,14 @@ public:
     GraphicGenerator();
     ~GraphicGenerator();
     
-    void draw(ofFbo &screen,ofTexture &tex);
+    void draw(ofFbo &screen,ofTexture &tex, float &delta,float &bright);
+    void setColor(ofColor a, ofColor b);
     
 private:
     ofShader        shader;
     ofMesh          mesh;
+    ofVec3f         colorA;
+    ofVec3f         colorB;
 };
 
 #endif /* GraphicGenerator_hpp */

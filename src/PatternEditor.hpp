@@ -37,6 +37,18 @@ public:
     void isVisible(bool value);
     ofEvent<int> SequencerIDHit;
     
+    ofColor getColorA(){return colorA->getColor();};
+    ofColor &getColorB(){return colorB->getColor();};
+    
+    float &getDeltaA(){return mSequenzer->updateDelta();};
+    float &getDeltaB(){return sSequenzer->updateDelta();};
+    float &getDeltaC(){return cSequenzer->updateDelta();};
+
+    float &getValueA(){return mCurve->getValue();};
+    float &getValueB(){return sCurve->getValue();};
+    float &getValueC(){return cCurve->getValue();};
+    void colorPressed(int &id);
+    
 
 private:
     ofRectangle         drawarea;
@@ -55,6 +67,7 @@ private:
     Zadar               *cCurve;
 
     ColorSwatch         *colorA;//primary
+    ColorSwatch         *colorB;//primary
     
     //testfiles
     ofColor testcolor;

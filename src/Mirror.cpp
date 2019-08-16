@@ -25,7 +25,8 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
         test.setColor(i, 0, ofColor((i/150.)* 255));//ramp
     }
     testImg.setFromPixels(test);
-    
+    int l = 100; // the textur width;
+
     //4 segments 5 points
     //reverse is in artnet settet up
     //draw onscreen
@@ -66,20 +67,20 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
     //to pixels not normalized!!!!!
     
     preview[0].addTexCoord(ofVec2f(0,0));
-    preview[0].addTexCoord(ofVec2f(0.125*100,0));
-    preview[0].addTexCoord(ofVec2f(0.25*100,0));
+    preview[0].addTexCoord(ofVec2f(0.125*l,0));
+    preview[0].addTexCoord(ofVec2f(0.25*l,0));
     
-    preview[1].addTexCoord(ofVec2f(0.25*100,0));
-    preview[1].addTexCoord(ofVec2f(0.375*100,0));
-    preview[1].addTexCoord(ofVec2f(0.5*100,0));
+    preview[1].addTexCoord(ofVec2f(0.25*l,0));
+    preview[1].addTexCoord(ofVec2f(0.375*l,0));
+    preview[1].addTexCoord(ofVec2f(0.5*l,0));
     
-    preview[2].addTexCoord(ofVec2f(0.5*100,0));
-    preview[2].addTexCoord(ofVec2f(0.625*100,0));
-    preview[2].addTexCoord(ofVec2f(0.75*100,0));
+    preview[2].addTexCoord(ofVec2f(0.5*l,0));
+    preview[2].addTexCoord(ofVec2f(0.625*l,0));
+    preview[2].addTexCoord(ofVec2f(0.75*l,0));
     
-    preview[3].addTexCoord(ofVec2f(75*100,0));
-    preview[3].addTexCoord(ofVec2f(0.825*100,0));
-    preview[3].addTexCoord(ofVec2f(1.0*100,0));
+    preview[3].addTexCoord(ofVec2f(0.75*l,0));
+    preview[3].addTexCoord(ofVec2f(0.825*l,0));
+    preview[3].addTexCoord(ofVec2f(1.0*l,0));
     
 
 
@@ -89,7 +90,6 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
     //and draw there the mesh lines with different texture mappings always on 3 points
     //this fo is then readed to pixels and send to artnet universes
     //per loop
-    
     all.begin();
     ofClear(0,0,0);
     all.end();
@@ -106,7 +106,7 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
     da = ofVec3f(105,0,0);
     
     
-    render[1].setMode(OF_PRIMITIVE_LINE_STRIP);
+    render[0].setMode(OF_PRIMITIVE_LINE_STRIP);
     render[0].addVertex(a);
     render[0].addVertex(ab);
     render[0].addVertex(b);
@@ -127,22 +127,22 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
     render[3].addVertex(da);
     render[3].addVertex(end);
     
-    render[0].addTexCoord(ofVec2f(0*150,0));
-    render[0].addTexCoord(ofVec2f(0.125*150,0));
-    render[0].addTexCoord(ofVec2f(0.25*150,0));
+    render[0].addTexCoord(ofVec2f(0*l,0));
+    render[0].addTexCoord(ofVec2f(0.125*l,0));
+    render[0].addTexCoord(ofVec2f(0.25*l,0));
     
-    render[1].addTexCoord(ofVec2f(0.25*150,0));
-    render[1].addTexCoord(ofVec2f(0.375*150,0));
-    render[1].addTexCoord(ofVec2f(0.5*150,0));
+    render[1].addTexCoord(ofVec2f(0.25*l,0));
+    render[1].addTexCoord(ofVec2f(0.375*l,0));
+    render[1].addTexCoord(ofVec2f(0.5*l,0));
     
-    render[2].addTexCoord(ofVec2f(0.5*150,0));
-    render[2].addTexCoord(ofVec2f(0.625*150,0));
-    render[2].addTexCoord(ofVec2f(0.75*150,0));
+    render[2].addTexCoord(ofVec2f(0.5*l,0));
+    render[2].addTexCoord(ofVec2f(0.625*l,0));
+    render[2].addTexCoord(ofVec2f(0.75*l,0));
     
     
-    render[3].addTexCoord(ofVec2f(75*150,0));
-    render[3].addTexCoord(ofVec2f(0.825*150,0));
-    render[3].addTexCoord(ofVec2f(1.0*150,0));
+    render[3].addTexCoord(ofVec2f(0.75*l,0));
+    render[3].addTexCoord(ofVec2f(0.825*l,0));
+    render[3].addTexCoord(ofVec2f(1.0*l,0));
 
 
     setTextureMapping(mappingMode);

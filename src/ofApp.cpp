@@ -21,15 +21,17 @@ void ofApp::setup(){
     int w = ofGetWidth() / 32;
     for(int i = 0;i < patEditors.size();i++)
     {
-        previewBTNs.push_back(ofRectangle(i*2*w,0,w,w));
+        previewBTNs.push_back(ofRectangle(i*2*w,160,w,w));
     }
-    
+
     //mapping test
     arTest.getOutArray()[0] = 25;
 //    cout << "out0 should been 25:" << arTest.getOutArray()[0] << endl;
     arTest.getReverseArray()[4] = 5;
 //    cout << "out0 should been 5:" << arTest.getOutArray()[0]<< " " << arTest.getReverseArray()[4] << endl;
+    cout << "end of setup "<< endl;
     artnet = new ArtnetData();
+    cout << "end of setup "<< endl;
     
     patEditors[editSelect]->isVisible(true);
     LIVE = patEditors[liveSelect];
@@ -41,8 +43,6 @@ void ofApp::setup(){
         mirrors.push_back(Mirror(i, artnet,ofRectangle(i*w*2,0,w,h)));
     }
 //
-    //ofAddListener(patEditors[0]->, <#ListenerClass *listener#>, <#void (ListenerClass::*listenerMethod)(const void *, ArgumentsType &)#>)
-
 }
 
 //--------------------------------------------------------------
@@ -51,6 +51,13 @@ void ofApp::update()
     float now = ofGetElapsedTimef();
     if(now > timer + steplength)
     {
+        //set all colors, should been done somewhere else
+        for(int i = 0;i < mirrors.size();i++)
+        {
+            gfx.setColor(patEditors[editSelect]->getColorA(), patEditors[editSelect]->getColorB());
+        }
+
+        
         timer = now + steplength;
         //update all
         for (int i = 0; i < patEditors.size(); i++)
@@ -83,7 +90,7 @@ void ofApp::update()
         LIVE->update();
     }
     // now create the graphic
-    gfx.draw(preview,LIVE->getCurve());
+    gfx.draw(preview,LIVE->getCurve(),patEditors[editSelect]->getDeltaC(),patEditors[editSelect]->getValueA());
     
     // now write to artnet
     
@@ -99,8 +106,6 @@ void ofApp::draw(){
     patEditors[editSelect]->drawGUI();
     ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,600);
     int id = 0;
-    ofImage img = artnet->getNode(id).universes[0];
-    img.draw(300, 500,150,50);
     ofSetColor(255,128,0);
     for(int i = 0;i < previewBTNs.size();i++)
     {
@@ -108,7 +113,6 @@ void ofApp::draw(){
     }
     ofSetColor(255);
     //preview.draw(0,0,100,100);
-    artnet->drawPreview(LIVE->getSegmentPattern());
     
     for(int i = 0;i < mirrors.size();i++)
     {
@@ -136,7 +140,7 @@ void ofApp::keyPressed(int key){
     {
         for(int i = 0;i < mirrors.size();i++)
         {
-            mirrors[i].setEnables(true, true, true, true);
+            gfx.setColor(patEditors[editSelect]->getColorA(), patEditors[editSelect]->getColorB());
         }
     }
     if(key == 'n')

@@ -57,7 +57,10 @@ PatternEditor::PatternEditor(ofRectangle area,DataControler *d, ofTrueTypeFont *
     cCurve = new Zadar(ofRectangle(x,y,w,h),pData,mFont);
     // color swatches
     
-    colorA = new ColorSwatch(ofRectangle(x+w*1.3,y,100,100));
+    colorA = new ColorSwatch(ofRectangle(x+w*1.3,y,60,60));
+    ofAddListener(colorA->colorPressed,this,&PatternEditor::colorPressed);
+    colorB = new ColorSwatch(ofRectangle(x+w*1.7,y,60,60));
+    ofAddListener(colorB->colorPressed,this,&PatternEditor::colorPressed);
 }
 
 PatternEditor::~PatternEditor()
@@ -77,6 +80,7 @@ PatternEditor::~PatternEditor()
     delete cSequenzer;
     delete cCurve;
     delete colorA;
+    delete colorB;
 
 }
 
@@ -111,6 +115,12 @@ void PatternEditor::drawGUI()
     cSequenzer->drawSequencer();
     cCurve->draw();
     colorA->draw();
+    colorB->draw();
+}
+
+void PatternEditor::colorPressed(int &id)
+{
+    
 }
 
 void PatternEditor::sequenzerHit(int & index)
@@ -181,6 +191,7 @@ void PatternEditor::isVisible(bool value)
         cSequenzer->addListener();//mirror sequenzer
         cCurve->addListener();
         colorA->addListener();
+        colorB->addListener();
     }
     else
     {
@@ -193,5 +204,6 @@ void PatternEditor::isVisible(bool value)
         cSequenzer->removeListener();//segment sequenzer
         cCurve->removeListener();
         colorA->removeListener();
+        colorB->removeListener();
     }
 }

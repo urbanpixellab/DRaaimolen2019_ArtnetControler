@@ -23,18 +23,30 @@ GraphicGenerator::GraphicGenerator()
 
 GraphicGenerator::~GraphicGenerator(){}
 
-void GraphicGenerator::draw(ofFbo &screen,ofTexture &tex)
+void GraphicGenerator::draw(ofFbo &screen,ofTexture &tex,float &delta,float &bright)
 {
-    float brightness  = 1;
     screen.begin();
     ofClear(0, 0, 0);
     shader.begin();
+    shader.setUniform1f("freq",0.25);
     shader.setUniform2f("res",ofVec2f(100,100));
-    shader.setUniform1f("shift",100* (0.5 + sin(ofGetElapsedTimef())*0.5));
-    shader.setUniform3f("colA", ofVec3f(1,0,0.7));
-    shader.setUniform3f("colB", ofVec3f(0,1,0.5));
+    shader.setUniform1f("bright", bright);
+    shader.setUniform1f("shift",100 * delta);//delta time
+    shader.setUniform3f("colA", colorA);
+    shader.setUniform3f("colB", colorB);
     shader.setUniformTexture("tex",tex, 0);
     mesh.draw();
     shader.end();
     screen.end();
+}
+
+void GraphicGenerator::setColor(ofColor a, ofColor b)
+{
+    colorA.x = (a.r/255.);
+    colorA.y = (a.g/255.);
+    colorA.z = (a.b/255.);
+    
+    colorB.x = b.r/255.;
+    colorB.y = b.g/255.;
+    colorB.z = b.b/255.;
 }

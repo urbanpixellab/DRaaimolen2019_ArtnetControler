@@ -15,20 +15,6 @@
 class ArtnetData
 {
 public:
-    struct Segment
-    {
-        int         beginPixel; // start pixel position
-        int         endPixel;
-        ofPolyline  line;
-        int         uniID;      //which universum
-        int         nodeID;     //which artnet node
-        ofFbo       fbo;        // the fbo of the segment
-    };
-
-    struct Spiegel
-    {
-        Segment seg[4];
-    };
 
     struct Node
     {
@@ -47,14 +33,8 @@ public:
     void saveNodes();
     
     void send(int &node, int &universum);
-    void drawPreview(bool * enables);
-    
-    Node &getNode(int &id){return nodes[id];};
-    //Segment &getSegment(int &id){return segments[id];};
     
 private:
-    vector<Node> nodes;
-    vector<Spiegel> spiegels;
     vector<Node> _nodes;
 
 };

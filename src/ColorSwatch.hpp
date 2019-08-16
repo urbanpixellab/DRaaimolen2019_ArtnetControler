@@ -25,6 +25,8 @@ public:
     void draw();
     ofColor &getColor(){return colors[colorID];};
     
+    ofEvent<int> colorPressed;
+    
 private:
     ofRectangle     drawarea;
     ofFbo           fbo;

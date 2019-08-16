@@ -11,13 +11,18 @@ ArtnetData::ArtnetData()
 {
     loadNodes();
     int nMAX = 5;
+    cout << "artnet "<< endl;
     
     for(int i = 0;i < 5*8;i++)
     {
-        
-        _nodes.push_back(Node());
+        cout << "voor node "<< endl;
+//        Node n;
+//        _nodes.push_back(n);
         //every artnet object consists of an ip and an universe
-        _nodes.back().artnets[i%8].setup("192.168.12.200",i%8);// everyone has 8 universes
+        string ip = "192.168.12." + ofToString(29+floor(i/8.));
+        cout << ip << endl;
+//        _nodes.back().artnets[i%8].setup(ip,i%8);// everyone has 8 universes
+        
     }
 
 }
@@ -25,66 +30,11 @@ ArtnetData::~ArtnetData(){}
 
 void ArtnetData::loadNodes()
 {
-    //temporary create instead of load
-    nodes.clear();
-    int stripLenghth = 150;
-    for (int i = 0; i < 1; i++)
-    {
-        Node n;
-        n.ip = "127.0.0.1";
-        for (int u = 0; u < 8;u++)
-        {
-            n.universes[u].allocate(stripLenghth, 1, OF_PIXELS_RGB);
-            //fill black
-            while( i < stripLenghth*3)
-            {
-                n.universes[u][i] = 0;
-                i++;
-            }
-        }
-        nodes.push_back(n);
-    }
-    
-    spiegels.clear();
-    for (int i = 0; i < 20; i++)
-    {
-        int spacer = 5;
-        int w = 30;
-        int h = 90;
-        int x = i * (w + spacer);
-        int y = 0;
-        ofRectangle area(x,y,w,h);
-        Spiegel s;
-        s.seg[0].line.addVertex(x, y+h); //links cw
-        s.seg[0].line.addVertex(x, y);
-
-        s.seg[1].line.addVertex(x, y); //oben
-        s.seg[1].line.addVertex(x+w, y);
-
-        s.seg[2].line.addVertex(x+w, y);//rechts
-        s.seg[2].line.addVertex(x+w, y+h);
-
-        s.seg[3].line.addVertex(x+w, y+h);//unten
-        s.seg[3].line.addVertex(x, y+h);
-
-        spiegels.push_back(s);
-    }
-}
-
-void ArtnetData::drawPreview(bool * enables)
-{
-    for(int i = 0;i < spiegels.size();i++)
-    {
-        for (int s = 0;s < 4; s++)
-        {
-            if(enables[i*4 + s] == true) spiegels[i].seg[s].line.draw();
-        }
-    }
 }
 
 void ArtnetData::send(int &node, int &universum)
 {
-    _nodes[node].artnets[universum].sendArtnet(_nodes[node].universes[universum]);
+    //_nodes[node].artnets[universum].sendArtnet(_nodes[node].universes[universum]);
 }
 
 

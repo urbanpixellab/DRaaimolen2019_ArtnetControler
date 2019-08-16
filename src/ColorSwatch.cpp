@@ -46,6 +46,7 @@ void ColorSwatch::mousePressed(ofMouseEventArgs & args)
 
 void ColorSwatch::setColor(int id)
 {
+    ofNotifyEvent(colorPressed, id);
     colorID = id;
     updateFBO();
 }
