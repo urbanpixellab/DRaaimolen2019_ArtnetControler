@@ -10,7 +10,7 @@
 #define Zadar_hpp
 
 #include <stdio.h>
-#include "DataControler.hpp"
+#include "ofMain.h"
 
 #define RES 100
 
@@ -48,7 +48,7 @@ public:
         int         id;
     };
     
-    Zadar(ofRectangle drawarea,DataControler *data, ofTrueTypeFont *mFont);
+    Zadar(ofRectangle drawarea, ofTrueTypeFont *mFont);
     ~Zadar();
     
     void createGUI();
@@ -78,9 +78,8 @@ public:
     int getRightBorder(){return curvebuttons[curvebuttons.size()-1].drawarea.getRight();};
 
 private:
-    void createCurves();
-    int myID;
-    DataControler       *data;
+    void                createCurves();
+    int                 myID;
     ofRectangle         drawarea;
     ofFbo               preview;//holds the curve preview
     int                 curveID;

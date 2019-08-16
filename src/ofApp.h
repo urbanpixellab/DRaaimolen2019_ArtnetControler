@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "ArrayMappingTest.hpp"
-#include "DataControler.hpp"
 #include "PatternEditor.hpp"
 #include "ArtnetData.hpp"
 #include "GraphicGenerator.hpp"
@@ -29,12 +28,11 @@ public:
 
     void setEditorID(int index);
     void setLiveID(int index);
-    
+    void isTrigger(int &triggerIndex);
     void exit();
 
 private:
     
-    DataControler           dataControl;
     vector<PatternEditor*>  patEditors;
     PatternEditor           *LIVE;
 

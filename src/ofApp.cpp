@@ -12,9 +12,10 @@ void ofApp::setup(){
     
     for(int i = 0;i < 16 ;i++)
     {
-        patEditors.push_back(new PatternEditor(PatternEditor(ofRectangle(0,300,800,500),&dataControl,&menueFont)));
+        patEditors.push_back(new PatternEditor(PatternEditor(ofRectangle(0,300,800,500),&menueFont)));
+        ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isTrigger);
     }
-    //LIVE = new PatternEditor();
+    LIVE = new PatternEditor();
     
     //testwise preview buttons
     previewBTNs.clear();
@@ -29,10 +30,8 @@ void ofApp::setup(){
 //    cout << "out0 should been 25:" << arTest.getOutArray()[0] << endl;
     arTest.getReverseArray()[4] = 5;
 //    cout << "out0 should been 5:" << arTest.getOutArray()[0]<< " " << arTest.getReverseArray()[4] << endl;
-    cout << "end of setup "<< endl;
+
     artnet = new ArtnetData();
-    cout << "end of setup "<< endl;
-    
     patEditors[editSelect]->isVisible(true);
     LIVE = patEditors[liveSelect];
     
@@ -69,12 +68,14 @@ void ofApp::update()
         stepcount++;
         if(stepcount >= 16)
         {
+            /*
             for(int i = 0;i < mirrors.size();i++)
             {
                 bool r = true;
                 if(ofRandom(4) > 1) r = false;
                 mirrors[i].setEnables(r,r,r,r);
             }
+             */
             stepcount = 0;
         }
 
@@ -132,6 +133,19 @@ void ofApp::setLiveID(int index)
 {
     liveSelect = index;
     LIVE = patEditors[liveSelect];
+}
+
+void ofApp::isTrigger(int &triggerIndex)
+{
+        if(triggerIndex == 0)
+        {
+            for(int i = 0;i < mirrors.size();i++)
+            {
+                bool e = patEditors[editSelect]->getMirrorPattern()[i];
+                mirrors[i].setEnables(e,e,e,e);
+            }
+
+        }
 }
 
 //--------------------------------------------------------------

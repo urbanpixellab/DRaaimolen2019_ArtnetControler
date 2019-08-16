@@ -8,7 +8,7 @@
 #include "StepSequencer.hpp"
 
 
-StepSequencer::StepSequencer(ofRectangle drawarea,DataControler * d,int maxStep,int id):data(d), myID(id)
+StepSequencer::StepSequencer(ofRectangle drawarea,int maxStep,int id): myID(id)
 {
     createSequencer(drawarea,maxStep);
     delta = 0;

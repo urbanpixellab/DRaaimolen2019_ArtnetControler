@@ -9,7 +9,7 @@
 #include "Zadar.hpp"
 
 
-Zadar::Zadar(ofRectangle area,DataControler *data, ofTrueTypeFont *f) : drawarea(area),data(data), mFont(f)
+Zadar::Zadar(ofRectangle area, ofTrueTypeFont *f) : drawarea(area), mFont(f)
 {
     curvePixels.allocate(RES,1,OF_IMAGE_COLOR);
     curveImage.allocate(RES, 1, OF_IMAGE_COLOR);

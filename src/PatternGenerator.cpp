@@ -6,7 +6,7 @@
 //
 
 #include "PatternGenerator.hpp"
-PatternGenerator::PatternGenerator(ofRectangle area, DataControler *d,int maxSeg, ofTrueTypeFont *f) : mFont(f), data(d)
+PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f) : mFont(f)
 {
     maxSegment = maxSeg; // for all mirrors
     drawarea = area;

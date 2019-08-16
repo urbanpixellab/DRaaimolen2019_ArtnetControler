@@ -12,7 +12,6 @@
 #include "StepSequencer.hpp"
 #include "PatternGenerator.hpp"
 #include "Zadar.hpp"
-#include "DataControler.hpp"
 #include "ColorSwatch.hpp"
 
 #define MIRRORS 20
@@ -23,7 +22,7 @@ class PatternEditor
 public:
     
     PatternEditor();
-    PatternEditor(ofRectangle area, DataControler * d, ofTrueTypeFont *mFont);
+    PatternEditor(ofRectangle area, ofTrueTypeFont *mFont);
     ~PatternEditor();
     
     void nextStep();
@@ -49,10 +48,13 @@ public:
     float &getValueC(){return cCurve->getValue();};
     void colorPressed(int &id);
     
+    vector<bool> &getMirrorPattern(){return mPatGen->getPattern();};
+    
+    ofEvent<int> isTrigger;
+    
 
 private:
     ofRectangle         drawarea;
-    DataControler       *pData;
     float               seqDelta[3];
 
     StepSequencer       *mSequenzer;//mirror sequenzer
@@ -68,10 +70,6 @@ private:
 
     ColorSwatch         *colorA;//primary
     ColorSwatch         *colorB;//primary
-    
-    //testfiles
-    ofColor testcolor;
-    int testradius = 100;
     
     bool    visible;
     bool    segments[80] = {false};// holds all segments

@@ -9,7 +9,7 @@
 #define PatternGenerator_hpp
 
 #include <stdio.h>
-#include "DataControler.hpp"
+#include "ofMain.h"
 
 class PatternGenerator
 {
@@ -50,7 +50,7 @@ public:
     
     
     
-    PatternGenerator(ofRectangle area, DataControler *d,int maxSeg, ofTrueTypeFont *f);
+    PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f);
     ~PatternGenerator();
     
     void updatePattern();// gets triggered by sequencer
@@ -76,7 +76,6 @@ public:
     
     
 private:
-    DataControler   *data;
     int maxSegment;//how many mirrors
     int patternID;//the selected pattern
     int sequenzerID; /// which sequenzer i belong to
@@ -94,7 +93,7 @@ private:
     vector<BUTTON>      patternbuttons;//buttons for pattern
     //vector<BUTTON>      segmentbuttons;//buttons for segment selection
     ofColor             c[2] = {ofColor(0,0,255),ofColor(255,0,0)};
-    int                 lastPressed;
+    int                 lastPressed;//save the last for invert
     string              patternnames[11] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
         "RANDOM","TURING","SECOND","THIRD","INVERT"};
   

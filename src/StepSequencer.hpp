@@ -9,7 +9,7 @@
 #define StepSequencer_hpp
 
 #include <stdio.h>
-#include "DataControler.hpp"
+#include "ofMain.h"
 
 class StepSequencer
 {
@@ -22,7 +22,7 @@ public:
         int drawColorID;
     };
     
-    StepSequencer(ofRectangle drawarea,DataControler *data ,int maxStep,int id);
+    StepSequencer(ofRectangle drawarea,int maxStep,int id);
     ~StepSequencer();
     
     void update();// do the
@@ -42,7 +42,6 @@ public:
 private:
     void createSequencer(ofRectangle drawarea,int maxStep);
     
-    DataControler *data;
     ofRectangle area;
     vector<STEP> steps; // this
     vector<bool> triggerSets;

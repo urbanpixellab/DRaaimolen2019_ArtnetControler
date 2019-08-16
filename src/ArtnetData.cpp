@@ -11,18 +11,13 @@ ArtnetData::ArtnetData()
 {
     loadNodes();
     int nMAX = 5;
-    cout << "artnet "<< endl;
-    
     for(int i = 0;i < 5*8;i++)
     {
-        cout << "voor node "<< endl;
-//        Node n;
-//        _nodes.push_back(n);
+        Node n;
+        _nodes.push_back(n);
         //every artnet object consists of an ip and an universe
         string ip = "192.168.12." + ofToString(29+floor(i/8.));
-        cout << ip << endl;
-//        _nodes.back().artnets[i%8].setup(ip,i%8);// everyone has 8 universes
-        
+        _nodes.back().artnets[i%8].setup(ip,i%8);// everyone has 8 universes
     }
 
 }

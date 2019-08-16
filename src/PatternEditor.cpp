@@ -9,7 +9,7 @@
 
 PatternEditor::PatternEditor(){}
 
-PatternEditor::PatternEditor(ofRectangle area,DataControler *d, ofTrueTypeFont *mFont): pData(d)
+PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
 {
     isVisible(false);
     drawarea = area;
@@ -17,44 +17,44 @@ PatternEditor::PatternEditor(ofRectangle area,DataControler *d, ofTrueTypeFont *
     int y = drawarea.getTop();
     int w = drawarea.getWidth() * 0.49;
     int h = drawarea.getHeight()/4; //divide into 4 reagions
-    mSequenzer = new StepSequencer(ofRectangle(x,y,w,h),pData,16,0);
+    mSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,0);
     ofAddListener(mSequenzer->trigger, this, &PatternEditor::sequenzerHit);
     
     x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
     w = drawarea.getWidth() * 0.24;
-    mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),pData,MIRRORS,mFont);
+    mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont);
     
     x = mPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.24;
-    mCurve = new Zadar(ofRectangle(x,y,w,h),pData,mFont);
+    mCurve = new Zadar(ofRectangle(x,y,w,h),mFont);
 
     /// now the segments elements
     y += h;
     x = drawarea.getLeft();
     w = drawarea.getWidth() * 0.49;
 
-    sSequenzer = new StepSequencer(ofRectangle(x,y,w,h),pData,16,1);
+    sSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,1);
     ofAddListener(sSequenzer->trigger, this, &PatternEditor::sequenzerHit);
     
     x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
     w = drawarea.getWidth() * 0.24;
-    sPatGen = new PatternGenerator(ofRectangle(x,y,w,h),pData,SEGMENTS,mFont);
+    sPatGen = new PatternGenerator(ofRectangle(x,y,w,h),SEGMENTS,mFont);
     
     x = sPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.24;
-    sCurve = new Zadar(ofRectangle(x,y,w,h),pData,mFont);
+    sCurve = new Zadar(ofRectangle(x,y,w,h),mFont);
 
     ////////// now the coloring stuff
     y += h;
     x = drawarea.getLeft();
     w = drawarea.getWidth() * 0.49;
     
-    cSequenzer = new StepSequencer(ofRectangle(x,y,w,h),pData,16,2);
+    cSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,2);
     ofAddListener(cSequenzer->trigger, this, &PatternEditor::sequenzerHit);
     
     x = sPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.24;
-    cCurve = new Zadar(ofRectangle(x,y,w,h),pData,mFont);
+    cCurve = new Zadar(ofRectangle(x,y,w,h),mFont);
     // color swatches
     
     colorA = new ColorSwatch(ofRectangle(x+w*1.3,y,60,60));
@@ -104,8 +104,6 @@ void PatternEditor::nextStep()
 
 void PatternEditor::drawGUI()
 {
-    ofSetColor(testcolor*seqDelta[0]);
-    ofDrawCircle(ofGetWidth()/2, ofGetHeight()/2, testradius*seqDelta[1]);
     mSequenzer->drawSequencer();
     mCurve->draw();
     mPatGen->drawGUI();
@@ -129,7 +127,9 @@ void PatternEditor::sequenzerHit(int & index)
     if(index < 0) return;
     else if(index == 0)
     {
-        testcolor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
+        //we have a mirror sequenzer  hit
+        //update the mirrors
+        
         mPatGen->updatePattern();
         for (int m =0; m < mPatGen->getPattern().size(); m++) // tot 20
         {
@@ -175,6 +175,8 @@ void PatternEditor::sequenzerHit(int & index)
     {
         /// is comming
     }
+    ofNotifyEvent(isTrigger, index);
+
 }
 
 void PatternEditor::isVisible(bool value)
