@@ -26,6 +26,7 @@ public:
         TURING,// has to been generic duss calculation on each step
         SECOND,
         THIRD,
+        INVERT,
         END
         //OUT_IN_RND
         //////add some more patterns
@@ -93,9 +94,9 @@ private:
     vector<BUTTON>      patternbuttons;//buttons for pattern
     //vector<BUTTON>      segmentbuttons;//buttons for segment selection
     ofColor             c[2] = {ofColor(0,0,255),ofColor(255,0,0)};
-    
-    string              patternnames[10] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
-        "RANDOM","TURING","SECOND","THIRD"};
+    int                 lastPressed;
+    string              patternnames[11] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
+        "RANDOM","TURING","SECOND","THIRD","INVERT"};
   
 };
 

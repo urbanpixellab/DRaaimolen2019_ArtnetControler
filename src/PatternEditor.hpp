@@ -35,6 +35,7 @@ public:
     bool *getSegmentPattern(){return segments;};
     
     void isVisible(bool value);
+    ofEvent<int> SequencerIDHit;
     
 
 private:

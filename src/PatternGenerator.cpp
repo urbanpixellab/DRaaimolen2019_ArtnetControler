@@ -183,6 +183,16 @@ void PatternGenerator::updatePattern()
             }
             break;
         }
+        case PATTERNS::INVERT:
+        {
+            maxSeqCount = maxSegment;
+            for (int j = 0; j < maxSegment; j++)
+            {
+                patternOut[j] = !patternOut[j];
+            }
+            break;
+        }
+
         default:
             break;
     }
@@ -334,6 +344,15 @@ void PatternGenerator::setPattern(int patSelect)
             }
             break;
         }
+        case PATTERNS::INVERT:
+        {
+            maxSeqCount = maxSegment;
+            for (int j = 0; j < maxSegment; j++)
+            {
+                patternOut[j] = !patternOut[j];
+            }
+            break;
+        }
         default:
             break;
     }
@@ -365,9 +384,14 @@ void PatternGenerator::mousePressed(ofMouseEventArgs & args)
     
     for (int i = 0; i < patternbuttons.size();i++)
     {
+        
         if(patternbuttons[i].drawarea.inside(args.x, args.y))
         {
             setPatternButton(i, !patternbuttons[i].pressed);
+            if(i != lastPressed)
+            {
+                //he is
+            }
             return;
         }
     }

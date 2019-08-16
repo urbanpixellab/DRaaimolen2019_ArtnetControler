@@ -6,7 +6,7 @@
 #include "PatternEditor.hpp"
 #include "ArtnetData.hpp"
 #include "GraphicGenerator.hpp"
-
+#include "Mirror.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -52,7 +52,9 @@ private:
   
     ofFbo                   preview;
     GraphicGenerator        gfx;
-    
+  
+    vector<Mirror>          mirrors;
+    int                     stepcount;//64
 };
 
 // infos

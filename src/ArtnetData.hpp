@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "ofMain.h"
+#include "ofxArtnet.h"
 
 class ArtnetData
 {
@@ -33,6 +34,7 @@ public:
     {
         string      ip;
         ofPixels    universes[8];
+        ofxArtnetSender artnets[8];
     };
     
     
@@ -44,6 +46,7 @@ public:
     void loadNodes();
     void saveNodes();
     
+    void send(int &node, int &universum);
     void drawPreview(bool * enables);
     
     Node &getNode(int &id){return nodes[id];};
@@ -52,6 +55,8 @@ public:
 private:
     vector<Node> nodes;
     vector<Spiegel> spiegels;
+    vector<Node> _nodes;
+
 };
 
 #endif /* ArtnetData_hpp */

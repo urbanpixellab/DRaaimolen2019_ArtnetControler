@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     steplength = 0.0625;
+    ofSetFrameRate(30);
     timer = 0;
     menueFont.load("verdana.ttf", 8);
     editSelect = 0;
@@ -32,6 +33,15 @@ void ofApp::setup(){
     
     patEditors[editSelect]->isVisible(true);
     LIVE = patEditors[liveSelect];
+    
+    w = ofGetWidth() / 40;
+    int h = 90;//we have max 90 leds in height
+    for (int i = 0; i < 20; i++)
+    {
+        mirrors.push_back(Mirror(i, artnet,ofRectangle(i*w*2,0,w,h)));
+    }
+//
+    //ofAddListener(patEditors[0]->, <#ListenerClass *listener#>, <#void (ListenerClass::*listenerMethod)(const void *, ArgumentsType &)#>)
 
 }
 
@@ -48,6 +58,19 @@ void ofApp::update()
             //patEditors[editSelect]->nextStep();
         }
         patEditors[editSelect]->nextStep();
+
+        stepcount++;
+        if(stepcount >= 16)
+        {
+            for(int i = 0;i < mirrors.size();i++)
+            {
+                bool r = true;
+                if(ofRandom(4) > 1) r = false;
+                mirrors[i].setEnables(r,r,r,r);
+            }
+            stepcount = 0;
+        }
+
         if(editSelect != liveSelect) LIVE->nextStep(); // onl;y if they are not the same update them
     }
     else
@@ -61,7 +84,13 @@ void ofApp::update()
     }
     // now create the graphic
     gfx.draw(preview,LIVE->getCurve());
+    
     // now write to artnet
+    
+    for(int i = 0;i < mirrors.size();i++)
+    {
+        mirrors[i].update();
+    }
 }
 
 //--------------------------------------------------------------
@@ -78,8 +107,14 @@ void ofApp::draw(){
         ofDrawRectangle(previewBTNs[i]);
     }
     ofSetColor(255);
-    preview.draw(0,0,100,100);
+    //preview.draw(0,0,100,100);
     artnet->drawPreview(LIVE->getSegmentPattern());
+    
+    for(int i = 0;i < mirrors.size();i++)
+    {
+        mirrors[i].drawPreview(preview.getTexture());
+    }
+
 }
 
 void ofApp::setEditorID(int index)
@@ -99,8 +134,10 @@ void ofApp::setLiveID(int index)
 void ofApp::keyPressed(int key){
     if(key == ' ')
     {
-//        seqA.resetToBegin();
-        
+        for(int i = 0;i < mirrors.size();i++)
+        {
+            mirrors[i].setEnables(true, true, true, true);
+        }
     }
     if(key == 'n')
     {

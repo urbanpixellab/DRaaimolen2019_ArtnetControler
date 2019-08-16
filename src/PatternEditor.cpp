@@ -115,6 +115,7 @@ void PatternEditor::drawGUI()
 
 void PatternEditor::sequenzerHit(int & index)
 {
+    
     if(index < 0) return;
     else if(index == 0)
     {

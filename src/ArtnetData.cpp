@@ -10,6 +10,16 @@
 ArtnetData::ArtnetData()
 {
     loadNodes();
+    int nMAX = 5;
+    
+    for(int i = 0;i < 5*8;i++)
+    {
+        
+        _nodes.push_back(Node());
+        //every artnet object consists of an ip and an universe
+        _nodes.back().artnets[i%8].setup("192.168.12.200",i%8);// everyone has 8 universes
+    }
+
 }
 ArtnetData::~ArtnetData(){}
 
@@ -71,6 +81,12 @@ void ArtnetData::drawPreview(bool * enables)
         }
     }
 }
+
+void ArtnetData::send(int &node, int &universum)
+{
+    _nodes[node].artnets[universum].sendArtnet(_nodes[node].universes[universum]);
+}
+
 
 void ArtnetData::saveNodes()
 {
