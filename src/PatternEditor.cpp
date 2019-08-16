@@ -57,10 +57,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     cCurve = new Zadar(ofRectangle(x,y,w,h),mFont);
     // color swatches
     
-    colorA = new ColorSwatch(ofRectangle(x+w*1.3,y,60,60));
-    ofAddListener(colorA->colorPressed,this,&PatternEditor::colorPressed);
-    colorB = new ColorSwatch(ofRectangle(x+w*1.7,y,60,60));
-    ofAddListener(colorB->colorPressed,this,&PatternEditor::colorPressed);
+    colors = new ColorSwatch(ofRectangle(x+w*1.3,y,120,60));
+    ofAddListener(colors->colorPressed,this,&PatternEditor::colorPressed);
 }
 
 PatternEditor::~PatternEditor()
@@ -79,8 +77,7 @@ PatternEditor::~PatternEditor()
     delete sCurve;
     delete cSequenzer;
     delete cCurve;
-    delete colorA;
-    delete colorB;
+    delete colors;
 
 }
 
@@ -112,8 +109,7 @@ void PatternEditor::drawGUI()
     sPatGen->drawGUI();
     cSequenzer->drawSequencer();
     cCurve->draw();
-    colorA->draw();
-    colorB->draw();
+    colors->draw();
 }
 
 void PatternEditor::colorPressed(int &id)
@@ -192,8 +188,7 @@ void PatternEditor::isVisible(bool value)
         sCurve->addListener();
         cSequenzer->addListener();//mirror sequenzer
         cCurve->addListener();
-        colorA->addListener();
-        colorB->addListener();
+        colors->addListener();
     }
     else
     {
@@ -205,7 +200,6 @@ void PatternEditor::isVisible(bool value)
         sCurve->removeListener();
         cSequenzer->removeListener();//segment sequenzer
         cCurve->removeListener();
-        colorA->removeListener();
-        colorB->removeListener();
+        colors->removeListener();
     }
 }

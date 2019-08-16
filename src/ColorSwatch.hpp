@@ -20,20 +20,29 @@ public:
     void mousePressed(ofMouseEventArgs & args);
     void addListener(){ofAddListener(ofEvents().mousePressed, this, &ColorSwatch::mousePressed);};
     void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &ColorSwatch::mousePressed);};
-    void setColor(int id);
+    void setColorA(int id);
+    void setColorB(int id);
+    void swapColor();
     void updateFBO();
     void draw();
-    ofColor &getColor(){return colors[colorID];};
+    ofColor &getColorA(){return colors[colorIDA];};
+    ofColor &getColorB(){return colors[colorIDB];};
     
     ofEvent<int> colorPressed;
     
 private:
     ofRectangle     drawarea;
     ofFbo           fbo;
-    int             colorID;
+    int             colorIDA;
+    int             colorIDB;
     int             xdim,ydim;
-    ofRectangle     area[16];
+    ofRectangle     areaA[16];
+    ofRectangle     areaB[16];
     
+    ofRectangle     preview[2];
+    ofRectangle     swap;
+    
+
     ofColor colors[16] = {ofColor(0),ofColor(128),ofColor(255)
         ,ofColor(255,0,0),ofColor(255,128,0),ofColor(255,255,0)
         ,ofColor(128,255,0),ofColor(0,255,0),ofColor(0,255,128)

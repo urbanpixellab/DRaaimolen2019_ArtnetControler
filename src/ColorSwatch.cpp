@@ -11,17 +11,32 @@ ColorSwatch::ColorSwatch(ofRectangle draw)
 {
     drawarea = draw;
     fbo.allocate(draw.getWidth(),draw.getHeight());
-    int xdim = draw.getWidth()/4;
-    int ydim = draw.getHeight()/4;
+    int xdim = draw.getWidth()/9;
+    int ydim = draw.getHeight()/5;
     for (int y = 0; y < 4; y++)
     {
         for (int x = 0; x < 4; x++)
         {
-            area[y*4+x] = ofRectangle(drawarea.getLeft()+x*xdim,drawarea.getTop()+y*ydim,xdim,ydim);
+            areaA[y*4+x] = ofRectangle(drawarea.getLeft()+x*xdim,ydim+ drawarea.getTop()+y*ydim,xdim,ydim);
         }
     }
-    setColor(0);
+    //shift left
+    int shift = xdim * 5;
+    for (int y = 0; y < 4; y++)
+    {
+        for (int x = 0; x < 4; x++)
+        {
+            areaB[y*4+x] = ofRectangle(shift + drawarea.getLeft()+x*xdim,ydim+ drawarea.getTop()+y*ydim,xdim,ydim);
+        }
+    }
+    preview[0] = ofRectangle(drawarea.getLeft(),drawarea.getTop(),xdim*3,ydim);
+    preview[1] = ofRectangle(drawarea.getLeft() + 7*xdim,drawarea.getTop(),xdim*3,ydim);
+    swap = ofRectangle(drawarea.getLeft()+3*xdim,drawarea.getTop(),xdim*3,ydim);
+    
+    setColorA(0);
+    setColorB(0);
 }
+
 ColorSwatch::~ColorSwatch(){}
 
 void ColorSwatch::draw()
@@ -35,20 +50,43 @@ void ColorSwatch::mousePressed(ofMouseEventArgs & args)
     {
         for (int i = 0; i < 16; i++)
         {
-            if(area[i].inside(args.x,args.y))
+            if(areaA[i].inside(args.x,args.y))
             {
-                setColor(i);
+                setColorA(i);
+                return;
+            }
+            if(areaB[i].inside(args.x,args.y))
+            {
+                setColorB(i);
                 return;
             }
         }
+        if(swap.inside(args.x,args.y)) swapColor();
     }
 }
 
-void ColorSwatch::setColor(int id)
+void ColorSwatch::setColorA(int id)
 {
     ofNotifyEvent(colorPressed, id);
-    colorID = id;
+    colorIDA = id;
     updateFBO();
+}
+
+void ColorSwatch::setColorB(int id)
+{
+    ofNotifyEvent(colorPressed, id);
+    colorIDB = id;
+    updateFBO();
+}
+
+void ColorSwatch::swapColor()
+{
+    //also think about a link to sequencer toggle
+    int tmp = colorIDA;
+    colorIDA = colorIDB;
+    colorIDB = tmp;
+    updateFBO();
+    ofNotifyEvent(colorPressed, tmp);
 }
 
 void ColorSwatch::updateFBO()
@@ -58,14 +96,16 @@ void ColorSwatch::updateFBO()
     for(int i = 0;i < 16;i++)
     {
         ofSetColor(colors[i]);
-        ofDrawRectangle(area[i].x-drawarea.getLeft(),area[i].y-drawarea.getTop(),area[i].width,area[i].height);
+        ofDrawRectangle(areaA[i].x-drawarea.getLeft(),areaA[i].y-drawarea.getTop(),areaA[i].width,areaA[i].height);
+        ofDrawRectangle(areaB[i].x-drawarea.getLeft(),areaB[i].y-drawarea.getTop(),areaB[i].width,areaB[i].height);
     }
-    // now highlight the selected color
+    ofSetColor(colors[colorIDA]);
+    ofDrawRectangle(preview[0].x-drawarea.getLeft(),preview[0].y-drawarea.getTop(),preview[0].width,preview[0].height);
+    ofSetColor(colors[colorIDB]);
+    ofDrawRectangle(preview[1].x-drawarea.getLeft(),preview[1].y-drawarea.getTop(),preview[1].width,preview[1].height);
     ofSetColor(255);
-    ofNoFill();
-    ofSetLineWidth(2);
-    ofDrawRectangle(area[colorID].x-drawarea.getLeft(),area[colorID].y-drawarea.getTop(),area[colorID].width,area[colorID].height);
-    ofFill();
-    ofSetLineWidth(1);
+    ofDrawRectangle(swap.x - drawarea.getLeft(), swap.y - drawarea.getTop(), swap.getWidth(), swap.getHeight());
+    ofSetColor(0);
+    ofDrawBitmapString("swap", swap.x - drawarea.getLeft(), swap.y - drawarea.getTop());
     fbo.end();
 }

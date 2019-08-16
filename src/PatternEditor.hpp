@@ -36,8 +36,8 @@ public:
     void isVisible(bool value);
     ofEvent<int> SequencerIDHit;
     
-    ofColor getColorA(){return colorA->getColor();};
-    ofColor &getColorB(){return colorB->getColor();};
+    ofColor getColorA(){return colors->getColorA();};
+    ofColor &getColorB(){return colors->getColorB();};
     
     float &getDeltaA(){return mSequenzer->updateDelta();};
     float &getDeltaB(){return sSequenzer->updateDelta();};
@@ -68,8 +68,7 @@ private:
     StepSequencer       *cSequenzer;//color pattern sequenzer
     Zadar               *cCurve;
 
-    ColorSwatch         *colorA;//primary
-    ColorSwatch         *colorB;//primary
+    ColorSwatch         *colors;//primary
     
     bool    visible;
     bool    segments[80] = {false};// holds all segments
