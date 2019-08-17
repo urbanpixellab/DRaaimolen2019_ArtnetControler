@@ -32,7 +32,10 @@ ColorSwatch::ColorSwatch(ofRectangle draw)
     preview[0] = ofRectangle(drawarea.getLeft(),drawarea.getTop(),xdim*3,ydim);
     preview[1] = ofRectangle(drawarea.getLeft() + 7*xdim,drawarea.getTop(),xdim*3,ydim);
     swap = ofRectangle(drawarea.getLeft()+3*xdim,drawarea.getTop(),xdim*3,ydim);
+    swapSeq = ofRectangle(swap.getRight() - 0.2*swap.getWidth(),swap.getTop(),swap.getWidth()*0.2,swap.getHeight());
     
+    colorIDA,colorIDB = 0;
+    isSeq = false;
     setColorA(0);
     setColorB(0);
 }
@@ -61,7 +64,14 @@ void ColorSwatch::mousePressed(ofMouseEventArgs & args)
                 return;
             }
         }
-        if(swap.inside(args.x,args.y)) swapColor();
+        if(swap.inside(args.x,args.y))
+        {
+            swapColor();
+            //stop sequenzer
+            //isSeq = false;
+            //i have to notify about swap sequencer!!!
+            
+        }
     }
 }
 

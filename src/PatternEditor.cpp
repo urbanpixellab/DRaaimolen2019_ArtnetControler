@@ -170,6 +170,8 @@ void PatternEditor::sequenzerHit(int & index)
     else if(index == 2)
     {
         /// is comming
+        //swap colors on demand
+        colors->swapColor();
     }
     ofNotifyEvent(isTrigger, index);
 

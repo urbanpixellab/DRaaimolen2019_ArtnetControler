@@ -41,6 +41,8 @@ private:
     
     ofRectangle     preview[2];
     ofRectangle     swap;
+    ofRectangle     swapSeq;
+    bool            isSeq = false;
     
 
     ofColor colors[16] = {ofColor(0),ofColor(128),ofColor(255)
