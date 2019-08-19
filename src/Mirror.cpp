@@ -98,37 +98,28 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
     all[1].end();
     
     //getht bis 120, later with in and out point per segment, and center of IO
-    a = ofVec3f(0,0,0);
-    b = ofVec3f(30,0,0);//aspect to rest;
-    c = ofVec3f(60,0,0);
-    d = ofVec3f(90,0,0);
-    end = ofVec3f(120,0,0);
-    ab = ofVec3f(15,0,0);
-    bc = ofVec3f(45,0,0);
-    cd = ofVec3f(75,0,0);
-    da = ofVec3f(105,0,0);
     
     
     render[0].setMode(OF_PRIMITIVE_LINE_STRIP);
-    render[0].addVertex(a);
-    render[0].addVertex(ab);
-    render[0].addVertex(b);
+    render[0].addVertex(ofVec3f(0,0,0));
+    render[0].addVertex(ofVec3f(30,0,0));
+    render[0].addVertex(ofVec3f(60,0,0));
     
     
     render[1].setMode(OF_PRIMITIVE_LINE_STRIP);
-    render[1].addVertex(b);
-    render[1].addVertex(bc);
-    render[1].addVertex(c);
+    render[1].addVertex(ofVec3f(90,0,0));
+    render[1].addVertex(ofVec3f(120,0,0));
+    render[1].addVertex(ofVec3f(150,0,0));
 
     render[2].setMode(OF_PRIMITIVE_LINE_STRIP);
-    render[2].addVertex(c);
-    render[2].addVertex(cd);
-    render[2].addVertex(d);
+    render[2].addVertex(ofVec3f(0,0,0));
+    render[2].addVertex(ofVec3f(30,0,0));
+    render[2].addVertex(ofVec3f(60,0,0));
     
     render[3].setMode(OF_PRIMITIVE_LINE_STRIP);
-    render[3].addVertex(d);
-    render[3].addVertex(da);
-    render[3].addVertex(end);
+    render[3].addVertex(ofVec3f(90,0,0));
+    render[3].addVertex(ofVec3f(120,0,0));
+    render[3].addVertex(ofVec3f(150,0,0));
     
     render[0].addTexCoord(ofVec2f(0*l,0));
     render[0].addTexCoord(ofVec2f(0.125*l,0));

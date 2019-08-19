@@ -171,7 +171,9 @@ void PatternEditor::sequenzerHit(int & index)
     {
         /// is comming
         //swap colors on demand
-        colors->swapColor();
+        
+        // should be on a external button to ink to the sequencer
+        //colors->swapColor();
     }
     ofNotifyEvent(isTrigger, index);
 
