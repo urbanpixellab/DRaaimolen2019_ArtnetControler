@@ -57,7 +57,7 @@ private:
     
     ArtnetData  *artnet;//direct link to artnet
     int     mappingMode;//how are the segments presented; cw ccw in<->out bottum up top down
-    ofFbo       all;//later split it up
+    ofFbo       all[2];//all two strips
     
     //audio amplifier
 };

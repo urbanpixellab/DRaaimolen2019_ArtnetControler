@@ -68,14 +68,6 @@ void ofApp::update()
         stepcount++;
         if(stepcount >= 16)
         {
-            /*
-            for(int i = 0;i < mirrors.size();i++)
-            {
-                bool r = true;
-                if(ofRandom(4) > 1) r = false;
-                mirrors[i].setEnables(r,r,r,r);
-            }
-             */
             stepcount = 0;
         }
 

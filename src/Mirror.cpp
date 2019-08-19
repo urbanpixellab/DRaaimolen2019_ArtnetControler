@@ -39,8 +39,6 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
     ofVec3f cd = ofVec3f(c.x,drawarea.getCenter().y,0);
     ofVec3f da = ofVec3f(drawarea.getCenter().x,a.y,0);
     ofVec3f end = a;
-
-
     
     preview[0].setMode(OF_PRIMITIVE_LINE_STRIP);
     preview[0].addVertex(a);
@@ -86,13 +84,18 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
 
     //preview.addTexCoord(ofVec2f(1,0));//end
     
-    all.allocate(150, 1);//here i draw allways all segments from one universum
+    all[0].allocate(150, 1);//here i draw allways all segments from one universum
+    all[1].allocate(150, 1);//here i draw allways all segments from one universum
     //and draw there the mesh lines with different texture mappings always on 3 points
     //this fo is then readed to pixels and send to artnet universes
     //per loop
-    all.begin();
+    all[0].begin();
     ofClear(0,0,0);
-    all.end();
+    all[0].end();
+
+    all[1].begin();
+    ofClear(0,0,0);
+    all[1].end();
     
     //getht bis 120, later with in and out point per segment, and center of IO
     a = ofVec3f(0,0,0);
@@ -197,27 +200,31 @@ void Mirror::update()//get shader values and draw the fbo and then to pixels
 
 void Mirror::drawPreview(ofTexture &tex)
 {
-    all.begin();
-    all.end();
     ofSetLineWidth(5);
-    all.begin();
+    all[0].begin();
     ofClear(0,0,0);
     tex.bind();
     if(enabled[0])render[0].draw();
     if(enabled[1])render[1].draw();
+    all[0].end();
+
+    all[1].begin();
+    ofClear(0,0,0);
     if(enabled[2])render[2].draw();
     if(enabled[3])render[3].draw();
-    tex.unbind();
-    all.end();
+    all[1].end();
+    
+    
     //now after everything is writen and sended we can dra a preview to screen
-    tex.bind();
     if(enabled[0])preview[0].draw();
     if(enabled[1])preview[1].draw();
     if(enabled[2])preview[2].draw();
     if(enabled[3])preview[3].draw();
     tex.unbind();
     ofSetLineWidth(1);
-    all.draw(drawarea.getLeft(),drawarea.getBottom()+5,drawarea.getWidth()*2,50);
+    
+    all[0].draw(drawarea.getLeft(),drawarea.getBottom()+5,drawarea.getWidth()*2,10);
+    all[1].draw(drawarea.getLeft(),drawarea.getBottom()+25,drawarea.getWidth()*2,10);
 }
 
 void Mirror::setEnables(bool left,bool top, bool right, bool bottom)
