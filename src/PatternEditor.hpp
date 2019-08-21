@@ -31,7 +31,6 @@ public:
     void sequenzerHit(int & index);
     
     ofTexture   &getCurve(){return cCurve->getCurveTex();};
-    bool *getSegmentPattern(){return segments;};
     
     void isVisible(bool value);
     ofEvent<int> SequencerIDHit;
@@ -40,11 +39,11 @@ public:
     ofColor &getColorB(){return colors->getColorB();};
     
     float &getDeltaA(){return mSequenzer->updateDelta();};
-    float &getDeltaB(){return sSequenzer->updateDelta();};
+//    float &getDeltaB(){return sSequenzer->updateDelta();};
     float &getDeltaC(){return cSequenzer->updateDelta();};
 
     float &getValueA(){return mCurve->getValue();};
-    float &getValueB(){return sCurve->getValue();};
+//    float &getValueB(){return sCurve->getValue();};
     float &getValueC(){return cCurve->getValue();};
     void colorPressed(int &id);
     
@@ -61,9 +60,9 @@ private:
     PatternGenerator    *mPatGen;
     Zadar               *mCurve;
 
-    StepSequencer       *sSequenzer;//segment sequenzer
-    PatternGenerator    *sPatGen;
-    Zadar               *sCurve;
+//    StepSequencer       *sSequenzer;//segment sequenzer
+//    PatternGenerator    *sPatGen;
+//    Zadar               *sCurve;
 
     StepSequencer       *cSequenzer;//color pattern sequenzer
     Zadar               *cCurve;
@@ -71,7 +70,6 @@ private:
     ColorSwatch         *colors;//primary
     
     bool    visible;
-    bool    segments[80] = {false};// holds all segments
 };
 
 #endif /* PatternEditor_hpp */

@@ -15,7 +15,7 @@ void ofApp::setup(){
         patEditors.push_back(new PatternEditor(PatternEditor(ofRectangle(0,300,800,500),&menueFont)));
         ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isTrigger);
     }
-    LIVE = new PatternEditor();
+    //LIVE = new PatternEditor();
     
     //testwise preview buttons
     previewBTNs.clear();
@@ -33,7 +33,7 @@ void ofApp::setup(){
 
     artnet = new ArtnetData();
     patEditors[editSelect]->isVisible(true);
-    LIVE = patEditors[liveSelect];
+    //LIVE = patEditors[liveSelect];
     
     w = ofGetWidth() / 40;
     int h = 90;//we have max 90 leds in height
@@ -71,7 +71,7 @@ void ofApp::update()
             stepcount = 0;
         }
 
-        if(editSelect != liveSelect) LIVE->nextStep(); // onl;y if they are not the same update them
+        //if(editSelect != liveSelect) LIVE->nextStep(); // onl;y if they are not the same update them
     }
     else
     {
@@ -80,10 +80,10 @@ void ofApp::update()
         //    patEditors[editSelect]->nextStep();
         }
         patEditors[editSelect]->update();
-        LIVE->update();
+        //LIVE->update();
     }
     // now create the graphic
-    gfx.draw(preview,LIVE->getCurve(),patEditors[editSelect]->getDeltaC(),patEditors[editSelect]->getValueA());
+    gfx.draw(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getDeltaC(),patEditors[editSelect]->getValueA());
     
     // now write to artnet
     
@@ -124,7 +124,7 @@ void ofApp::setEditorID(int index)
 void ofApp::setLiveID(int index)
 {
     liveSelect = index;
-    LIVE = patEditors[liveSelect];
+    //LIVE = patEditors[liveSelect];
 }
 
 void ofApp::isTrigger(int &triggerIndex)
@@ -156,18 +156,6 @@ void ofApp::keyPressed(int key){
     if(key == 'm')
     {
 //        patCont.setPatternDirection(1);
-    }
-    if(key == '0')
-    {
-        setEditorID(0);
-    }
-    if(key == '1')
-    {
-        setEditorID(1);
-    }
-    if(key == '2')
-    {
-        setEditorID(2);
     }
 }
 

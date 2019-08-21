@@ -34,7 +34,7 @@ public:
 private:
     
     vector<PatternEditor*>  patEditors;
-    PatternEditor           *LIVE;
+//    PatternEditor           *LIVE;
 
     vector<ofRectangle>     previewBTNs;
     
