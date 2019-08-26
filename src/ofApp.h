@@ -6,6 +6,7 @@
 #include "ArtnetData.hpp"
 #include "GraphicGenerator.hpp"
 #include "Mirror.hpp"
+#include "UniverseMapper.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -53,6 +54,7 @@ private:
   
     vector<Mirror>          mirrors;
     int                     stepcount;//64
+    UniverseMapper          *uMapper;
 };
 
 // infos

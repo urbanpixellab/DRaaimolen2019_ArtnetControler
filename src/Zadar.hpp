@@ -48,7 +48,7 @@ public:
         int         id;
     };
     
-    Zadar(ofRectangle drawarea, ofTrueTypeFont *mFont);
+    Zadar(ofRectangle drawarea, ofTrueTypeFont *mFont,string name);
     ~Zadar();
     
     void createGUI();
@@ -85,7 +85,7 @@ private:
     int                 curveID;
     float               dT;
     float               out;
-    
+    string              myName;
     vector<vector<float>>curveLUT;
     bool                inverse;// by -1
     bool                reverse;//end is begin!!!
@@ -93,7 +93,6 @@ private:
     float               curveValues[100];//holds the
     ofPixels            curvePixels;//the gray texture of the image;
     ofImage             curveImage;
-    
     //gui
     vector<BUTTON>      modebuttons;//invert reverse
     vector<BUTTON>      curvebuttons;// the curves

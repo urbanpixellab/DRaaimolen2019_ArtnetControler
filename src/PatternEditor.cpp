@@ -22,11 +22,17 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     
     x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
     w = drawarea.getWidth() * 0.24;
-    mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont);
+    mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont,"MIROR SELECT");
+    //pattern  segment generator
+    for (int i = 0; i < 20; i++)
+    {
+        mPatSegGen[i] = new PatternGenerator(ofRectangle(x,y+h *1.1,w,h),4,mFont,"MIROR SUBSEGMENT");
+    }
+
     
     x = mPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.24;
-    mCurve = new Zadar(ofRectangle(x,y,w,h),mFont);
+    mCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"MIRROR SEQUENZER BRIGHTNESS");
 
     /// now the segments elements
     y += h;
@@ -51,10 +57,15 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     
     cSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,2);
     ofAddListener(cSequenzer->trigger, this, &PatternEditor::sequenzerHit);
-    
-    x = mPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
+
+    x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
     w = drawarea.getWidth() * 0.24;
-    cCurve = new Zadar(ofRectangle(x,y,w,h),mFont);
+
+    cPatGen = new PatternGenerator(ofRectangle(x,y,w,h),2,mFont,"COLOR SWAP");
+
+    x = cPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
+    w = drawarea.getWidth() * 0.24;
+    cCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"COLOR CURVE");
     // color swatches
     
     colors = new ColorSwatch(ofRectangle(x+w*1.3,y,120,60));
@@ -78,6 +89,12 @@ PatternEditor::~PatternEditor()
     delete cSequenzer;
     delete cCurve;
     delete colors;
+    for (int i = 0; i < 20; i++)
+    {
+        delete mPatSegGen[i];
+    }
+    delete cPatGen;
+
 
 }
 
@@ -104,6 +121,9 @@ void PatternEditor::drawGUI()
     mSequenzer->drawSequencer();
     mCurve->draw();
     mPatGen->drawGUI();
+    mPatSegGen[0]->drawGUI();//zeichne nur einnen sesub selector
+    cPatGen->drawGUI();
+
 //    sSequenzer->drawSequencer();
 //    sCurve->draw();
 //    sPatGen->drawGUI();
@@ -127,6 +147,10 @@ void PatternEditor::sequenzerHit(int & index)
         //update the mirrors
         
         mPatGen->updatePattern();
+        for (int i = 0; i < 20; i++)
+        {
+            mPatSegGen[i]->updatePattern();
+        }
     }
     else if(index == 1)
     {
@@ -170,7 +194,12 @@ void PatternEditor::isVisible(bool value)
     {
         mSequenzer->addListener();//mirror sequenzer
         mPatGen->addListener();
+        for(int i = 0;i < 20;i++)
+        {
+            mPatSegGen[i]->addListener();
+        }
         mCurve->addListener();
+        cPatGen->addListener();
 //        sSequenzer->addListener();//mirror sequenzer
 //        sPatGen->addListener();
 //        sCurve->addListener();
@@ -182,8 +211,15 @@ void PatternEditor::isVisible(bool value)
     {
         mSequenzer->removeListener();//mirror sequenzer
         mPatGen->removeListener();
+        for(int i = 0;i < 20;i++)
+        {
+            mPatSegGen[i]->removeListener();
+        }
+
         mCurve->removeListener();
-//        sSequenzer->removeListener();//segment sequenzer
+        cPatGen->removeListener();
+
+        //        sSequenzer->removeListener();//segment sequenzer
 //        sPatGen->removeListener();
 //        sCurve->removeListener();
         cSequenzer->removeListener();//segment sequenzer

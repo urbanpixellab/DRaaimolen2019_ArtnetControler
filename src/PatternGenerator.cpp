@@ -6,7 +6,7 @@
 //
 
 #include "PatternGenerator.hpp"
-PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f) : mFont(f)
+PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f,string name) : mFont(f),myName(name)
 {
     maxSegment = maxSeg; // for all mirrors
     drawarea = area;
@@ -59,10 +59,12 @@ void PatternGenerator::createGUI()
     
     w = drawarea.getWidth()/3;
     patternbuttons.clear();
+    int x;
+    int y;
     for (int i = 0; i < PATTERNS::END; i++)
     {
-        int x = drawarea.getLeft() + floor(i/5)*w;
-        int y = r.drawarea.getBottom() + 10 + (i%5)*h;
+        x = drawarea.getLeft() + floor(i/5)*w;
+        y = r.drawarea.getBottom() + 10 + (i%5)*h;
         patternbuttons.push_back(BUTTON());
         patternbuttons.back().id = i;
         patternbuttons.back().color = c[0];
@@ -79,11 +81,27 @@ void PatternGenerator::createGUI()
         patternbuttons.back().fbo.end();
     }
     
+    invPattern.id = 20;
+    invPattern.color = c[0];
+    invPattern.pressed = false;
+    invPattern.name = "invert";
+    x = drawarea.getLeft() + floor(PATTERNS::END/5)*w;
+    y = r.drawarea.getBottom() + 10 + (PATTERNS::END%5)*h;
+    invPattern.drawarea = ofRectangle(x,y,w,h);
+    invPattern.fbo.allocate(w, h,GL_RGBA);
+    invPattern.fbo.begin();
+    ofClear(0,0,0);
+    ofSetColor(invPattern.color);
+    ofDrawRectRounded(0,0,w,h, 5);
+    ofSetColor(255);
+    mFont->drawString(invPattern.name, 5, h - 2);
+    invPattern.fbo.end();
 }
 
 void PatternGenerator::drawGUI()
 {
     ofSetColor(255);
+    mFont->drawString(myName, drawarea.getLeft(), drawarea.getTop() - 10);
     for (int i = 0; i < dirbuttons.size(); i++)
     {
         dirbuttons[i].fbo.draw(dirbuttons[i].drawarea);
@@ -92,18 +110,58 @@ void PatternGenerator::drawGUI()
     {
         patternbuttons[i].fbo.draw(patternbuttons[i].drawarea);
     }
+    invPattern.fbo.draw(invPattern.drawarea);
 }
 
 
 void PatternGenerator::updatePattern()
 {
     int len = patternOut.size();
+
+    switch (seqDirection)
+    {
+        case 0:
+            sequenzCounter++;
+            if (sequenzCounter >= maxSeqCount) sequenzCounter = 0;
+            break;
+            
+        case 1:
+            sequenzCounter--;
+            if (sequenzCounter < 0) sequenzCounter = maxSeqCount-1;
+            break;
+            
+        case 2:
+            // think about it
+            break;
+            
+            
+        default:
+            break;
+    }
+
     switch (patternID) {
-        case PATTERNS::ON_OFF:
+        case PATTERNS::ALL_OFF:
         {
             for (int i = 0; i < len; i++)
             {
-                patternOut[i] = !patternOut[i];
+                patternOut[i] = 0;
+            }
+            break;
+        }
+        case PATTERNS::ALL_ON:
+        {
+            for (int i = 0; i < len; i++)
+            {
+                patternOut[i] = 1;
+            }
+            break;
+        }
+        case PATTERNS::ON_OFF:
+        {
+            bool onOrOff = patternOut[0];
+            for (int i = 0; i < len; i++)
+            {
+                patternOut[i] = !onOrOff;
             }
             break;
         }
@@ -183,41 +241,21 @@ void PatternGenerator::updatePattern()
             }
             break;
         }
-        case PATTERNS::INVERT:
+        default: //inverse all
         {
-            maxSeqCount = maxSegment;
-            for (int j = 0; j < maxSegment; j++)
-            {
-                patternOut[j] = !patternOut[j];
-            }
             break;
         }
+    }
 
-        default:
-            break;
-    }
-    
-    //based on the direction
-    switch (seqDirection)
+    if(invPattern.pressed) //inverse the selection
     {
-        case 0:
-            sequenzCounter++;
-            if (sequenzCounter >= maxSeqCount) sequenzCounter = 0;
-            break;
-            
-        case 1:
-            sequenzCounter--;
-            if (sequenzCounter < 0) sequenzCounter = maxSeqCount-1;
-            break;
-            
-        case 2:
-            // think about it
-            break;
-            
-            
-        default:
-            break;
+        maxSeqCount = maxSegment;
+        for (int j = 0; j < maxSegment; j++)
+        {
+            patternOut[j] = !patternOut[j];
+        }
     }
+    //based on the direction
     //printSequence();
 }
 
@@ -344,15 +382,6 @@ void PatternGenerator::setPattern(int patSelect)
             }
             break;
         }
-        case PATTERNS::INVERT:
-        {
-            maxSeqCount = maxSegment;
-            for (int j = 0; j < maxSegment; j++)
-            {
-                patternOut[j] = !patternOut[j];
-            }
-            break;
-        }
         default:
             break;
     }
@@ -388,12 +417,12 @@ void PatternGenerator::mousePressed(ofMouseEventArgs & args)
         if(patternbuttons[i].drawarea.inside(args.x, args.y))
         {
             setPatternButton(i, !patternbuttons[i].pressed);
-            if(i != lastPressed)
-            {
-                //he is
-            }
             return;
         }
+    }
+    if(invPattern.drawarea.inside(args.x,args.y))
+    {
+        setInverseButton(!invPattern.pressed);
     }
 }
 
@@ -429,10 +458,9 @@ void PatternGenerator::setPatternButton(int id, bool value)
     int lastID = -1;
     for (int i = 0; i < patternbuttons.size(); i++)
     {
-        if(patternbuttons[i].pressed == true)
+        if(patternbuttons[i].pressed)
         {
             lastID = i;
-            break;
         }
     }
     //only update the two
@@ -449,7 +477,7 @@ void PatternGenerator::setPatternButton(int id, bool value)
         patternbuttons[lastID].fbo.end();
     }
     patternbuttons[id].pressed = value;
-    patternbuttons[id].color = c[true];
+    patternbuttons[id].color = c[value];
     setPattern(id);
     patternbuttons[id].fbo.begin();
     ofClear(0,0,0);
@@ -460,3 +488,15 @@ void PatternGenerator::setPatternButton(int id, bool value)
     patternbuttons[id].fbo.end();
 }
 
+void PatternGenerator::setInverseButton(bool pressed)
+{
+    invPattern.pressed = pressed;
+    invPattern.color = c[pressed];
+    invPattern.fbo.begin();
+    ofClear(0,0,0);
+    ofSetColor(invPattern.color);
+    ofDrawRectRounded(0,0,invPattern.drawarea.getWidth(),invPattern.drawarea.getHeight(), 5);
+    ofSetColor(255);
+    mFont->drawString(invPattern.name, 5, invPattern.drawarea.getHeight() - 2);
+    invPattern.fbo.end();
+}

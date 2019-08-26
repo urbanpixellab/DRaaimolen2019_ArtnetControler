@@ -9,7 +9,7 @@
 #include "Zadar.hpp"
 
 
-Zadar::Zadar(ofRectangle area, ofTrueTypeFont *f) : drawarea(area), mFont(f)
+Zadar::Zadar(ofRectangle area, ofTrueTypeFont *f,string name) : drawarea(area), mFont(f),myName(name)
 {
     curvePixels.allocate(RES,1,OF_IMAGE_COLOR);
     curveImage.allocate(RES, 1, OF_IMAGE_COLOR);
@@ -51,7 +51,7 @@ void Zadar::createGUI()
     inv.color = c[0];
     inv.pressed = false;
     inv.name = "INVERT";
-    inv.drawarea = ofRectangle(drawarea.getLeft(),drawarea.getBottom()-h,w,h);
+    inv.drawarea = ofRectangle(drawarea.getLeft(),drawarea.getCenter().y+2*h,w,h);
     inv.fbo.allocate(w, h,GL_RGBA);
     inv.fbo.begin();
     ofClear(0,0,0);
@@ -148,6 +148,7 @@ void Zadar::draw()
 
 void Zadar::drawGUI()
 {
+    mFont->drawString(myName, drawarea.getLeft(), drawarea.getTop() - 10);
     for (int i = 0; i < modebuttons.size(); i++)
     {
         ofSetColor(255);

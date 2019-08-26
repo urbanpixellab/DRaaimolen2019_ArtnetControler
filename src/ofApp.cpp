@@ -12,7 +12,7 @@ void ofApp::setup(){
     
     for(int i = 0;i < 16 ;i++)
     {
-        patEditors.push_back(new PatternEditor(PatternEditor(ofRectangle(0,300,800,500),&menueFont)));
+        patEditors.push_back(new PatternEditor(ofRectangle(0,300,800,500),&menueFont));
         ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isTrigger);
     }
     //LIVE = new PatternEditor();
@@ -41,6 +41,7 @@ void ofApp::setup(){
     {
         mirrors.push_back(Mirror(i, artnet,ofRectangle(i*w*2,0,w,h)));
     }
+    uMapper = new UniverseMapper(ofRectangle(0,ofGetHeight()-100,ofGetWidth(),100),150,&menueFont);
 //
 }
 
@@ -95,6 +96,8 @@ void ofApp::update()
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    ofSetColor(0);
+    ofDrawRectangle(0,0, ofGetWidth(), 150);
     ofSetColor(255);
     patEditors[editSelect]->drawGUI();
     ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,600);
@@ -111,7 +114,7 @@ void ofApp::draw(){
     {
         mirrors[i].drawPreview(preview.getTexture());
     }
-
+    uMapper->draw();
 }
 
 void ofApp::setEditorID(int index)
@@ -133,8 +136,20 @@ void ofApp::isTrigger(int &triggerIndex)
         {
             for(int i = 0;i < mirrors.size();i++)
             {
-                bool e = patEditors[editSelect]->getMirrorPattern()[i];
-                mirrors[i].setEnables(e,e,e,e);
+                if(patEditors[editSelect]->getMirrorPattern()[i] == true)
+                {
+                    bool left = patEditors[editSelect]->getMirrorSubPattern(i)[0];
+                    bool top = patEditors[editSelect]->getMirrorSubPattern(i)[1];
+                    bool right = patEditors[editSelect]->getMirrorSubPattern(i)[2];
+                    bool bottom = patEditors[editSelect]->getMirrorSubPattern(i)[3];
+                    mirrors[i].setEnables(left,top,right,bottom);
+                    //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
+                }
+                else
+                {
+                    mirrors[i].setEnables(false,false,false,false);
+                    //cout << "mirror" << i << " FALSE " << endl;
+                }
             }
 
         }
@@ -165,6 +180,8 @@ void ofApp::exit()
     {
         delete patEditors[i];
     }
+    delete uMapper;
+    delete artnet;
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){

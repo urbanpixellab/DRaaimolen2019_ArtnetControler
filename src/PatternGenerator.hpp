@@ -26,7 +26,6 @@ public:
         TURING,// has to been generic duss calculation on each step
         SECOND,
         THIRD,
-        INVERT,
         END
         //OUT_IN_RND
         //////add some more patterns
@@ -50,7 +49,7 @@ public:
     
     
     
-    PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f);
+    PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f,string name);
     ~PatternGenerator();
     
     void updatePattern();// gets triggered by sequencer
@@ -68,6 +67,7 @@ public:
     void setDirButton(int i,bool pressed);
     void setPatternButton(int i, bool pressed);
     void setSegmentButton(int i, bool pressed);
+    void setInverseButton(bool pressed);
     
     int &getPatternID(){return patternID;};
     int &getSequenceDirection(){return seqDirection;};
@@ -76,6 +76,7 @@ public:
     
     
 private:
+    string myName;
     int maxSegment;//how many mirrors
     int patternID;//the selected pattern
     int sequenzerID; /// which sequenzer i belong to
@@ -86,17 +87,19 @@ private:
     
     vector<bool> patternOut;// thios holds the segments per step
     
+    
     //gui
     ofTrueTypeFont      *mFont;
     ofRectangle         drawarea;
     vector<BUTTON>      dirbuttons;//the buttons for the direction;
     vector<BUTTON>      patternbuttons;//buttons for pattern
     //vector<BUTTON>      segmentbuttons;//buttons for segment selection
+    BUTTON              invPattern;
+
     ofColor             c[2] = {ofColor(0,0,255),ofColor(255,0,0)};
     int                 lastPressed;//save the last for invert
     string              patternnames[11] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
-        "RANDOM","TURING","SECOND","THIRD","INVERT"};
-  
+        "RANDOM","TURING","SECOND","THIRD"};
 };
 
 #endif /* PatternGenerator_hpp */

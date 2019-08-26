@@ -48,6 +48,7 @@ public:
     void colorPressed(int &id);
     
     vector<bool> &getMirrorPattern(){return mPatGen->getPattern();};
+    vector<bool> &getMirrorSubPattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
     
     ofEvent<int> isTrigger;
     
@@ -58,6 +59,7 @@ private:
 
     StepSequencer       *mSequenzer;//mirror sequenzer
     PatternGenerator    *mPatGen;
+    PatternGenerator    *mPatSegGen[20];//for every mirror we have a 4 pattern generator
     Zadar               *mCurve;
 
 //    StepSequencer       *sSequenzer;//segment sequenzer
@@ -65,6 +67,7 @@ private:
 //    Zadar               *sCurve;
 
     StepSequencer       *cSequenzer;//color pattern sequenzer
+    PatternGenerator    *cPatGen;///who two colors applied
     Zadar               *cCurve;
 
     ColorSwatch         *colors;//primary
