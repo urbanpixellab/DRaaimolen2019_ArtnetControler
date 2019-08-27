@@ -37,6 +37,7 @@ public:
         STAIRS,
         END
     };
+    //more curves like peak, .....
     
     struct BUTTON
     {

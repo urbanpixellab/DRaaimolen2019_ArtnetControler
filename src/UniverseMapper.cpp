@@ -73,11 +73,9 @@ void UniverseMapper::updateFbo()
     ofClear(0,0,0);
     ofSetColor(128);
     ofDrawRectangle(0,0,drawFbo.getWidth(),drawFbo.getHeight());
-    ofSetColor(255);
-    buttonOverlay.draw(0,0);
     ofPushMatrix();
     ofTranslate(-drawarea.getTopLeft());
-    ofSetColor(0,0,160,78);
+    ofSetColor(0,0,160,128);
     for (int i = 0; i < mirSeg[0].pixels.size(); i++)
     {
         ofDrawRectangle(areas[mirSeg[0].pixels[i]]);
@@ -86,7 +84,10 @@ void UniverseMapper::updateFbo()
     {
         ofDrawRectangle(areas[mirSeg[1].pixels[i]]);
     }
+    
     ofPopMatrix();
+    ofSetColor(255);
+    buttonOverlay.draw(0,0);
     drawFbo.end();
 }
 
@@ -94,12 +95,13 @@ void UniverseMapper::updateSegment(int id,int beginPixel, int endPixel)
 {
     mirSeg[id].pixelIDs[0] = beginPixel;
     mirSeg[id].pixelIDs[2] = endPixel;
-    mirSeg[id].pixelIDs[1] = (endPixel-beginPixel)/2;
+    mirSeg[id].pixelIDs[1] = (beginPixel+endPixel)/2;
     mirSeg[id].isInverse = false;
     mirSeg[id].lengthPixels = abs(mirSeg[id].pixelIDs[2] - mirSeg[id].pixelIDs[0]);
     mirSeg[id].texCoords[0] = ofVec2f(0,0);//shal been calulated and also been adjusted
     mirSeg[id].texCoords[1] = ofVec2f(0.5,0);
     mirSeg[id].texCoords[2] = ofVec2f(1,0);
+    mirSeg[id].pixels.clear();
     for (int s = 0; s < mirSeg[id].lengthPixels; s++)
     {
         mirSeg[id].pixels.push_back(mirSeg[id].pixelIDs[0]+s);
@@ -128,8 +130,7 @@ void UniverseMapper::mousePressed(ofMouseEventArgs & args)
     //which one is the shortest, is my select of action by position
     // if i am close to an in or outpoint the select this one and give notification for dragging this point by
     //updating the fbo which is drawn on the new positions
-    
-    updateFbo();
+    cout << "pressed id " << ioPixelSelect << endl;
 }
 
 void UniverseMapper::mouseDragged(ofMouseEventArgs & args)
@@ -139,7 +140,7 @@ void UniverseMapper::mouseDragged(ofMouseEventArgs & args)
         ioPixelSelect = -1;
         return;
     }
-    //which area i am
+    //which area i am in
     //new begin
     int s = -1;
     for (int i = 0; i < areas.size(); i++)
@@ -150,7 +151,8 @@ void UniverseMapper::mouseDragged(ofMouseEventArgs & args)
             break;
         }
     }
-    int sID = ioPixelSelect/2;
+    if(s < 0) return;
+    int sID = floor(ioPixelSelect/2);
     int begin = mirSeg[sID].pixelIDs[0];
     int end = mirSeg[sID].pixelIDs[2];
     if(ioPixelSelect%2 == 0) //begin
@@ -172,7 +174,7 @@ void UniverseMapper::mouseReleased(ofMouseEventArgs & args)
         ioPixelSelect = -1;
         return;
     }
-    //which area i am
+    //which area i am in
     //new begin
     int s = -1;
     for (int i = 0; i < areas.size(); i++)
@@ -183,7 +185,8 @@ void UniverseMapper::mouseReleased(ofMouseEventArgs & args)
             break;
         }
     }
-    int sID = ioPixelSelect/2;
+    if(s < 0) return;
+    int sID = floor(ioPixelSelect/2);
     int begin = mirSeg[sID].pixelIDs[0];
     int end = mirSeg[sID].pixelIDs[2];
     if(ioPixelSelect%2 == 0) //begin
