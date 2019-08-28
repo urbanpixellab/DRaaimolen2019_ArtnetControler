@@ -20,7 +20,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     mSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,0);
     ofAddListener(mSequenzer->trigger, this, &PatternEditor::sequenzerHit);
     
-    x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
+    x = drawarea.getLeft();
+    y += h;
     w = drawarea.getWidth() * 0.24;
     mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont,"MIROR SELECT");
     //pattern  segment generator
@@ -28,7 +29,12 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     {
         mPatSegGen[i] = new PatternGenerator(ofRectangle(x,y+h *1.1,w,h),4,mFont,"MIROR SUBSEGMENT");
     }
-
+    
+    for (int i = 0; i < 16; i++)
+    {
+        mPatTexGen[i] = new PatternGenerator(ofRectangle(x,y+h *1.1,w,h),16,mFont,"MIROR Texture");
+    }
+    
     
     x = mPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.24;
@@ -58,7 +64,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     cSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,2);
     ofAddListener(cSequenzer->trigger, this, &PatternEditor::sequenzerHit);
 
-    x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
+    x = drawarea.getLeft();
+    y +=h;
     w = drawarea.getWidth() * 0.24;
 
     cPatGen = new PatternGenerator(ofRectangle(x,y,w,h),2,mFont,"COLOR SWAP");
@@ -69,6 +76,9 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     // color swatches
     
     colors = new ColorSwatch(ofRectangle(x+w*1.3,y,120,60));
+    ofAddListener(colors->colorPressed,this,&PatternEditor::colorPressed);
+
+    colorsB = new ColorSwatch(ofRectangle(x+w*1.3,y+60,120,60));
     ofAddListener(colors->colorPressed,this,&PatternEditor::colorPressed);
 }
 
@@ -130,6 +140,7 @@ void PatternEditor::drawGUI()
     cSequenzer->drawSequencer();
     cCurve->draw();
     colors->draw();
+    colorsB->draw();
 }
 
 void PatternEditor::colorPressed(int &id)
@@ -206,6 +217,7 @@ void PatternEditor::isVisible(bool value)
         cSequenzer->addListener();//mirror sequenzer
         cCurve->addListener();
         colors->addListener();
+        colorsB->addListener();
     }
     else
     {
@@ -225,5 +237,6 @@ void PatternEditor::isVisible(bool value)
         cSequenzer->removeListener();//segment sequenzer
         cCurve->removeListener();
         colors->removeListener();
+        colorsB->removeListener();
     }
 }

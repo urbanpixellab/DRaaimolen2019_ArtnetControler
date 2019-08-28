@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofSetBackgroundColor(51,44,53);
     steplength = 0.0625;
     ofSetFrameRate(30);
     timer = 0;
@@ -12,17 +13,22 @@ void ofApp::setup(){
     
     for(int i = 0;i < 16 ;i++)
     {
-        patEditors.push_back(new PatternEditor(ofRectangle(0,300,800,500),&menueFont));
+        patEditors.push_back(new PatternEditor(ofRectangle(0,0,800,500),&menueFont));
         ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isTrigger);
     }
     //LIVE = new PatternEditor();
     
     //testwise preview buttons
     previewBTNs.clear();
+    float cx = ofGetWidth()/2;
+    float cy = ofGetHeight()/2;
     int w = ofGetWidth() / 32;
+    float radius = (ofGetHeight()/2) * 0.8;
     for(int i = 0;i < patEditors.size();i++)
     {
-        previewBTNs.push_back(ofRectangle(i*2*w,160,w,w));
+        float x = cx - 0.6*radius*sin((i/float(patEditors.size()))*TWO_PI+PI);
+        float y = cy + 0.6*radius*cos((i/float(patEditors.size()))*TWO_PI+PI);
+        previewBTNs.push_back(ofRectangle(x-w/2,y-w/2,w,w));
     }
 
     //mapping test
@@ -39,18 +45,25 @@ void ofApp::setup(){
     int h = 90;//we have max 90 leds in height
     for (int i = 0; i < 20; i++)
     {
-        mirrors.push_back(Mirror(i, artnet,ofRectangle(i*w*2,0,w,h)));
+        //mirrors.push_back(Mirror(i, artnet,ofRectangle(i*w*2,0,w,h)));
+        float x = cx + radius*sin((i/20.)*TWO_PI);
+        float y = cy + radius*cos((i/20.)*TWO_PI);
+        mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h)));
     }
     uMapper = new UniverseMapper(ofRectangle(0,ofGetHeight()-100,ofGetWidth(),100),150,&menueFont);
-//
+
+    rotSequencer = new RotarySequencer(ofRectangle((ofGetWidth()-ofGetHeight())/2.0,0,ofGetHeight(),ofGetHeight()),12);
+    masterClock = 0;
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
     float now = ofGetElapsedTimef();
-    if(now > timer + steplength)
+    if(now >= timer + steplength)
     {
+        masterClock++;
+        if (masterClock >= 64) masterClock = 0;
         //set all colors, should been done somewhere else
         for(int i = 0;i < mirrors.size();i++)
         {
@@ -65,6 +78,7 @@ void ofApp::update()
             //patEditors[editSelect]->nextStep();
         }
         patEditors[editSelect]->nextStep();
+        rotSequencer->nextStep();
 
         stepcount++;
         if(stepcount >= 16)
@@ -92,20 +106,24 @@ void ofApp::update()
     {
         mirrors[i].update();
     }
+    rotSequencer->update();
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofSetColor(0);
-    ofDrawRectangle(0,0, ofGetWidth(), 150);
+//    ofSetColor(0);
+//    ofDrawRectangle(0,0, ofGetWidth(), 150);
     ofSetColor(255);
     patEditors[editSelect]->drawGUI();
     ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,600);
     int id = 0;
-    ofSetColor(255,128,0);
     for(int i = 0;i < previewBTNs.size();i++)
     {
+        ofSetColor(255,128,0);
         ofDrawRectangle(previewBTNs[i]);
+        ofSetColor(255);
+        menueFont.drawString(ofToString(i+1), previewBTNs[i].getCenter().x,previewBTNs[i].getCenter().y);
     }
     ofSetColor(255);
     //preview.draw(0,0,100,100);
@@ -115,6 +133,7 @@ void ofApp::draw(){
         mirrors[i].drawPreview(preview.getTexture());
     }
     uMapper->draw();
+    rotSequencer->draw();
 }
 
 void ofApp::setEditorID(int index)
@@ -182,6 +201,7 @@ void ofApp::exit()
     }
     delete uMapper;
     delete artnet;
+    delete rotSequencer;
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
@@ -228,7 +248,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    cout << w << " " << h << endl;
 }
 
 //--------------------------------------------------------------

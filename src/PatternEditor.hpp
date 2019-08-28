@@ -36,7 +36,7 @@ public:
     ofEvent<int> SequencerIDHit;
     
     ofColor getColorA(){return colors->getColorA();};
-    ofColor &getColorB(){return colors->getColorB();};
+    ofColor getColorB(){return colorsB->getColorB();};
     
     float &getDeltaA(){return mSequenzer->updateDelta();};
 //    float &getDeltaB(){return sSequenzer->updateDelta();};
@@ -49,6 +49,8 @@ public:
     
     vector<bool> &getMirrorPattern(){return mPatGen->getPattern();};
     vector<bool> &getMirrorSubPattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
+    vector<bool> &getMirrorTexturePattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
+
     
     ofEvent<int> isTrigger;
     
@@ -59,7 +61,9 @@ private:
 
     StepSequencer       *mSequenzer;//mirror sequenzer
     PatternGenerator    *mPatGen;
-    PatternGenerator    *mPatSegGen[20];//for every mirror we have a 4 pattern generator
+    PatternGenerator    *mPatSegGen[20];
+    //for every mirror we have a 4 pattern generator
+    PatternGenerator    *mPatTexGen[16];//for every mirror we have a 4
     Zadar               *mCurve;
 
 //    StepSequencer       *sSequenzer;//segment sequenzer
@@ -71,6 +75,7 @@ private:
     Zadar               *cCurve;
 
     ColorSwatch         *colors;//primary
+    ColorSwatch         *colorsB;//primary
     
     bool    visible;
 };

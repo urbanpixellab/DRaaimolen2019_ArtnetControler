@@ -255,6 +255,13 @@ void PatternGenerator::updatePattern()
             patternOut[j] = !patternOut[j];
         }
     }
+    /*
+    int l = 4;// this are the repetitions
+    for (int j = 0; j < maxSegment; j++)
+    {
+        patternOut[j] = patternOut[j%l];
+    }
+    */
     //based on the direction
     //printSequence();
 }

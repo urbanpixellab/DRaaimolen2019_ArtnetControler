@@ -8,6 +8,8 @@
 #include "Mirror.hpp"
 #include "UniverseMapper.hpp"
 
+#include "RotarySequencer.hpp"
+
 class ofApp : public ofBaseApp{
 
 public:
@@ -55,6 +57,9 @@ private:
     vector<Mirror>          mirrors;
     int                     stepcount;//64
     UniverseMapper          *uMapper;
+    
+    RotarySequencer         *rotSequencer;
+    int                     masterClock;
 };
 
 // infos
