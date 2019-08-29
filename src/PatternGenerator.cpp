@@ -10,6 +10,7 @@ PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *
 {
     maxSegment = maxSeg; // for all mirrors
     drawarea = area;
+    patternSelect = new RotaryEncoder(ofRectangle(drawarea.getCenter().x,drawarea.getCenter().y,100,100), 0, mFont, "PatternSelect", 0, 9, 9, true);
     createGUI();
     setDirButton(0, true);
     setPatternButton(0,true);
@@ -17,7 +18,21 @@ PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *
 
 PatternGenerator::~PatternGenerator()
 {
+    delete patternSelect;
 }
+
+void PatternGenerator::addListener()
+{
+    ofAddListener(ofEvents().mousePressed, this, &PatternGenerator::mousePressed);
+    ofAddListener(patternSelect->newValue, this, &PatternGenerator::newEncoderID);
+}
+
+void PatternGenerator::removeListener()
+{
+    ofRemoveListener(ofEvents().mousePressed, this, &PatternGenerator::mousePressed);
+    //ofRemoveListener(patternSelect->newValue, this, &PatternGenerator::newEncoderID);
+}
+
 
 void PatternGenerator::createGUI()
 {
@@ -95,6 +110,9 @@ void PatternGenerator::createGUI()
     ofDrawRectRounded(0,0,w,h, 5);
     ofSetColor(255);
     mFont->drawString(invPattern.name, 5, h - 2);
+    
+    patternSelect->draw();
+    
     invPattern.fbo.end();
 }
 
@@ -106,6 +124,7 @@ void PatternGenerator::drawGUI()
     {
         dirbuttons[i].fbo.draw(dirbuttons[i].drawarea);
     }
+    patternSelect->draw();
     for (int i = 0; i < patternbuttons.size(); i++)
     {
         patternbuttons[i].fbo.draw(patternbuttons[i].drawarea);
@@ -406,6 +425,12 @@ void PatternGenerator::printSequence()
     cout << s << endl;
 }
 
+void PatternGenerator::newEncoderID(int & id)
+{
+    patternID = patternSelect->getValue();
+    setPatternEncoder(patternID);
+    cout << patternID << endl;
+}
 
 void PatternGenerator::mousePressed(ofMouseEventArgs & args)
 {
@@ -427,6 +452,7 @@ void PatternGenerator::mousePressed(ofMouseEventArgs & args)
             return;
         }
     }
+    
     if(invPattern.drawarea.inside(args.x,args.y))
     {
         setInverseButton(!invPattern.pressed);
@@ -457,6 +483,16 @@ void PatternGenerator::setDirButton(int id,bool value)
     ofSetColor(255);
     mFont->drawString(dirbuttons[id].name, 5, dirbuttons[id].drawarea.getHeight() - 2);
     dirbuttons[id].fbo.end();
+}
+void PatternGenerator::setPatternEncoder(int &id)
+{
+    patternbuttons[id].fbo.begin();
+    ofClear(0,0,0);
+    ofSetColor(patternbuttons[id].color);
+    ofDrawRectRounded(0,0,patternbuttons[id].drawarea.getWidth(),patternbuttons[id].drawarea.getHeight(), 5);
+    ofSetColor(255);
+    mFont->drawString(patternbuttons[id].name, 5, patternbuttons[id].drawarea.getHeight() - 2);
+    patternbuttons[id].fbo.end();
 }
 
 void PatternGenerator::setPatternButton(int id, bool value)

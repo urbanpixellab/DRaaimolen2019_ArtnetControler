@@ -7,7 +7,6 @@
 #include "GraphicGenerator.hpp"
 #include "Mirror.hpp"
 #include "UniverseMapper.hpp"
-
 #include "RotarySequencer.hpp"
 
 class ofApp : public ofBaseApp{

@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "ofMain.h"
+#include "RotaryEncoder.hpp"
 
 class PatternGenerator
 {
@@ -61,11 +62,12 @@ public:
     
     void createGUI();
     void drawGUI();
-    void addListener(){ofAddListener(ofEvents().mousePressed, this, &PatternGenerator::mousePressed);};
-    void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &PatternGenerator::mousePressed);};
+    void addListener();
+    void removeListener();
     void mousePressed(ofMouseEventArgs & arg);
     void setDirButton(int i,bool pressed);
     void setPatternButton(int i, bool pressed);
+    void setPatternEncoder(int &id);
     void setSegmentButton(int i, bool pressed);
     void setInverseButton(bool pressed);
     
@@ -74,6 +76,7 @@ public:
     
     float getRightBorder(){return drawarea.getRight();};
     
+    void newEncoderID(int & id);
     
 private:
     string myName;
@@ -98,8 +101,9 @@ private:
 
     ofColor             c[2] = {ofColor(0,0,255),ofColor(255,0,0)};
     int                 lastPressed;//save the last for invert
-    string              patternnames[11] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
+    string              patternnames[10] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
         "RANDOM","TURING","SECOND","THIRD"};
+    RotaryEncoder       *patternSelect;
 };
 
 #endif /* PatternGenerator_hpp */

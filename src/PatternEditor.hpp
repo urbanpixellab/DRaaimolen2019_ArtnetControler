@@ -14,6 +14,7 @@
 #include "Zadar.hpp"
 #include "ColorSwatch.hpp"
 
+
 #define MIRRORS 20
 #define SEGMENTS 4
 

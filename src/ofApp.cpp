@@ -26,8 +26,10 @@ void ofApp::setup(){
     float radius = (ofGetHeight()/2) * 0.8;
     for(int i = 0;i < patEditors.size();i++)
     {
-        float x = cx - 0.6*radius*sin((i/float(patEditors.size()))*TWO_PI+PI);
-        float y = cy + 0.6*radius*cos((i/float(patEditors.size()))*TWO_PI+PI);
+        //float x = cx - 0.6*radius*sin((i/float(patEditors.size()))*TWO_PI+PI);
+        //float y = cy + 0.6*radius*cos((i/float(patEditors.size()))*TWO_PI+PI);
+        float x = (ofGetWidth() - w*5) + (i%4*w*1.1);
+        float y = w + floor(i/4)*w*1.1;
         previewBTNs.push_back(ofRectangle(x-w/2,y-w/2,w,w));
     }
 
