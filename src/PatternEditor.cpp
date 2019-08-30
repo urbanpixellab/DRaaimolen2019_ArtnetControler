@@ -91,8 +91,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     rad *=0.65;
     s = 80;
     rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16,2);
-    ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
-    ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
+//    ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
+//    ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
 
     
 
@@ -250,8 +250,8 @@ void PatternEditor::isVisible(bool value)
         cCurve->addListener();
         colors->addListener();
         colorsB->addListener();
-        rotSequencer[0]->addListener();
-        rotSequencer[1]->addListener();
+//        rotSequencer[0]->addListener();
+//        rotSequencer[1]->addListener();
     }
     else
     {
@@ -269,8 +269,8 @@ void PatternEditor::isVisible(bool value)
 //        sPatGen->removeListener();
 //        sCurve->removeListener();
         cSequenzer->removeListener();//segment sequenzer
-        rotSequencer[0]->removeListener();
-        rotSequencer[1]->removeListener();
+//        rotSequencer[0]->removeListener();
+//        rotSequencer[1]->removeListener();
         cCurve->removeListener();
         colors->removeListener();
         colorsB->removeListener();

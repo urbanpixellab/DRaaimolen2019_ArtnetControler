@@ -8,13 +8,13 @@
 
 #include "Mirror.hpp"
 
-Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),drawarea(area)
+Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum): artnet(artnet),drawarea(area)
 {
     mID = id;
     myNode = floor(id/4);
     //stimmt noch nicht muessen 8 sein nicht 4!!!
-    myUniverses[0] = id%4 + 0;
-    myUniverses[1] = id%4 + 1;
+    myUniverses[0] = startUniversum;
+    myUniverses[1] = startUniversum + 1;
     //create the drawing function
     mappingMode = MAPPING::CW;
     // no create the draw segments and draw functions
@@ -24,8 +24,10 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
     allBlack.allocate(150, 1, 3);
     for (int i = 0; i < 150; i++)
     {
-        outPixelsA.setColor(i, 0, ofColor((i/150.)* 255));//ramp
-        outPixelsB.setColor(i, 0, ofColor((i/150.)* 255));//ramp
+        //ofColor c = ofColor((i/150.)* 255);
+        ofColor c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
+        outPixelsA.setColor(i, 0, c);//ramp
+        outPixelsB.setColor(i, 0, c);//ramp
         allBlack.setColor(i, 0, ofColor(0));//ramp
     }
     outImgA.setFromPixels(outPixelsA);
@@ -89,8 +91,8 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area): artnet(artnet),dra
 
     //preview.addTexCoord(ofVec2f(1,0));//end
     
-    all[0].allocate(150, 1);//here i draw allways all segments from one universum
-    all[1].allocate(150, 1);//here i draw allways all segments from one universum
+    all[0].allocate(150, 1,GL_RGB);//here i draw allways all segments from one universum
+    all[1].allocate(150, 1,GL_RGB);//here i draw allways all segments from one universum
     //and draw there the mesh lines with different texture mappings always on 3 points
     //this fo is then readed to pixels and send to artnet universes
     //per loop
@@ -157,7 +159,7 @@ void Mirror::setTextureMapping(int mappingID)
 }
 
 
-void Mirror::update()//get shader values and draw the fbo and then to pixels
+void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and then to pixels
 //or if to heavy calculation get the texture and write it to array
 {
     //update draws the graphics to artnet->nodes->universes
@@ -192,16 +194,18 @@ void Mirror::update()//get shader values and draw the fbo and then to pixels
         //but only if they are available!!!
         //if all black
         //artnet->send(myNode, outPixelsA);
-        //artnet->send(myNode, myUniverses[1]);
-    }
-}
 
-void Mirror::drawPreview(ofTexture &tex)
-{
+
+        //artnet->send(myNode, myUniverses[0],outPixelsA);
+        //artnet->send(myNode, myUniverses[1],outPixelsB);
+
+        //artnet->send(myNode, myUniverses[0],outPixelsA);
+        //artnet->send(myNode, myUniverses[1],outPixelsB);
+    }
     ofSetColor(0);
     ofDrawRectangle(drawarea);
     ofSetColor(255);
-    ofSetLineWidth(5);
+    ofSetLineWidth(2);
     //draw to the artnet fbos
     all[0].begin();
     ofClear(0,0,0);
@@ -209,15 +213,27 @@ void Mirror::drawPreview(ofTexture &tex)
     if(enabled[0])render[0].draw();
     if(enabled[1])render[1].draw();
     all[0].end();
-
+    
     all[1].begin();
     ofClear(0,0,0);
     if(enabled[2])render[2].draw();
     if(enabled[3])render[3].draw();
     all[1].end();
+    ofSetLineWidth(1);
     
     
-    //now after everything is writen and sended we can dra a preview to screen
+    tex.unbind();
+
+    //here read to universes the fbos and send
+    all[0].readToPixels(outPixelsA);
+    all[1].readToPixels(outPixelsB);
+
+}
+
+void Mirror::drawPreview(ofTexture &tex)
+{
+    ofSetLineWidth(3);
+    tex.bind();
     if(enabled[0])preview[0].draw();
     if(enabled[1])preview[1].draw();
     if(enabled[2])preview[2].draw();
@@ -225,12 +241,10 @@ void Mirror::drawPreview(ofTexture &tex)
     tex.unbind();
     ofSetLineWidth(1);
     
-    all[0].draw(drawarea.getLeft(),drawarea.getBottom()+25,drawarea.getWidth()*2,10);
-    all[1].draw(drawarea.getLeft()+drawarea.getWidth()*2,drawarea.getBottom()+25,drawarea.getWidth()*2,10);
-    //here read to universes the fbos and send
-    all[0].readToPixels(outPixelsA);
-    all[1].readToPixels(outPixelsB);
-    
+    all[0].draw(drawarea.getLeft()-50,drawarea.getBottom(),drawarea.getWidth()+100,10);
+    all[1].draw(drawarea.getLeft()-50,drawarea.getBottom()+10,drawarea.getWidth()+100,10);
+
+
 }
 
 void Mirror::setEnables(bool left,bool top, bool right, bool bottom)

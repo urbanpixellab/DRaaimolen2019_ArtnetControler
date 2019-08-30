@@ -20,7 +20,7 @@ public:
     {
         string      ip;
         ofPixels    universes[8];
-        ofxArtnetSender artnets[8];
+        ofxArtnetSender *artnets[8];
     };
     
     
@@ -33,10 +33,17 @@ public:
     void saveNodes();
     
     void send(int &node, int &universum);
+    void send(int &node, int &universum, ofPixels &pix);
+    
+    Node *getNode(int &id){return _nodes[id];};
+    
+    void sendTest();
+    void sendTest2(ofPixels &pix);
     
 private:
-    vector<Node> _nodes;
-
+    vector<Node*> _nodes;
+    vector<ofxArtnetSender*>     artnets;
+    ofPixels        test;
 };
 
 #endif /* ArtnetData_hpp */

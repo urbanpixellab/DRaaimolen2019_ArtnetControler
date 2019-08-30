@@ -27,15 +27,21 @@ public:
         FUCKED_UP
     };
     
-    Mirror(int id, ArtnetData * artnet,ofRectangle area);
+    Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum);
     ~Mirror();
     
     void setMappingMode(){};
     void setEnables(bool left,bool top, bool right, bool bottom);//also mapping
     void allOff();
-    void update();//draw the stuff to the arrays
+    void update(ofTexture &tex);//draw the stuff to the arrays
     void drawPreview(ofTexture &tex);
     void setTextureMapping(int mappingID);
+    ofPixels &getPixelsA(){return outPixelsA;};
+    ofPixels &getPixelsB(){return outPixelsB;};
+    int &getUniverseIDA(){return myUniverses[0];};
+    int &getUniverseIDB(){return myUniverses[1];};
+    
+    ofFbo &getFbo(int id){return all[id];};
     
     
 private:

@@ -42,23 +42,12 @@ void ofApp::setup(){
         //mirrors.push_back(Mirror(i, artnet,ofRectangle(i*w*2,0,w,h)));
         float x = cx + radius*sin((i/20.)*TWO_PI);
         float y = cy + radius*cos((i/20.)*TWO_PI);
-        mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h)));
+        int startUniversum = (i%4)+(i%4);
+        cout << startUniversum << endl;
+        mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h),startUniversum));
     }
     uMapper = new UniverseMapper(ofRectangle(ofGetWidth()/2,ofGetHeight()-100,ofGetWidth()/2,100),150,&menueFont);
 
-/*
-    float x = (ofGetWidth()-ofGetHeight())/2.0;
-    float y = 0;
-    w = ofGetHeight();
-    h = ofGetHeight();
-    float s = 100;
-    float rad = (w/2)*0.65;
-    rotSequencer[0] = new RotarySequencer(ofRectangle(x,y,w,h),rad,16);
-    rad *=0.65;
-    s = 80;
-    rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16);
-    */
-    
     masterClock = 0;
 }
 
@@ -103,9 +92,6 @@ void ofApp::update()
         patEditors[editSelect]->update();
         //LIVE->update();
     }
-    // now create the graphic
-//    rotSequencer[0]->update();
-//    rotSequencer[1]->update();
 
     gfx.draw(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getDeltaC(),patEditors[editSelect]->getValueA());
     
@@ -113,9 +99,13 @@ void ofApp::update()
     
     for(int i = 0;i < mirrors.size();i++)
     {
-        mirrors[i].update();
+        //send to artnet
+        mirrors[i].update(preview.getTexture());
+        int n = floor(i/4);
+        artnet->sendTest2(mirrors[i].getPixelsA());
+        //artnet->send(n,mirrors[i].getUniverseIDA() ,mirrors[i].getPixelsA());
+        //artnet->send(n,mirrors[i].getUniverseIDB() ,mirrors[i].getPixelsB());
     }
-
 }
 
 //--------------------------------------------------------------
@@ -134,13 +124,17 @@ void ofApp::draw(){
         menueFont.drawString(ofToString(i+1), previewBTNs[i].getCenter().x,previewBTNs[i].getCenter().y);
     }
     ofSetColor(255);
-    //preview.draw(0,0,100,100);
     
     for(int i = 0;i < mirrors.size();i++)
     {
         mirrors[i].drawPreview(preview.getTexture());
     }
     uMapper->draw();
+    
+    mirrors[0].getFbo(0).draw(0,0,150,50);
+    ofImage img;
+    img.setFromPixels(mirrors[0].getPixelsA());
+    img.draw(ofGetWidth()/2, ofGetHeight()/2, 150,20);
 }
 
 void ofApp::setEditorID(int index)
@@ -192,7 +186,9 @@ void ofApp::keyPressed(int key){
     }
     if(key == 'n')
     {
-//        patCont.setPatternDirection(0);
+        //send artnet testwise
+        artnet->sendTest();
+        cout << "artnet sended" << endl;
     }
     if(key == 'm')
     {

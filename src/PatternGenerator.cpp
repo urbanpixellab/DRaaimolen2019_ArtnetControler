@@ -73,7 +73,7 @@ void PatternGenerator::createGUI()
     dirbuttons.push_back(r);
     
     w = drawarea.getWidth()/3;
-    patternbuttons.clear();
+//    patternbuttons.clear();
     int x;
     int y;
     for (int i = 0; i < PATTERNS::END; i++)
