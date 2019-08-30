@@ -24,10 +24,13 @@ public:
         bool    pressed;
     };
     
-    RotarySequencer(ofRectangle area,int count);
+    RotarySequencer(ofRectangle area,float radius,int count,int id);
     ~RotarySequencer();
     
     void nextStep();
+    float &updateDelta();
+    void resetToBegin();
+    void updateFbo();
     void update();
     void draw();
     
@@ -43,12 +46,20 @@ public:
 private:
     ofRectangle     drawarea;
     ofFbo           drawFbo;
+    int             myID;
     int             initSteps;
     vector<Knop>    steps;//later anothert struct with more options
     int             stepID;
-    float           delta;// the delta
     
-    
+    //new
+    float lastStepTime;
+    float stepTime;//holds the time per step
+    float thisTriggerTime;
+    float nextTriggerTime;
+    float deltaTime;//holds the time when next trigger appears
+    float delta;// the delta
+    bool hasTrigger;//do we have a trigger?
+
 };
 
 #endif /* RotarySequencer_hpp */

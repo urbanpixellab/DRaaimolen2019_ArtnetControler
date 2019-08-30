@@ -12,7 +12,7 @@ UniverseMapper::UniverseMapper(ofRectangle area,int length,ofTrueTypeFont *f):dr
 {
     ofFbo singleButton;
     int perRow = 30;
-    int w = (ofGetWidth()-100)/perRow;
+    int w = (area.getWidth()-100)/perRow;
     int h = drawarea.getHeight()/ceil(length/perRow);
     singleButton.allocate(w,h);
     singleButton.begin();

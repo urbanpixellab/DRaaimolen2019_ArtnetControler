@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetBackgroundColor(51,44,53);
+    ofSetBackgroundColor(31,27,33);
     steplength = 0.0625;
     ofSetFrameRate(30);
     timer = 0;
@@ -13,7 +13,7 @@ void ofApp::setup(){
     
     for(int i = 0;i < 16 ;i++)
     {
-        patEditors.push_back(new PatternEditor(ofRectangle(0,0,800,500),&menueFont));
+        patEditors.push_back(new PatternEditor(ofRectangle(0,0,ofGetWidth(),ofGetHeight()),&menueFont));
         ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isTrigger);
     }
     //LIVE = new PatternEditor();
@@ -26,18 +26,10 @@ void ofApp::setup(){
     float radius = (ofGetHeight()/2) * 0.8;
     for(int i = 0;i < patEditors.size();i++)
     {
-        //float x = cx - 0.6*radius*sin((i/float(patEditors.size()))*TWO_PI+PI);
-        //float y = cy + 0.6*radius*cos((i/float(patEditors.size()))*TWO_PI+PI);
         float x = (ofGetWidth() - w*5) + (i%4*w*1.1);
         float y = w + floor(i/4)*w*1.1;
         previewBTNs.push_back(ofRectangle(x-w/2,y-w/2,w,w));
     }
-
-    //mapping test
-    arTest.getOutArray()[0] = 25;
-//    cout << "out0 should been 25:" << arTest.getOutArray()[0] << endl;
-    arTest.getReverseArray()[4] = 5;
-//    cout << "out0 should been 5:" << arTest.getOutArray()[0]<< " " << arTest.getReverseArray()[4] << endl;
 
     artnet = new ArtnetData();
     patEditors[editSelect]->isVisible(true);
@@ -52,9 +44,21 @@ void ofApp::setup(){
         float y = cy + radius*cos((i/20.)*TWO_PI);
         mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h)));
     }
-    uMapper = new UniverseMapper(ofRectangle(0,ofGetHeight()-100,ofGetWidth(),100),150,&menueFont);
+    uMapper = new UniverseMapper(ofRectangle(ofGetWidth()/2,ofGetHeight()-100,ofGetWidth()/2,100),150,&menueFont);
 
-    rotSequencer = new RotarySequencer(ofRectangle((ofGetWidth()-ofGetHeight())/2.0,0,ofGetHeight(),ofGetHeight()),12);
+/*
+    float x = (ofGetWidth()-ofGetHeight())/2.0;
+    float y = 0;
+    w = ofGetHeight();
+    h = ofGetHeight();
+    float s = 100;
+    float rad = (w/2)*0.65;
+    rotSequencer[0] = new RotarySequencer(ofRectangle(x,y,w,h),rad,16);
+    rad *=0.65;
+    s = 80;
+    rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16);
+    */
+    
     masterClock = 0;
 }
 
@@ -77,10 +81,10 @@ void ofApp::update()
         //update all
         for (int i = 0; i < patEditors.size(); i++)
         {
-            //patEditors[editSelect]->nextStep();
+            patEditors[i]->nextStep();
         }
-        patEditors[editSelect]->nextStep();
-        rotSequencer->nextStep();
+        //do all
+        //patEditors[editSelect]->nextStep();
 
         stepcount++;
         if(stepcount >= 16)
@@ -100,6 +104,9 @@ void ofApp::update()
         //LIVE->update();
     }
     // now create the graphic
+//    rotSequencer[0]->update();
+//    rotSequencer[1]->update();
+
     gfx.draw(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getDeltaC(),patEditors[editSelect]->getValueA());
     
     // now write to artnet
@@ -108,7 +115,6 @@ void ofApp::update()
     {
         mirrors[i].update();
     }
-    rotSequencer->update();
 
 }
 
@@ -135,7 +141,6 @@ void ofApp::draw(){
         mirrors[i].drawPreview(preview.getTexture());
     }
     uMapper->draw();
-    rotSequencer->draw();
 }
 
 void ofApp::setEditorID(int index)
@@ -203,7 +208,8 @@ void ofApp::exit()
     }
     delete uMapper;
     delete artnet;
-    delete rotSequencer;
+//    delete rotSequencer[0];
+//    delete rotSequencer[1];
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){

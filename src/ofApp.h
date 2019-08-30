@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ArrayMappingTest.hpp"
 #include "PatternEditor.hpp"
 #include "ArtnetData.hpp"
 #include "GraphicGenerator.hpp"
@@ -41,7 +40,6 @@ private:
     vector<ofRectangle>     previewBTNs;
     
     ArtnetData              *artnet;
-    ArrayMappingTest    arTest;
     
     ofTrueTypeFont      menueFont;
     int liveSelect,editSelect = 0;
@@ -57,7 +55,7 @@ private:
     int                     stepcount;//64
     UniverseMapper          *uMapper;
     
-    RotarySequencer         *rotSequencer;
+//    RotarySequencer         *rotSequencer[2];
     int                     masterClock;
 };
 

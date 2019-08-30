@@ -429,7 +429,7 @@ void PatternGenerator::newEncoderID(int & id)
 {
     patternID = patternSelect->getValue();
     setPatternEncoder(patternID);
-    cout << patternID << endl;
+//    cout << patternID << endl;
 }
 
 void PatternGenerator::mousePressed(ofMouseEventArgs & args)

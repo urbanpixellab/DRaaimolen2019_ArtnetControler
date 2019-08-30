@@ -8,14 +8,15 @@
 
 #include "RotarySequencer.hpp"
 
-RotarySequencer::RotarySequencer(ofRectangle area,int count)
+RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id)
 {
+    myID = id;
     drawarea = area;
     initSteps = count;
     stepID = 0;
     
     drawFbo.allocate(area.getWidth(),area.getHeight());
-    float radius = (drawarea.getWidth()/2)*0.65;
+    float radius = rad;
     float cx = drawarea.getWidth()/2.;
     float cy = drawarea.getHeight()/2.;
     for (int i = 0; i < initSteps; i++)
@@ -24,11 +25,14 @@ RotarySequencer::RotarySequencer(ofRectangle area,int count)
         float y = cy + radius * cos(i/float(initSteps)*TWO_PI);
         Knop data;
         data.position = ofVec2f(x,y);
-        data.radius = 16;
+        data.radius = drawarea.getWidth()/20;
         data.pressed = false;
         data.col = ofColor(0,0,255,128);
         steps.push_back(data);
     }
+    delta = 0;
+    hasTrigger = false;
+    lastStepTime = 0;
     addListener();
     update();
 }
@@ -43,11 +47,12 @@ void RotarySequencer::nextStep()
     stepID--;
     //de pends on direction - is forward!!!!
     if(stepID < 0 ) stepID = steps.size() - 1;
-    update();
+    updateFbo();
 }
 
-void RotarySequencer::update()
+void RotarySequencer::updateFbo()
 {
+    
     drawFbo.begin();
     ofClear(0,0,0);
     for (int i = 0; i < steps.size(); i++)
@@ -55,7 +60,11 @@ void RotarySequencer::update()
         ofSetColor(255, 0, 0,128);
         if(i == stepID) ofSetColor(255, 0, 0,230);
         if(steps[i].pressed) ofSetColor(170, 147, 43,230);
-        if(steps[i].pressed && i == stepID) ofSetColor(231, 200, 120,255);
+        if(steps[i].pressed && i == stepID)
+        {
+            ofSetColor(231, 200, 120,255);
+            ofNotifyEvent(trigger, myID);
+        }
         ofDrawCircle(steps[i].position.x,steps[i].position.y,steps[i].radius);
         ofNoFill();
         ofSetColor(255,255,255,128);
@@ -64,6 +73,71 @@ void RotarySequencer::update()
     }
     drawFbo.end();
 }
+
+void RotarySequencer::update()
+{
+    /*
+    float now = ofGetElapsedTimef();
+    for (int i = 0; i < steps.size(); i++)
+    {
+        if(i == stepID)
+        {
+            steps[i].isStep = true;
+            if(steps[i].pressed)
+            {
+                //search for the next trigger
+                int startID = i;
+                bool nextTrigger = false;
+                int toNextCount = 1;
+                int maxStep = 16;
+                thisTriggerTime = now;
+                while(nextTrigger == false)
+                {
+                    if(steps[(startID+toNextCount)%maxStep].pressed == true)
+                    {
+                        nextTrigger = true;
+                        break;
+                    }
+                    else toNextCount++;
+                    
+                    if(toNextCount > maxStep)
+                    {
+                        break;
+                    }
+                }
+                deltaTime = stepTime*float(toNextCount+1);//+1 my own length
+                nextTriggerTime = thisTriggerTime+deltaTime;
+                //cout << "next in " << toNextCount << " delta " << deltaTime << endl;
+                //begin with delta
+                ofNotifyEvent(trigger, myID);
+            }
+        }
+        else
+        {
+            steps[i].isStep = false;
+            steps[i].drawColorID = 0;
+            if(steps[i].pressed) steps[i].drawColorID = 1;
+        }
+    }*/
+}
+
+float &RotarySequencer::updateDelta()
+{
+    
+    // now the other delta stuff
+    float now = ofGetElapsedTimef();
+    delta = (now - thisTriggerTime)/(deltaTime);
+    //cout << "d " << delta << endl;
+    if(delta > 1) delta = 1;
+    return delta;
+}
+
+void RotarySequencer::resetToBegin()
+{
+    stepID = 0;
+    update();
+}
+
 
 void RotarySequencer::draw()
 {
@@ -77,9 +151,10 @@ void RotarySequencer::mousePressed(ofMouseEventArgs & args)
     {
         for (int i = 0; i < steps.size(); i++)
         {
-            if(ofDist(steps[i].position.x+drawarea.getLeft(),steps[i].position.y,args.x,args.y) < steps[i].radius)
+            if(ofDist(steps[i].position.x+drawarea.getLeft(),steps[i].position.y+drawarea.getTop(),args.x,args.y) < steps[i].radius)
             {
                 steps[i].pressed = !steps[i].pressed;
+                break;
             }
         }
         update();

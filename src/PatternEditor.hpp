@@ -13,7 +13,7 @@
 #include "PatternGenerator.hpp"
 #include "Zadar.hpp"
 #include "ColorSwatch.hpp"
-
+#include "RotarySequencer.hpp"
 
 #define MIRRORS 20
 #define SEGMENTS 4
@@ -77,6 +77,9 @@ private:
 
     ColorSwatch         *colors;//primary
     ColorSwatch         *colorsB;//primary
+    
+    RotarySequencer         *rotSequencer[2];//mirror and color
+
     
     bool    visible;
 };
