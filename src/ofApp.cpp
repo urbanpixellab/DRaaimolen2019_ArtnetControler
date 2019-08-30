@@ -39,7 +39,6 @@ void ofApp::setup(){
     int h = 90;//we have max 90 leds in height
     for (int i = 0; i < 20; i++)
     {
-        //mirrors.push_back(Mirror(i, artnet,ofRectangle(i*w*2,0,w,h)));
         float x = cx + radius*sin((i/20.)*TWO_PI);
         float y = cy + radius*cos((i/20.)*TWO_PI);
         int startUniversum = (i%4)+(i%4);
@@ -93,7 +92,7 @@ void ofApp::update()
         //LIVE->update();
     }
 
-    gfx.draw(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getDeltaC(),patEditors[editSelect]->getValueA());
+    gfx.draw(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA());
     
     // now write to artnet
     
@@ -102,7 +101,9 @@ void ofApp::update()
         //send to artnet
         mirrors[i].update(preview.getTexture());
         int n = floor(i/4);
+        
         artnet->sendTest2(mirrors[i].getPixelsA());
+        
         //artnet->send(n,mirrors[i].getUniverseIDA() ,mirrors[i].getPixelsA());
         //artnet->send(n,mirrors[i].getUniverseIDB() ,mirrors[i].getPixelsB());
     }

@@ -55,7 +55,6 @@ private:
     int                     stepcount;//64
     UniverseMapper          *uMapper;
     
-//    RotarySequencer         *rotSequencer[2];
     int                     masterClock;
 };
 

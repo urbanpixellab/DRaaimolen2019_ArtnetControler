@@ -39,10 +39,6 @@ public:
     ofColor getColorA(){return colors->getColorA();};
     ofColor getColorB(){return colorsB->getColorB();};
     
-    float &getDeltaA(){return mSequenzer->updateDelta();};
-//    float &getDeltaB(){return sSequenzer->updateDelta();};
-    float &getDeltaC(){return cSequenzer->updateDelta();};
-
     float &getValueA(){return mCurve->getValue();};
 //    float &getValueB(){return sCurve->getValue();};
     float &getValueC(){return cCurve->getValue();};
@@ -58,9 +54,8 @@ public:
 
 private:
     ofRectangle         drawarea;
-    float               seqDelta[3];
+    float               seqDelta[2];
 
-    StepSequencer       *mSequenzer;//mirror sequenzer
     PatternGenerator    *mPatGen;
     PatternGenerator    *mPatSegGen[20];
     //for every mirror we have a 4 pattern generator
@@ -71,7 +66,6 @@ private:
 //    PatternGenerator    *sPatGen;
 //    Zadar               *sCurve;
 
-    StepSequencer       *cSequenzer;//color pattern sequenzer
     PatternGenerator    *cPatGen;///who two colors applied
     Zadar               *cCurve;
 

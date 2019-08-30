@@ -14,6 +14,11 @@ RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id)
     drawarea = area;
     initSteps = count;
     stepID = 0;
+    delta = 0;
+    hasTrigger = false;
+    lastStepTime = 0;
+    stepTime = 0.100;
+
     
     drawFbo.allocate(area.getWidth(),area.getHeight());
     float radius = rad;
@@ -76,7 +81,6 @@ void RotarySequencer::updateFbo()
 
 void RotarySequencer::update()
 {
-    /*
     float now = ofGetElapsedTimef();
     for (int i = 0; i < steps.size(); i++)
     {
@@ -118,7 +122,17 @@ void RotarySequencer::update()
             steps[i].drawColorID = 0;
             if(steps[i].pressed) steps[i].drawColorID = 1;
         }
-    }*/
+    }
+
+    delta = (now - thisTriggerTime)/(deltaTime);
+    //cout << "d " << delta << endl;
+    if(delta > 1) delta = 1;
+ /*
+    // now the other delta stuff
+    delta = (now - thisTriggerTime)/(deltaTime);
+    //cout << "d " << delta << endl;
+    if(delta > 1) delta = 1;
+*/
 }
 
 float &RotarySequencer::updateDelta()

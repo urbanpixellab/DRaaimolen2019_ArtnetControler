@@ -15,13 +15,14 @@
 class RotarySequencer
 {
 public:
-    
     struct Knop
     {
         ofVec2f position;
         float   radius;
+        bool isStep;
         ofColor col;
         bool    pressed;
+        int drawColorID;
     };
     
     RotarySequencer(ofRectangle area,float radius,int count,int id);

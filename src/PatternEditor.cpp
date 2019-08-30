@@ -17,9 +17,6 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     int y = drawarea.getTop();
     int w = drawarea.getWidth() * 0.25;
     int h = drawarea.getHeight()/8; //divide into 4 reagions
-    mSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,0);
-    ofAddListener(mSequenzer->trigger, this, &PatternEditor::sequenzerHit);
-    
     x = drawarea.getLeft();
     y += h;
     w = drawarea.getWidth() * 0.125;
@@ -58,15 +55,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
 
     ////////// now the coloring stuff
     x = drawarea.getLeft();
-    w = drawarea.getWidth() * 0.25;
-    y = ofGetHeight() - 3*h;
-    
-    cSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,2);
-    ofAddListener(cSequenzer->trigger, this, &PatternEditor::sequenzerHit);
-
-    x = drawarea.getLeft();
+    y = ofGetHeight() - 2*h;
     w = drawarea.getWidth() * 0.125;
-    y +=h;
     cPatGen = new PatternGenerator(ofRectangle(x,y,w,h),2,mFont,"COLOR SWAP");
 
     x = cPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
@@ -91,8 +81,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     rad *=0.65;
     s = 80;
     rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16,2);
-//    ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
-//    ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
+    ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
+    ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
 
     
 
@@ -106,13 +96,11 @@ PatternEditor::~PatternEditor()
     //pData->writeSequencerSetting(id, mSequenzer->getSteps());
     //pData->writeAdsr(id, mCurve->getCurveID(), mCurve->getInverse(), mCurve->getReverse());
     //pData->writeMainPattern(id, mPatGen->getPatternID(), mPatGen->getSequenceDirection());
-    delete mSequenzer;
     delete mPatGen;
     delete mCurve;
 //    delete sSequenzer;
 //    delete sPatGen;
 //    delete sCurve;
-    delete cSequenzer;
     delete cCurve;
     delete colors;
     for (int i = 0; i < 20; i++)
@@ -129,11 +117,10 @@ PatternEditor::~PatternEditor()
 
 void PatternEditor::update()
 {
-    seqDelta[0] = mCurve->update(mSequenzer->updateDelta());
     rotSequencer[0]->update();
-    seqDelta[0] = mCurve->update(rotSequencer[0]->updateDelta());
-//    seqDelta[1] = sCurve->update(sSequenzer->updateDelta());
-    seqDelta[2] = cCurve->update(cSequenzer->updateDelta());
+    rotSequencer[1]->update();
+    seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
+    seqDelta[1] = cCurve->update(rotSequencer[1]->getDeltaTIme());
 }
                            
 void PatternEditor::nextStep()
@@ -142,20 +129,16 @@ void PatternEditor::nextStep()
     rotSequencer[0]->nextStep();
     rotSequencer[1]->nextStep();
 
-    mSequenzer->nextStep();
-//    sSequenzer->nextStep();
-    cSequenzer->nextStep();
 //    seqDelta[0] = mCurve->update(rotSequencer[0]->updateDelta());
-    seqDelta[0] = mCurve->update(mSequenzer->updateDelta());
+    seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
     
 //    seqDelta[1] = sCurve->update(sSequenzer->updateDelta());
-    seqDelta[2] = cCurve->update(cSequenzer->updateDelta());
+    seqDelta[1] = cCurve->update(rotSequencer[1]->getDeltaTIme());
 }
 
 
 void PatternEditor::drawGUI()
 {
-    mSequenzer->drawSequencer();
     mCurve->draw();
     mPatGen->drawGUI();
     mPatSegGen[0]->drawGUI();//zeichne nur einnen sesub selector
@@ -164,7 +147,6 @@ void PatternEditor::drawGUI()
 //    sSequenzer->drawSequencer();
 //    sCurve->draw();
 //    sPatGen->drawGUI();
-    cSequenzer->drawSequencer();
     cCurve->draw();
     colors->draw();
     colorsB->draw();
@@ -235,7 +217,6 @@ void PatternEditor::isVisible(bool value)
     visible = value;
     if(visible)
     {
-        mSequenzer->addListener();//mirror sequenzer
         mPatGen->addListener();
         for(int i = 0;i < 20;i++)
         {
@@ -246,7 +227,6 @@ void PatternEditor::isVisible(bool value)
 //        sSequenzer->addListener();//mirror sequenzer
 //        sPatGen->addListener();
 //        sCurve->addListener();
-        cSequenzer->addListener();//mirror sequenzer
         cCurve->addListener();
         colors->addListener();
         colorsB->addListener();
@@ -255,7 +235,6 @@ void PatternEditor::isVisible(bool value)
     }
     else
     {
-        mSequenzer->removeListener();//mirror sequenzer
         mPatGen->removeListener();
         for(int i = 0;i < 20;i++)
         {
@@ -268,7 +247,6 @@ void PatternEditor::isVisible(bool value)
         //        sSequenzer->removeListener();//segment sequenzer
 //        sPatGen->removeListener();
 //        sCurve->removeListener();
-        cSequenzer->removeListener();//segment sequenzer
 //        rotSequencer[0]->removeListener();
 //        rotSequencer[1]->removeListener();
         cCurve->removeListener();
