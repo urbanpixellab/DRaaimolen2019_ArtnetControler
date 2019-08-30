@@ -40,6 +40,7 @@ RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id)
     lastStepTime = 0;
     addListener();
     update();
+    isActive = false;;
 }
 
 RotarySequencer::~RotarySequencer()
@@ -113,7 +114,7 @@ void RotarySequencer::update()
                 nextTriggerTime = thisTriggerTime+deltaTime;
                 //cout << "next in " << toNextCount << " delta " << deltaTime << endl;
                 //begin with delta
-                ofNotifyEvent(trigger, myID);
+                if(isActive) ofNotifyEvent(trigger, myID);
             }
         }
         else
@@ -155,12 +156,14 @@ void RotarySequencer::resetToBegin()
 
 void RotarySequencer::draw()
 {
+    if(isActive == false) return;
     ofSetColor(255);
     drawFbo.draw(drawarea);
 }
 
 void RotarySequencer::mousePressed(ofMouseEventArgs & args)
 {
+    if(isActive == false) return;
     if (drawarea.inside(args.x, args.y))
     {
         for (int i = 0; i < steps.size(); i++)

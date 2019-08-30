@@ -14,6 +14,7 @@ StepSequencer::StepSequencer(ofRectangle drawarea,int maxStep,int id): myID(id)
     delta = 0;
     hasTrigger = false;
     lastStepTime = 0;
+    isActive = false;
 }
 
 StepSequencer::~StepSequencer()
@@ -108,7 +109,7 @@ void StepSequencer::update()
                 nextTriggerTime = thisTriggerTime+deltaTime;
                 //cout << "next in " << toNextCount << " delta " << deltaTime << endl;
                 //begin with delta
-                ofNotifyEvent(trigger, myID);
+                if(isActive) ofNotifyEvent(trigger, myID);
             }
         }
         else
@@ -139,6 +140,7 @@ void StepSequencer::resetToBegin()
 
 void StepSequencer::drawSequencer()
 {
+    if(!isActive) return;
     ofSetColor(255);
     for (int i = 0; i < steps.size(); i++)
     {
@@ -151,6 +153,7 @@ void StepSequencer::drawSequencer()
 
 void StepSequencer::mousePressed(ofMouseEventArgs & args)
 {
+    if(!isActive) return;
     if (area.inside(args.x, args.y))
     {
         for (int i = 0; i < steps.size(); i++)

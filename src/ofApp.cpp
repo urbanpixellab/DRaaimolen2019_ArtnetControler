@@ -32,7 +32,7 @@ void ofApp::setup(){
     }
 
     artnet = new ArtnetData();
-    patEditors[editSelect]->isVisible(true);
+    patEditors[editSelect]->setActive(true);
     //LIVE = patEditors[liveSelect];
     
     w = ofGetWidth() / 40;
@@ -140,9 +140,9 @@ void ofApp::draw(){
 
 void ofApp::setEditorID(int index)
 {
-    patEditors[editSelect]->isVisible(false);
+    patEditors[editSelect]->setActive(false);
     editSelect = index;
-    patEditors[editSelect]->isVisible(true);
+    patEditors[editSelect]->setActive(true);
 }
 
 void ofApp::setLiveID(int index)

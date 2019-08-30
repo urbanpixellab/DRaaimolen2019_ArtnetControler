@@ -44,6 +44,9 @@ public:
     void addListener(){ofAddListener(ofEvents().mousePressed, this, &RotarySequencer::mousePressed);};
     void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &RotarySequencer::mousePressed);};
     
+    void setActive(bool value){isActive = value;};
+    bool & getActive(){return isActive;};
+    
 private:
     ofRectangle     drawarea;
     ofFbo           drawFbo;
@@ -60,6 +63,7 @@ private:
     float deltaTime;//holds the time when next trigger appears
     float delta;// the delta
     bool hasTrigger;//do we have a trigger?
+    bool isActive;// is thi one visible enables mouse
 
 };
 

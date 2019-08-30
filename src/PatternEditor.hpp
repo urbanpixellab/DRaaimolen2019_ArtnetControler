@@ -33,7 +33,6 @@ public:
     
     ofTexture   &getCurve(){return cCurve->getCurveTex();};
     
-    void isVisible(bool value);
     ofEvent<int> SequencerIDHit;
     
     ofColor getColorA(){return colors->getColorA();};
@@ -47,6 +46,10 @@ public:
     vector<bool> &getMirrorPattern(){return mPatGen->getPattern();};
     vector<bool> &getMirrorSubPattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
     vector<bool> &getMirrorTexturePattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
+
+    
+    void setActive(bool value);
+    bool & getActive(){return isActive;};
 
     
     ofEvent<int> isTrigger;
@@ -75,7 +78,8 @@ private:
     RotarySequencer         *rotSequencer[2];//mirror and color
 
     
-    bool    visible;
+//    bool    visible;
+    bool    isActive;
 };
 
 #endif /* PatternEditor_hpp */

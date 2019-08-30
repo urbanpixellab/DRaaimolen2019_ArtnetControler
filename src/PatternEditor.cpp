@@ -11,7 +11,6 @@ PatternEditor::PatternEditor(){}
 
 PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
 {
-    isVisible(false);
     drawarea = area;
     int x = drawarea.getLeft();
     int y = drawarea.getTop();
@@ -21,10 +20,13 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     y += h;
     w = drawarea.getWidth() * 0.125;
     mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont,"MIROR SELECT");
+    mPatGen->addListener();
     //pattern  segment generator
     for (int i = 0; i < 20; i++)
     {
         mPatSegGen[i] = new PatternGenerator(ofRectangle(x,y+h *1.1,w,h),4,mFont,"MIROR SUBSEGMENT");
+        mPatSegGen[i]->addListener();
+
     }
     
     for (int i = 0; i < 16; i++)
@@ -36,6 +38,7 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     x = mPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
     mCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"MIRROR SEQUENZER BRIGHTNESS");
+    mCurve->addListener();
 
     /// now the segments elements
     y += h;
@@ -58,10 +61,13 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     y = ofGetHeight() - 2*h;
     w = drawarea.getWidth() * 0.125;
     cPatGen = new PatternGenerator(ofRectangle(x,y,w,h),2,mFont,"COLOR SWAP");
+    cPatGen->addListener();
 
     x = cPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
     cCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"COLOR CURVE");
+    cCurve->addListener();
+
     // color swatches
     x = drawarea.getLeft();
     y += 60;
@@ -84,7 +90,11 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
     ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
 
-    
+
+    setActive(false);
+    //        rotSequencer[0]->addListener();
+    //        rotSequencer[1]->addListener();
+
 
 }
 
@@ -212,45 +222,10 @@ void PatternEditor::sequenzerHit(int & index)
 
 }
 
-void PatternEditor::isVisible(bool value)
+void PatternEditor::setActive(bool value)
 {
-    visible = value;
-    if(visible)
-    {
-        mPatGen->addListener();
-        for(int i = 0;i < 20;i++)
-        {
-            mPatSegGen[i]->addListener();
-        }
-        mCurve->addListener();
-        cPatGen->addListener();
-//        sSequenzer->addListener();//mirror sequenzer
-//        sPatGen->addListener();
-//        sCurve->addListener();
-        cCurve->addListener();
-        colors->addListener();
-        colorsB->addListener();
-//        rotSequencer[0]->addListener();
-//        rotSequencer[1]->addListener();
-    }
-    else
-    {
-        mPatGen->removeListener();
-        for(int i = 0;i < 20;i++)
-        {
-            mPatSegGen[i]->removeListener();
-        }
-
-        mCurve->removeListener();
-        cPatGen->removeListener();
-
-        //        sSequenzer->removeListener();//segment sequenzer
-//        sPatGen->removeListener();
-//        sCurve->removeListener();
-//        rotSequencer[0]->removeListener();
-//        rotSequencer[1]->removeListener();
-        cCurve->removeListener();
-        colors->removeListener();
-        colorsB->removeListener();
-    }
+    isActive = value;
+    //set all sub patterns active
+    rotSequencer[0]->setActive(isActive);
+    rotSequencer[1]->setActive(isActive);
 }

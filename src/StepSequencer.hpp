@@ -38,6 +38,9 @@ public:
     void addListener(){ofAddListener(ofEvents().mousePressed, this, &StepSequencer::mousePressed);};
     void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &StepSequencer::mousePressed);};
     
+    void setActive(bool value){isActive = value;};
+    bool & getActive(){return isActive;};
+
     
 private:
     void createSequencer(ofRectangle drawarea,int maxStep);
@@ -57,6 +60,7 @@ private:
     float delta;// the delta
     bool hasTrigger;//do we have a trigger?
     int         radius;
+    bool isActive;
 };
 
 #endif /* StepSequencer_hpp */
