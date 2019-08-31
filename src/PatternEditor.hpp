@@ -65,10 +65,6 @@ private:
     PatternGenerator    *mPatTexGen[16];//for every mirror we have a 4
     Zadar               *mCurve;
 
-//    StepSequencer       *sSequenzer;//segment sequenzer
-//    PatternGenerator    *sPatGen;
-//    Zadar               *sCurve;
-
     PatternGenerator    *cPatGen;///who two colors applied
     Zadar               *cCurve;
 

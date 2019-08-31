@@ -75,7 +75,7 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     ofAddListener(colors->colorPressed,this,&PatternEditor::colorPressed);
 
     colorsB = new ColorSwatch(ofRectangle(x+w*1.3,y+60,120,60));
-    ofAddListener(colors->colorPressed,this,&PatternEditor::colorPressed);
+    ofAddListener(colorsB->colorPressed,this,&PatternEditor::colorPressed);
     
     x = (ofGetWidth()-ofGetHeight())/2.0;
     y = 0;
@@ -149,6 +149,8 @@ void PatternEditor::nextStep()
 
 void PatternEditor::drawGUI()
 {
+    if(!isActive) return;
+
     mCurve->draw();
     mPatGen->drawGUI();
     mPatSegGen[0]->drawGUI();//zeichne nur einnen sesub selector
@@ -228,4 +230,16 @@ void PatternEditor::setActive(bool value)
     //set all sub patterns active
     rotSequencer[0]->setActive(isActive);
     rotSequencer[1]->setActive(isActive);
+    mPatGen->setActive(isActive);
+    for(int i = 0;i < 20;i++)
+    {
+        mPatSegGen[i]->setActive(isActive);
+    }
+    for(int i = 0;i < 16;i++)
+    {
+        mPatTexGen[i]->setActive(isActive);
+    }
+    cPatGen->setActive(isActive);
+    colors->setActive(isActive);
+    colorsB->setActive(isActive);
 }

@@ -34,6 +34,7 @@ RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string n
     value = 0;
     updateFbo();
     addListener();
+    isActive = false;
 }
 
 RotaryEncoder::~RotaryEncoder(){
@@ -92,11 +93,14 @@ void RotaryEncoder::setRange(ofVec2f r)
 
 void RotaryEncoder::draw()
 {
+    if(!isActive) return;
     drawFbo.draw(drawarea);
 }
 
 void RotaryEncoder::mousePressed(ofMouseEventArgs &args)
 {
+    if(!isActive) return;
+
     if(drawarea.inside(args.x, args.y))
     {
         clickValue = value;
@@ -108,6 +112,7 @@ void RotaryEncoder::mousePressed(ofMouseEventArgs &args)
 
 void RotaryEncoder::mouseDragged(ofMouseEventArgs &args)
 {
+    if(!isActive) return;
     if(drawarea.inside(args.x, args.y) && isSliding == true)
     {
         float val;
@@ -125,6 +130,7 @@ void RotaryEncoder::mouseDragged(ofMouseEventArgs &args)
 
 void RotaryEncoder::mouseReleased(ofMouseEventArgs &args)
 {
+    if(!isActive) return;
     isSliding = false;
 }
 

@@ -14,6 +14,7 @@ PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *
     createGUI();
     setDirButton(0, true);
     setPatternButton(0,true);
+    isActive = false;
 }
 
 PatternGenerator::~PatternGenerator()
@@ -118,6 +119,7 @@ void PatternGenerator::createGUI()
 
 void PatternGenerator::drawGUI()
 {
+    if(!isActive) return;
     ofSetColor(255);
     mFont->drawString(myName, drawarea.getLeft(), drawarea.getTop() - 10);
     for (int i = 0; i < dirbuttons.size(); i++)
@@ -434,6 +436,8 @@ void PatternGenerator::newEncoderID(int & id)
 
 void PatternGenerator::mousePressed(ofMouseEventArgs & args)
 {
+    if(!isActive) return;
+
     for (int i = 0; i < dirbuttons.size();i++)
     {
         if(dirbuttons[i].drawarea.inside(args.x, args.y))
@@ -542,4 +546,10 @@ void PatternGenerator::setInverseButton(bool pressed)
     ofSetColor(255);
     mFont->drawString(invPattern.name, 5, invPattern.drawarea.getHeight() - 2);
     invPattern.fbo.end();
+}
+
+void PatternGenerator::setActive(bool value)
+{
+    isActive = value;
+    patternSelect->setActive(isActive);
 }

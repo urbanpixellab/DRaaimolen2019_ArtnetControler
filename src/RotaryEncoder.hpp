@@ -33,6 +33,10 @@ public:
     float &getValueNormalized(){return value;};
     float &getValue(){return mapValue;};
     
+    void setActive(bool value){isActive = value;};
+    bool & getActive(){return isActive;};
+
+    
     ofEvent<int> newValue;
 
 private:
@@ -55,6 +59,7 @@ private:
     bool                isSliding = false;
     float               clickValue;// holds the pressed value
     vector<ofVec4f>     lines;
+    bool                isActive;
 };
 
 

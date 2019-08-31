@@ -80,7 +80,7 @@ void ArtnetData::sendTest2(ofPixels &pix)
 {
     for (int i = 0; i < artnets.size(); i++)
     {
-//        artnets[i]->sendArtnet(pix);
+        artnets[i]->sendArtnet(pix);
     }
 }
 

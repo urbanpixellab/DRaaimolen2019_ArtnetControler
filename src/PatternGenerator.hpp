@@ -77,6 +77,9 @@ public:
     float getRightBorder(){return drawarea.getRight();};
     
     void newEncoderID(int & id);
+    void setActive(bool value);
+    bool & getActive(){return isActive;};
+
     
 private:
     string myName;
@@ -104,6 +107,8 @@ private:
     string              patternnames[10] = {"OFF","ON","ON/OFF","RUN","CROSS","OUT_IN",
         "RANDOM","TURING","SECOND","THIRD"};
     RotaryEncoder       *patternSelect;
+    
+    bool    isActive;
 };
 
 #endif /* PatternGenerator_hpp */

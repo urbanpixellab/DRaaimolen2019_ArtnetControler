@@ -36,19 +36,28 @@ ColorSwatch::ColorSwatch(ofRectangle draw)
     
     colorIDA,colorIDB = 0;
     isSeq = false;
+    isActive = false;
     setColorA(0);
     setColorB(0);
+    ofAddListener(ofEvents().mousePressed, this, &ColorSwatch::mousePressed);
 }
 
-ColorSwatch::~ColorSwatch(){}
+ColorSwatch::~ColorSwatch()
+{
+    ofRemoveListener(ofEvents().mousePressed, this, &ColorSwatch::mousePressed);
+}
 
 void ColorSwatch::draw()
 {
+    if(!isActive) return;
+
     fbo.draw(drawarea);
 }
 
 void ColorSwatch::mousePressed(ofMouseEventArgs & args)
 {
+    if(!isActive) return;
+
     if(drawarea.inside(args.x,args.y))
     {
         for (int i = 0; i < 16; i++)

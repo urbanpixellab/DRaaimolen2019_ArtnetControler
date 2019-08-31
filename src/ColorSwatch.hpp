@@ -18,8 +18,6 @@ public:
     ~ColorSwatch();
 
     void mousePressed(ofMouseEventArgs & args);
-    void addListener(){ofAddListener(ofEvents().mousePressed, this, &ColorSwatch::mousePressed);};
-    void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &ColorSwatch::mousePressed);};
     void setColorA(int id);
     void setColorB(int id);
     void swapColor();
@@ -27,6 +25,9 @@ public:
     void draw();
     ofColor &getColorA(){return colors[colorIDA];};
     ofColor &getColorB(){return colors[colorIDB];};
+    void setActive(bool value){isActive = value;};
+    bool & getActive(){return isActive;};
+
     
     ofEvent<int> colorPressed;
     
@@ -51,6 +52,7 @@ private:
         ,ofColor(0,255,255),ofColor(0,128,255),ofColor(0,0,255)
         ,ofColor(128,0,255),ofColor(255,0,255),ofColor(255,0,128),ofColor(255,127,128)};
 
+    bool    isActive;
 };
 
 #endif /* ColorSwatch_hpp */
