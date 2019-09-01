@@ -8,13 +8,14 @@
 
 #include "Mirror.hpp"
 
-Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum): artnet(artnet),drawarea(area)
+Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,GraphicGenerator *g): artnet(artnet),drawarea(area),gfx(g)
 {
     mID = id;
     myNode = floor(id/4);
     //stimmt noch nicht muessen 8 sein nicht 4!!!
     myUniverses[0] = startUniversum;
     myUniverses[1] = startUniversum + 1;
+//    cout << "mirror id " << mID << " node id " << myNode << " my universes " << myUniverses[0] << " " << myUniverses[1] << endl;
     //create the drawing function
     mappingMode = MAPPING::CW;
     // no create the draw segments and draw functions

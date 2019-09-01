@@ -10,7 +10,7 @@ PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *
 {
     maxSegment = maxSeg; // for all mirrors
     drawarea = area;
-    patternSelect = new RotaryEncoder(ofRectangle(drawarea.getCenter().x,drawarea.getCenter().y,100,100), 0, mFont, "PatternSelect", 0, 9, 9, true);
+    patternSelect = new RotaryEncoder(ofRectangle(drawarea.getCenter().x,drawarea.getCenter().y,100,100), 0, mFont, "PatternSelect", 0, 9, 9, true,patternnames);
     createGUI();
     setDirButton(0, true);
     setPatternButton(0,true);

@@ -69,7 +69,7 @@ private:
     Zadar               *cCurve;
 
     ColorSwatch         *colors;//primary
-    ColorSwatch         *colorsB;//primary
+    ColorSwatch         *colorsB;//secondary
     
     RotarySequencer         *rotSequencer[2];//mirror and color
 

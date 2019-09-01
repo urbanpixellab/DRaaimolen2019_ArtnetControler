@@ -7,6 +7,41 @@
 
 #include "RotaryEncoder.hpp"
 
+RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick,string n[10]):drawarea(area),myID(id),mFont(f),myName(name),stepsDrawn(sDraw),isSticking(stick)
+{
+    for(int i = 0;i < 10;i++)
+    {
+        names[i] = n[i];
+    }
+    
+    range = ofVec2f(min,max);
+    cCenter.x = drawarea.getWidth()*0.5;
+    cRadius = drawarea.getWidth()* 0.3;
+    cCenter.y = drawarea.getHeight() - cRadius* 2;
+    
+    ofRectangle bbox = mFont->getStringBoundingBox(myName, 0, 0);
+    fBegin = ofVec2f((drawarea.getWidth()-bbox.getWidth())/2.,bbox.getHeight() + 5);
+    
+    drawFbo.allocate(drawarea.getWidth(), drawarea.getHeight());
+    
+    float angle = 0;
+    for(int i = 0;i < stepsDrawn + 1;i++)
+    {
+        angle = (PI*0.75);
+        angle += i * (PI * 1.5/float(stepsDrawn));
+        float x1 = cCenter.x + cos(angle) * cRadius;
+        float y1 = cCenter.y + sin(angle) * cRadius;
+        float x2 = cCenter.x + cos(angle) * cRadius*1.3;
+        float y2 = cCenter.y + sin(angle) * cRadius*1.3;
+        lines.push_back(ofVec4f(x1,y1,x2,y2));
+    }
+    
+    value = 0;
+    updateFbo();
+    addListener();
+    isActive = false;
+}
+
 RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick):drawarea(area),myID(id),mFont(f),myName(name),stepsDrawn(sDraw),isSticking(stick)
 {
     range = ofVec2f(min,max);
@@ -70,6 +105,7 @@ void RotaryEncoder::updateFbo()
     ofSetLineWidth(1);
 
     mFont->drawString(myName, fBegin.x,fBegin.y);
+    mFont->drawString(names[int(mapValue)], fBegin.x+10,drawarea.getHeight()-fBegin.y);
     drawFbo.end();
 }
 

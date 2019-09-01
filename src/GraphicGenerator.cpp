@@ -23,7 +23,7 @@ GraphicGenerator::GraphicGenerator()
 
 GraphicGenerator::~GraphicGenerator(){}
 
-void GraphicGenerator::draw(ofFbo &screen,ofTexture &tex,float &delta,float &bright)
+void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright)
 {
     screen.begin();
     ofClear(0, 0, 0);

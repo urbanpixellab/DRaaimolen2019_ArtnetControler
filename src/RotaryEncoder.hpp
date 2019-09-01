@@ -14,6 +14,7 @@
 class RotaryEncoder
 {
 public:
+    RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick,string names[12]);
     RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick);
     ~RotaryEncoder();
     
@@ -60,6 +61,7 @@ private:
     float               clickValue;// holds the pressed value
     vector<ofVec4f>     lines;
     bool                isActive;
+    string              names[10]={""};
 };
 
 

@@ -43,7 +43,7 @@ void ofApp::setup(){
         float y = cy + radius*cos((i/20.)*TWO_PI);
         int startUniversum = (i%4)+(i%4);
         cout << startUniversum << endl;
-        mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h),startUniversum));
+        mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h),startUniversum,&gfx));
     }
     uMapper = new UniverseMapper(ofRectangle(ofGetWidth()/2,ofGetHeight()-100,ofGetWidth()/2,100),150,&menueFont);
 
@@ -56,6 +56,7 @@ void ofApp::update()
     float now = ofGetElapsedTimef();
     if(now >= timer + steplength)
     {
+        //first update the gfx
         masterClock++;
         if (masterClock >= 64) masterClock = 0;
         //set all colors, should been done somewhere else
@@ -63,8 +64,6 @@ void ofApp::update()
         {
             gfx.setColor(patEditors[editSelect]->getColorA(), patEditors[editSelect]->getColorB());
         }
-
-        
         timer = now + steplength;
         //update all
         for (int i = 0; i < patEditors.size(); i++)
@@ -72,7 +71,6 @@ void ofApp::update()
             patEditors[i]->nextStep();
         }
         //do all
-        //patEditors[editSelect]->nextStep();
 
         stepcount++;
         if(stepcount >= 16)
@@ -92,7 +90,7 @@ void ofApp::update()
         //LIVE->update();
     }
 
-    gfx.draw(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA());
+    gfx.drawToFbo(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA());
     
     // now write to artnet
     

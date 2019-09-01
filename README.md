@@ -9,4 +9,6 @@
 * blackout button
 * midi implementatie
 * kleuren van laatste jaar
-
+* different mapping modes now is cw
+* pixelmapping, shpuld go into artnet
+* the mirrors get pointers to the graphics, reduces some stuff

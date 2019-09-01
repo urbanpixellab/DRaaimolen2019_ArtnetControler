@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "ArtnetData.hpp"//gets data from artnet
+#include "GraphicGenerator.hpp"
 
 class Mirror
 {
@@ -27,7 +28,7 @@ public:
         FUCKED_UP
     };
     
-    Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum);
+    Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,GraphicGenerator *gfx);
     ~Mirror();
     
     void setMappingMode(){};
@@ -69,6 +70,7 @@ private:
     ofFbo       all[2];//all two strips
     ofPixels    allBlack;//for faster sending off black
     //audio amplifier
+    GraphicGenerator    *gfx;
 };
 
 #endif /* Mirror_hpp */
