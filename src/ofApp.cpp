@@ -101,7 +101,7 @@ void ofApp::update()
         mirrors[i].update(preview.getTexture());
         int n = floor(i/4);
         
-        artnet->sendTest2(mirrors[i].getPixelsA());
+//        artnet->sendTest2(mirrors[i].getPixelsA());
         
         //artnet->send(n,mirrors[i].getUniverseIDA() ,mirrors[i].getPixelsA());
         //artnet->send(n,mirrors[i].getUniverseIDB() ,mirrors[i].getPixelsB());
@@ -154,27 +154,31 @@ void ofApp::setLiveID(int index)
 
 void ofApp::isTrigger(int &triggerIndex)
 {
-        if(triggerIndex == 0)
+    if(triggerIndex == 0) // the pattern for segments 1= color
+    {
+        for(int i = 0;i < mirrors.size();i++)
         {
-            for(int i = 0;i < mirrors.size();i++)
+            if(patEditors[editSelect]->getMirrorPattern()[i] == true)
             {
-                if(patEditors[editSelect]->getMirrorPattern()[i] == true)
-                {
-                    bool left = patEditors[editSelect]->getMirrorSubPattern(i)[0];
-                    bool top = patEditors[editSelect]->getMirrorSubPattern(i)[1];
-                    bool right = patEditors[editSelect]->getMirrorSubPattern(i)[2];
-                    bool bottom = patEditors[editSelect]->getMirrorSubPattern(i)[3];
-                    mirrors[i].setEnables(left,top,right,bottom);
-                    //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
-                }
-                else
-                {
-                    mirrors[i].setEnables(false,false,false,false);
-                    //cout << "mirror" << i << " FALSE " << endl;
-                }
+                bool left = patEditors[editSelect]->getMirrorSubPattern(i)[0];
+                bool top = patEditors[editSelect]->getMirrorSubPattern(i)[1];
+                bool right = patEditors[editSelect]->getMirrorSubPattern(i)[2];
+                bool bottom = patEditors[editSelect]->getMirrorSubPattern(i)[3];
+                mirrors[i].setEnables(left,top,right,bottom);
+                cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
             }
-
+            else
+            {
+                mirrors[i].setEnables(false,false,false,false);
+                //cout << "mirror" << i << " FALSE " << endl;
+            }
         }
+
+    }
+    else if(triggerIndex == 1)
+    {
+        //we have color trigger
+    }
 }
 
 //--------------------------------------------------------------
@@ -207,8 +211,6 @@ void ofApp::exit()
     delete uMapper;
     delete artnet;
     delete masterBrightness;
-//    delete rotSequencer[0];
-//    delete rotSequencer[1];
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){

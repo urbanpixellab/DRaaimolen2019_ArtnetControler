@@ -36,10 +36,11 @@ public:
     ofEvent<int> SequencerIDHit;
     
     ofColor getColorA(){return colors->getColorA();};
-    ofColor getColorB(){return colorsB->getColorB();};
+    ofColor getColorAA(){return colors->getColorB();};
+    ofColor getColorB(){return colorsB->getColorA();};
+    ofColor getColorBB(){return colorsB->getColorB();};
     
     float &getValueA(){return mCurve->getValue();};
-//    float &getValueB(){return sCurve->getValue();};
     float &getValueC(){return cCurve->getValue();};
     void colorPressed(int &id);
     
@@ -62,7 +63,6 @@ private:
     PatternGenerator    *mPatGen;
     PatternGenerator    *mPatSegGen[20];
     //for every mirror we have a 4 pattern generator
-    PatternGenerator    *mPatTexGen[16];//for every mirror we have a 4
     Zadar               *mCurve;
 
     PatternGenerator    *cPatGen;///who two colors applied

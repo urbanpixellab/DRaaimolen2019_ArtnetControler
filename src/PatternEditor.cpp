@@ -29,11 +29,6 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
 
     }
     
-    for (int i = 0; i < 16; i++)
-    {
-        mPatTexGen[i] = new PatternGenerator(ofRectangle(x,y+h *1.1,w,h),16,mFont,"MIROR Texture");
-    }
-    
     
     x = mPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
@@ -44,17 +39,9 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     x = drawarea.getLeft();
     w = drawarea.getWidth() * 0.25;
 
-//    sSequenzer = new StepSequencer(ofRectangle(x,y,w,h),16,1);
-//    ofAddListener(sSequenzer->trigger, this, &PatternEditor::sequenzerHit);
     
     x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
     w = drawarea.getWidth() * 125;
-//    sPatGen = new PatternGenerator(ofRectangle(x,y,w,h),SEGMENTS,mFont);
-    
-//    x = sPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
-//    w = drawarea.getWidth() * 0.24;
-//    sCurve = new Zadar(ofRectangle(x,y,w,h),mFont);
-
     ////////// now the coloring stuff
     x = drawarea.getLeft();
     y = ofGetHeight() - 2*h;
@@ -81,18 +68,15 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     h = drawarea.getHeight();
     float s = 100;
     float rad = (w/2)*0.65;
-    rotSequencer[0] = new RotarySequencer(ofRectangle(x,y,w,h),rad,16,1);
+    rotSequencer[0] = new RotarySequencer(ofRectangle(x,y,w,h),rad,16,0);
     rad *=0.65;
     s = 80;
-    rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16,2);
+    rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16,1);
     ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
     ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
 
 
     setActive(false);
-    //        rotSequencer[0]->addListener();
-    //        rotSequencer[1]->addListener();
-
 
 }
 
@@ -101,14 +85,8 @@ PatternEditor::~PatternEditor()
     //write data for storage
     //    these have to been called when a mouse input appears to keep the data updated
     int id = 0;
-    //pData->writeSequencerSetting(id, mSequenzer->getSteps());
-    //pData->writeAdsr(id, mCurve->getCurveID(), mCurve->getInverse(), mCurve->getReverse());
-    //pData->writeMainPattern(id, mPatGen->getPatternID(), mPatGen->getSequenceDirection());
     delete mPatGen;
     delete mCurve;
-//    delete sSequenzer;
-//    delete sPatGen;
-//    delete sCurve;
     delete cCurve;
     delete colors;
     for (int i = 0; i < 20; i++)
@@ -154,9 +132,6 @@ void PatternEditor::drawGUI()
     mPatSegGen[0]->drawGUI();//zeichne nur einnen sesub selector
     cPatGen->drawGUI();
 
-//    sSequenzer->drawSequencer();
-//    sCurve->draw();
-//    sPatGen->drawGUI();
     cCurve->draw();
     colors->draw();
     colorsB->draw();
@@ -172,10 +147,9 @@ void PatternEditor::colorPressed(int &id)
 
 void PatternEditor::sequenzerHit(int & index)
 {
-    
-    cout << "sequenzer hit " << index << endl;
-    if(index < 0) return;
-    else if(index == 0)
+    if(index < 0 || isActive == false) return;
+    cout << "sequenzer hit " << index <<   endl;
+    if(index == 0)
     {
         //we have a mirror sequenzer  hit
         //update the mirrors
@@ -185,7 +159,6 @@ void PatternEditor::sequenzerHit(int & index)
         {
             mPatSegGen[i]->updatePattern();
         }
-        
     }
     else if(index == 1)
     {
@@ -233,10 +206,6 @@ void PatternEditor::setActive(bool value)
     for(int i = 0;i < 20;i++)
     {
         mPatSegGen[i]->setActive(isActive);
-    }
-    for(int i = 0;i < 16;i++)
-    {
-        mPatTexGen[i]->setActive(isActive);
     }
     cCurve->setActive(isActive);
     cPatGen->setActive(isActive);
