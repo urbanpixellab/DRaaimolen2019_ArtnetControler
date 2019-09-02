@@ -81,29 +81,6 @@ void Zadar::createGUI()
     //w = 80;
     h = 12;
 
-    /*
-    curvebuttons.clear();
-    int maxH = floor(drawarea.getHeight()/20);
-    for (int i = 0; i < CURVES::END; i++)
-    {
-        int x = drawarea.getCenter().x + floor(i/maxH)*w;
-        int y = drawarea.getTop() + (i%maxH)*h;
-        curvebuttons.push_back(BUTTON());
-        curvebuttons.back().id = i;
-        curvebuttons.back().color = c[0];
-        curvebuttons.back().pressed = false;
-        curvebuttons.back().name = curvenames[i];
-        curvebuttons.back().drawarea = ofRectangle(x,y,w-5,h-2);
-        curvebuttons.back().fbo.allocate(w, h,GL_RGBA);
-        curvebuttons.back().fbo.begin();
-        ofClear(0,0,0);
-        ofSetColor(curvebuttons.back().color);
-        ofDrawRectRounded(0,0,w,h, 5);
-        ofSetColor(255);
-        mFont->drawString(curvebuttons.back().name, 5, h - 2);
-        curvebuttons.back().fbo.end();
-    }
-     */
 }
 
 float Zadar::update()
@@ -206,47 +183,6 @@ void Zadar::setModeButton(int id,bool value)
     ofSetColor(255);
     mFont->drawString(modebuttons[id].name, 5, modebuttons[id].drawarea.getHeight() - 2);
     modebuttons[id].fbo.end();
-}
-
-void Zadar::setCurveButton(int id, bool value)
-{
-    /*
-    //get the last pressed
-    int lastID = -1;
-    for (int i = 0; i < curvebuttons.size(); i++)
-    {
-        if(curvebuttons[i].pressed == true)
-        {
-            lastID = i;
-            break;
-        }
-    }
-    //only update the two
-    if(lastID >= 0)
-    {
-        curvebuttons[lastID].pressed = false;
-        curvebuttons[lastID].color = c[false];
-        curvebuttons[lastID].fbo.begin();
-        ofClear(0,0,0);
-        ofSetColor(curvebuttons[lastID].color);
-        ofDrawRectRounded(0,0,curvebuttons[lastID].drawarea.getWidth(),curvebuttons[lastID].drawarea.getHeight(), 5);
-        ofSetColor(255);
-
-        mFont->drawString(curvebuttons[lastID].name, 5, curvebuttons[lastID].drawarea.getHeight() - 2);
-        curvebuttons[lastID].fbo.end();
-    }
-    curvebuttons[id].pressed = value;
-    curvebuttons[id].color = c[true];
-    setCurve(id);
-    curvebuttons[id].fbo.begin();
-    ofClear(0,0,0);
-    ofSetColor(curvebuttons[id].color);
-    ofDrawRectRounded(0,0,curvebuttons[id].drawarea.getWidth(),curvebuttons[id].drawarea.getHeight(), 5);
-    ofSetColor(255);
-    mFont->drawString(curvebuttons[id].name, 5, curvebuttons[id].drawarea.getHeight() - 2);
-    curvebuttons[id].fbo.end();
-     */
-
 }
 
 //morphing automated by curve
@@ -471,7 +407,7 @@ void Zadar::createCurves()
     //wobble
     //multi triangle
     //waves
-    
+    //peak
     
     //at the end set shift to zero
     //make function which shifts this on

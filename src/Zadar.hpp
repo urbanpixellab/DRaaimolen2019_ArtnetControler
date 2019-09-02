@@ -64,7 +64,6 @@ public:
     void setReverse(bool r){reverse = r;};
     
     void setModeButton(int id,bool value);
-    void setCurveButton(int id, bool value);
     void mousePressed(ofMouseEventArgs & args);
 
     float &getValue(){return out;};

@@ -17,7 +17,7 @@ public:
     GraphicGenerator();
     ~GraphicGenerator();
     
-    void drawToFbo(ofFbo &screen,ofTexture &tex, float &delta,float &bright);
+    void drawToFbo(ofFbo &screen,ofTexture &tex, float &delta,float &bright,float &master);
     void drawToFbo(ofFbo &screen,ofTexture &tex, float &delta,float &bright,ofColor &a,ofColor &b);
     void setColor(ofColor a, ofColor b);
     

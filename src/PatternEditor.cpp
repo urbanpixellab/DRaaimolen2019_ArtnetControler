@@ -17,7 +17,7 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     int w = drawarea.getWidth() * 0.25;
     int h = drawarea.getHeight()/8; //divide into 4 reagions
     x = drawarea.getLeft();
-    y += h;
+    y += h*2;
     w = drawarea.getWidth() * 0.125;
     mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont,"MIROR SELECT");
     mPatGen->addListener();

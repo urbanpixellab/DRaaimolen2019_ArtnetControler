@@ -46,7 +46,8 @@ void ofApp::setup(){
     }
     uMapper = new UniverseMapper(ofRectangle(ofGetWidth()/2,ofGetHeight()-100,ofGetWidth()/2,100),150,&menueFont);
     patEditors[editSelect]->setActive(true);
-
+    masterBrightness = new RotaryEncoder(ofRectangle(10,10,100,100), 20, &menueFont, "BRIGHTNESS", 0, 1, 10, false);
+    masterBrightness->setActive(true);
     masterClock = 0;
 }
 
@@ -89,8 +90,8 @@ void ofApp::update()
         patEditors[editSelect]->update();
         //LIVE->update();
     }
-
-    gfx.drawToFbo(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA());
+    
+    gfx.drawToFbo(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA(),masterBrightness->getValue());
     
     // now write to artnet
     
@@ -133,6 +134,7 @@ void ofApp::draw(){
     ofImage img;
     img.setFromPixels(mirrors[0].getPixelsA());
     img.draw(ofGetWidth()/2, ofGetHeight()/2, 150,20);
+    masterBrightness->draw();
     ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,20);
 
 }
@@ -204,6 +206,7 @@ void ofApp::exit()
     }
     delete uMapper;
     delete artnet;
+    delete masterBrightness;
 //    delete rotSequencer[0];
 //    delete rotSequencer[1];
 }

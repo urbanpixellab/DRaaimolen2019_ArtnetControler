@@ -56,6 +56,7 @@ private:
     UniverseMapper          *uMapper;
     
     int                     masterClock;
+    RotaryEncoder           *masterBrightness;
 };
 
 // infos

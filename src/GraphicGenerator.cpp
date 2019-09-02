@@ -40,14 +40,14 @@ void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float
     screen.end();
 }
 
-void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright)
+void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright,float &master)
 {
     screen.begin();
     ofClear(0, 0, 0);
     shader.begin();
     shader.setUniform1f("freq",0.25);
     shader.setUniform2f("res",ofVec2f(100,100));
-    shader.setUniform1f("bright", bright);
+    shader.setUniform1f("bright", bright*master);
     shader.setUniform1f("shift",100 * delta);//delta time
     shader.setUniform3f("colA", colorA);
     shader.setUniform3f("colB", colorB);
