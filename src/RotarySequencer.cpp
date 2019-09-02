@@ -17,7 +17,7 @@ RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id)
     delta = 0;
     hasTrigger = false;
     lastStepTime = 0;
-    stepTime = 0.100;
+    stepTime = 0.0625;
 
     
     drawFbo.allocate(area.getWidth(),area.getHeight());
@@ -26,8 +26,8 @@ RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id)
     float cy = drawarea.getHeight()/2.;
     for (int i = 0; i < initSteps; i++)
     {
-        float x = cx + radius * sin(i/float(initSteps)*TWO_PI);
-        float y = cy + radius * cos(i/float(initSteps)*TWO_PI);
+        float x = cx + radius * cos(i/float(initSteps)*TWO_PI + PI*1.5);
+        float y = cy + radius * sin(i/float(initSteps)*TWO_PI + PI*1.5);
         Knop data;
         data.position = ofVec2f(x,y);
         data.radius = drawarea.getWidth()/20;
@@ -50,10 +50,36 @@ RotarySequencer::~RotarySequencer()
 
 void RotarySequencer::nextStep()
 {
-    stepID--;
+    float now = ofGetElapsedTimef();
+
+    stepID++;
     //de pends on direction - is forward!!!!
-    if(stepID < 0 ) stepID = steps.size() - 1;
+    if(stepID >= 16 ) stepID = 0;
     updateFbo();
+    stepTime = now - lastStepTime;
+    lastStepTime = now;
+
+    //do delta calculation if we have a hit on the sequencer
+    if(steps[stepID].pressed == true)
+    {
+        int startID = stepID;
+        bool nextTrigger = false;
+        int toNextCount = 1;
+        int maxStep = 16;
+        thisTriggerTime = now;
+        while(nextTrigger == false || toNextCount > maxStep)
+        {
+            if(steps[(startID+toNextCount)%maxStep].pressed == true)
+            {
+                nextTrigger = true;
+            }
+            else toNextCount++;
+            
+        }
+        deltaTime = stepTime*float(toNextCount+1);//+1 my own length
+        nextTriggerTime = thisTriggerTime+deltaTime;
+        if(isActive) ofNotifyEvent(trigger, myID);
+    }
 }
 
 void RotarySequencer::updateFbo()
@@ -69,7 +95,6 @@ void RotarySequencer::updateFbo()
         if(steps[i].pressed && i == stepID)
         {
             ofSetColor(231, 200, 120,255);
-            ofNotifyEvent(trigger, myID);
         }
         ofDrawCircle(steps[i].position.x,steps[i].position.y,steps[i].radius);
         ofNoFill();
@@ -82,58 +107,12 @@ void RotarySequencer::updateFbo()
 
 void RotarySequencer::update()
 {
-    float now = ofGetElapsedTimef();
-    for (int i = 0; i < steps.size(); i++)
-    {
-        if(i == stepID)
-        {
-            steps[i].isStep = true;
-            if(steps[i].pressed)
-            {
-                //search for the next trigger
-                int startID = i;
-                bool nextTrigger = false;
-                int toNextCount = 1;
-                int maxStep = 16;
-                thisTriggerTime = now;
-                while(nextTrigger == false)
-                {
-                    if(steps[(startID+toNextCount)%maxStep].pressed == true)
-                    {
-                        nextTrigger = true;
-                        break;
-                    }
-                    else toNextCount++;
-                    
-                    if(toNextCount > maxStep)
-                    {
-                        break;
-                    }
-                }
-                deltaTime = stepTime*float(toNextCount+1);//+1 my own length
-                nextTriggerTime = thisTriggerTime+deltaTime;
-                //cout << "next in " << toNextCount << " delta " << deltaTime << endl;
-                //begin with delta
-                if(isActive) ofNotifyEvent(trigger, myID);
-            }
-        }
-        else
-        {
-            steps[i].isStep = false;
-            steps[i].drawColorID = 0;
-            if(steps[i].pressed) steps[i].drawColorID = 1;
-        }
-    }
+    if(isActive == false) return;
 
+    float now = ofGetElapsedTimef();
     delta = (now - thisTriggerTime)/(deltaTime);
-    //cout << "d " << delta << endl;
-    if(delta > 1) delta = 1;
- /*
-    // now the other delta stuff
-    delta = (now - thisTriggerTime)/(deltaTime);
-    //cout << "d " << delta << endl;
-    if(delta > 1) delta = 1;
-*/
+    if(delta > 1.0) delta = 1;
+//    cout << "d " << delta << endl;
 }
 
 float &RotarySequencer::updateDelta()
@@ -158,6 +137,7 @@ void RotarySequencer::draw()
 {
     if(isActive == false) return;
     ofSetColor(255);
+//    cout << "d " << delta << endl;
     drawFbo.draw(drawarea);
 }
 
@@ -171,6 +151,7 @@ void RotarySequencer::mousePressed(ofMouseEventArgs & args)
             if(ofDist(steps[i].position.x+drawarea.getLeft(),steps[i].position.y+drawarea.getTop(),args.x,args.y) < steps[i].radius)
             {
                 steps[i].pressed = !steps[i].pressed;
+                cout << "pressed step" << i << endl;
                 break;
             }
         }

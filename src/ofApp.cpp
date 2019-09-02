@@ -63,7 +63,7 @@ void ofApp::update()
         //set all colors, should been done somewhere else
         for(int i = 0;i < mirrors.size();i++)
         {
-            gfx.setColor(patEditors[editSelect]->getColorA(), patEditors[editSelect]->getColorB());
+            gfx.setColor(patEditors[editSelect]->getColorA(), patEditors[editSelect]->getColorAA());
         }
         timer = now + steplength;
         //update all
@@ -154,6 +154,7 @@ void ofApp::setLiveID(int index)
 
 void ofApp::isTrigger(int &triggerIndex)
 {
+    cout << "trigger" << endl;
     if(triggerIndex == 0) // the pattern for segments 1= color
     {
         for(int i = 0;i < mirrors.size();i++)
@@ -165,7 +166,7 @@ void ofApp::isTrigger(int &triggerIndex)
                 bool right = patEditors[editSelect]->getMirrorSubPattern(i)[2];
                 bool bottom = patEditors[editSelect]->getMirrorSubPattern(i)[3];
                 mirrors[i].setEnables(left,top,right,bottom);
-                cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
+                //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
             }
             else
             {

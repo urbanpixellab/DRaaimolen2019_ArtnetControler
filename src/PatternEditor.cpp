@@ -44,7 +44,7 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     w = drawarea.getWidth() * 125;
     ////////// now the coloring stuff
     x = drawarea.getLeft();
-    y = ofGetHeight() - 2*h;
+    y = ofGetHeight() - 3*h;
     w = drawarea.getWidth() * 0.125;
     cPatGen = new PatternGenerator(ofRectangle(x,y,w,h),2,mFont,"COLOR SWAP");
     cPatGen->addListener();
@@ -56,10 +56,10 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     // color swatches
     x = drawarea.getLeft();
     y += 60;
-    colors = new ColorSwatch(ofRectangle(x+w*1.3,y,120,60));
+    colors = new ColorSwatch(ofRectangle(x+w*1.3,y+60,120,60));
     ofAddListener(colors->colorPressed,this,&PatternEditor::colorPressed);
 
-    colorsB = new ColorSwatch(ofRectangle(x+w*1.3,y+60,120,60));
+    colorsB = new ColorSwatch(ofRectangle(x+w*1.3,y+150,120,60));
     ofAddListener(colorsB->colorPressed,this,&PatternEditor::colorPressed);
     
     x = (ofGetWidth()-ofGetHeight())/2.0;
@@ -116,10 +116,10 @@ void PatternEditor::nextStep()
     rotSequencer[1]->nextStep();
 
 //    seqDelta[0] = mCurve->update(rotSequencer[0]->updateDelta());
-    seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
+//    seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
     
 //    seqDelta[1] = sCurve->update(sSequenzer->updateDelta());
-    seqDelta[1] = cCurve->update(rotSequencer[1]->getDeltaTIme());
+//    seqDelta[1] = cCurve->update(rotSequencer[1]->getDeltaTIme());
 }
 
 
@@ -147,8 +147,9 @@ void PatternEditor::colorPressed(int &id)
 
 void PatternEditor::sequenzerHit(int & index)
 {
+    cout << "pat trigger " << index << endl;
     if(index < 0 || isActive == false) return;
-    cout << "sequenzer hit " << index <<   endl;
+    //cout << "sequenzer hit " << index <<   endl;
     if(index == 0)
     {
         //we have a mirror sequenzer  hit
