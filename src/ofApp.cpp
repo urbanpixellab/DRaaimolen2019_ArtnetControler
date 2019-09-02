@@ -32,7 +32,6 @@ void ofApp::setup(){
     }
 
     artnet = new ArtnetData();
-    patEditors[editSelect]->setActive(true);
     //LIVE = patEditors[liveSelect];
     
     w = ofGetWidth() / 40;
@@ -46,6 +45,7 @@ void ofApp::setup(){
         mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h),startUniversum,&gfx));
     }
     uMapper = new UniverseMapper(ofRectangle(ofGetWidth()/2,ofGetHeight()-100,ofGetWidth()/2,100),150,&menueFont);
+    patEditors[editSelect]->setActive(true);
 
     masterClock = 0;
 }
@@ -113,7 +113,6 @@ void ofApp::draw(){
 //    ofDrawRectangle(0,0, ofGetWidth(), 150);
     ofSetColor(255);
     patEditors[editSelect]->drawGUI();
-    ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,600);
     int id = 0;
     for(int i = 0;i < previewBTNs.size();i++)
     {
@@ -134,6 +133,8 @@ void ofApp::draw(){
     ofImage img;
     img.setFromPixels(mirrors[0].getPixelsA());
     img.draw(ofGetWidth()/2, ofGetHeight()/2, 150,20);
+    ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,20);
+
 }
 
 void ofApp::setEditorID(int index)

@@ -66,9 +66,6 @@ public:
     void removeListener();
     void mousePressed(ofMouseEventArgs & arg);
     void setDirButton(int i,bool pressed);
-    void setPatternButton(int i, bool pressed);
-    void setPatternEncoder(int &id);
-    void setSegmentButton(int i, bool pressed);
     void setInverseButton(bool pressed);
     
     int &getPatternID(){return patternID;};
@@ -98,8 +95,6 @@ private:
     ofTrueTypeFont      *mFont;
     ofRectangle         drawarea;
     vector<BUTTON>      dirbuttons;//the buttons for the direction;
-    vector<BUTTON>      patternbuttons;//buttons for pattern
-    //vector<BUTTON>      segmentbuttons;//buttons for segment selection
     BUTTON              invPattern;
 
     ofColor             c[2] = {ofColor(0,0,255),ofColor(255,0,0)};

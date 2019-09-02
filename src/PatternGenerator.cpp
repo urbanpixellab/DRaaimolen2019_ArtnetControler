@@ -6,15 +6,13 @@
 //
 
 #include "PatternGenerator.hpp"
-PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f,string name) : mFont(f),myName(name)
+PatternGenerator::PatternGenerator(ofRectangle area,int maxSeg, ofTrueTypeFont *f,string name) : mFont(f),myName(name),drawarea(area)
 {
     maxSegment = maxSeg; // for all mirrors
-    drawarea = area;
-    patternSelect = new RotaryEncoder(ofRectangle(drawarea.getCenter().x,drawarea.getCenter().y,100,100), 0, mFont, "PatternSelect", 0, 9, 9, true,patternnames);
     createGUI();
     setDirButton(0, true);
-    setPatternButton(0,true);
     isActive = false;
+    setPattern(0);
 }
 
 PatternGenerator::~PatternGenerator()
@@ -31,14 +29,24 @@ void PatternGenerator::addListener()
 void PatternGenerator::removeListener()
 {
     ofRemoveListener(ofEvents().mousePressed, this, &PatternGenerator::mousePressed);
-    //ofRemoveListener(patternSelect->newValue, this, &PatternGenerator::newEncoderID);
+    ofRemoveListener(patternSelect->newValue, this, &PatternGenerator::newEncoderID);
 }
 
 
 void PatternGenerator::createGUI()
 {
+    //we make a grid left rot encoder right buttons
     int w = drawarea.getWidth()/2;
-    int h = 12;
+    int h = drawarea.getHeight();
+    int x = drawarea.getLeft();
+    int y = drawarea.getTop();
+
+    
+    
+    patternSelect = new RotaryEncoder(ofRectangle(x,y,w,h), 0, mFont, "PatternSelect", 0, 9, 9, true,patternnames);
+
+    h /= 3;
+    
     //top are the direction
     dirbuttons.clear();
     BUTTON f;
@@ -46,14 +54,15 @@ void PatternGenerator::createGUI()
     f.pressed = false;
     f.color = c[0];
     f.name = "FORWARD";
-    f.drawarea = ofRectangle(drawarea.getLeft(),drawarea.getTop(),w,h);
+    f.drawarea = ofRectangle(drawarea.getRight()-w,drawarea.getTop(),w,h-2);
     f.fbo.allocate(w, h,GL_RGBA);
     f.fbo.begin();
     ofClear(0,0,0);
     ofSetColor(f.color);
     ofDrawRectRounded(0,0,w,h, 5);
     ofSetColor(255);
-    mFont->drawString(f.name, 5, h - 2);
+    ofRectangle fBbox = mFont->getStringBoundingBox(f.name, 0, 0);
+    mFont->drawString(f.name, f.fbo.getWidth()/2 - fBbox.getWidth()/2, f.fbo.getHeight()/2 - fBbox.getHeight()/2);
     f.fbo.end();
     dirbuttons.push_back(f);
     
@@ -62,55 +71,32 @@ void PatternGenerator::createGUI()
     r.pressed = false;
     r.color = c[0];
     r.name = "REVERSE";
-    r.drawarea = ofRectangle(f.drawarea.getRight(),drawarea.getTop(),w,h);
+    r.drawarea = ofRectangle(drawarea.getRight()-w,drawarea.getTop()+h,w,h-2);
     r.fbo.allocate(w, h,GL_RGBA);
     r.fbo.begin();
     ofClear(0,0,0);
     ofSetColor(r.color);
     ofDrawRectRounded(0,0,w,h, 5);
     ofSetColor(255);
-    mFont->drawString(r.name, 5, h - 2);
+    fBbox = mFont->getStringBoundingBox(r.name, 0, 0);
+    mFont->drawString(r.name, r.fbo.getWidth()/2 - fBbox.getWidth()/2, r.fbo.getHeight()/2 - fBbox.getHeight()/2);
     r.fbo.end();
     dirbuttons.push_back(r);
-    
-    w = drawarea.getWidth()/3;
-//    patternbuttons.clear();
-    int x;
-    int y;
-    for (int i = 0; i < PATTERNS::END; i++)
-    {
-        x = drawarea.getLeft() + floor(i/5)*w;
-        y = r.drawarea.getBottom() + 10 + (i%5)*h;
-        patternbuttons.push_back(BUTTON());
-        patternbuttons.back().id = i;
-        patternbuttons.back().color = c[0];
-        patternbuttons.back().pressed = false;
-        patternbuttons.back().name = patternnames[i];
-        patternbuttons.back().drawarea = ofRectangle(x,y,w-5,h-2);
-        patternbuttons.back().fbo.allocate(w, h,GL_RGBA);
-        patternbuttons.back().fbo.begin();
-        ofClear(0,0,0);
-        ofSetColor(patternbuttons.back().color);
-        ofDrawRectRounded(0,0,w,h, 5);
-        ofSetColor(255);
-        mFont->drawString(patternbuttons.back().name, 5, h - 2);
-        patternbuttons.back().fbo.end();
-    }
     
     invPattern.id = 20;
     invPattern.color = c[0];
     invPattern.pressed = false;
-    invPattern.name = "invert";
-    x = drawarea.getLeft() + floor(PATTERNS::END/5)*w;
-    y = r.drawarea.getBottom() + 10 + (PATTERNS::END%5)*h;
-    invPattern.drawarea = ofRectangle(x,y,w,h);
+    invPattern.name = "INVERT PATTERN";
+    
+    invPattern.drawarea = ofRectangle(drawarea.getRight()-w,drawarea.getTop()+h*2,w,h-2);
     invPattern.fbo.allocate(w, h,GL_RGBA);
     invPattern.fbo.begin();
     ofClear(0,0,0);
     ofSetColor(invPattern.color);
     ofDrawRectRounded(0,0,w,h, 5);
     ofSetColor(255);
-    mFont->drawString(invPattern.name, 5, h - 2);
+    fBbox = mFont->getStringBoundingBox(invPattern.name, 0, 0);
+    mFont->drawString(invPattern.name, invPattern.fbo.getWidth()/2 - fBbox.getWidth()/2, invPattern.fbo.getHeight()/2 - fBbox.getHeight()/2);
     
     patternSelect->draw();
     
@@ -122,15 +108,9 @@ void PatternGenerator::drawGUI()
     if(!isActive) return;
     ofSetColor(255);
     mFont->drawString(myName, drawarea.getLeft(), drawarea.getTop() - 10);
-    for (int i = 0; i < dirbuttons.size(); i++)
-    {
-        dirbuttons[i].fbo.draw(dirbuttons[i].drawarea);
-    }
     patternSelect->draw();
-    for (int i = 0; i < patternbuttons.size(); i++)
-    {
-        patternbuttons[i].fbo.draw(patternbuttons[i].drawarea);
-    }
+    dirbuttons[SDIR::FORWARD].fbo.draw(dirbuttons[SDIR::FORWARD].drawarea);
+    dirbuttons[SDIR::REVERSE].fbo.draw(dirbuttons[SDIR::REVERSE].drawarea);
     invPattern.fbo.draw(invPattern.drawarea);
 }
 
@@ -276,14 +256,6 @@ void PatternGenerator::updatePattern()
             patternOut[j] = !patternOut[j];
         }
     }
-    /*
-    int l = 4;// this are the repetitions
-    for (int j = 0; j < maxSegment; j++)
-    {
-        patternOut[j] = patternOut[j%l];
-    }
-    */
-    //based on the direction
     //printSequence();
 }
 
@@ -429,9 +401,7 @@ void PatternGenerator::printSequence()
 
 void PatternGenerator::newEncoderID(int & id)
 {
-    patternID = patternSelect->getValue();
-    setPatternEncoder(patternID);
-//    cout << patternID << endl;
+    setPattern(patternSelect->getValue());
 }
 
 void PatternGenerator::mousePressed(ofMouseEventArgs & args)
@@ -446,17 +416,6 @@ void PatternGenerator::mousePressed(ofMouseEventArgs & args)
             return;
         }
     }
-    
-    for (int i = 0; i < patternbuttons.size();i++)
-    {
-        
-        if(patternbuttons[i].drawarea.inside(args.x, args.y))
-        {
-            setPatternButton(i, !patternbuttons[i].pressed);
-            return;
-        }
-    }
-    
     if(invPattern.drawarea.inside(args.x,args.y))
     {
         setInverseButton(!invPattern.pressed);
@@ -473,10 +432,13 @@ void PatternGenerator::setDirButton(int id,bool value)
     ofSetColor(dirbuttons[id].color);
     ofDrawRectRounded(0,0,dirbuttons[id].drawarea.getWidth(),dirbuttons[id].drawarea.getHeight(), 5);
     ofSetColor(255);
-    mFont->drawString(dirbuttons[id].name, 5, dirbuttons[id].drawarea.getHeight() - 2);
+
+    ofRectangle fBbox = mFont->getStringBoundingBox(dirbuttons[id].name, 0, 0);
+    mFont->drawString(dirbuttons[id].name, dirbuttons[id].fbo.getWidth()/2 - fBbox.getWidth()/2, dirbuttons[id].fbo.getHeight()/2 + fBbox.getHeight()/2);
     dirbuttons[id].fbo.end();
     setPatternDirection(id);
     id = !id;
+    
     dirbuttons[id].pressed = !value;
     // now set the state
     dirbuttons[id].color = c[dirbuttons[id].pressed];
@@ -485,54 +447,10 @@ void PatternGenerator::setDirButton(int id,bool value)
     ofSetColor(dirbuttons[id].color);
     ofDrawRectRounded(0,0,dirbuttons[id].drawarea.getWidth(),dirbuttons[id].drawarea.getHeight(), 5);
     ofSetColor(255);
-    mFont->drawString(dirbuttons[id].name, 5, dirbuttons[id].drawarea.getHeight() - 2);
+    fBbox = mFont->getStringBoundingBox(dirbuttons[id].name, 0, 0);
+    mFont->drawString(dirbuttons[id].name, dirbuttons[id].fbo.getWidth()/2 - fBbox.getWidth()/2, dirbuttons[id].fbo.getHeight()/2 + fBbox.getHeight()/2);
+//    mFont->drawString(dirbuttons[id].name, 5, dirbuttons[id].drawarea.getHeight() - 2);
     dirbuttons[id].fbo.end();
-}
-void PatternGenerator::setPatternEncoder(int &id)
-{
-    patternbuttons[id].fbo.begin();
-    ofClear(0,0,0);
-    ofSetColor(patternbuttons[id].color);
-    ofDrawRectRounded(0,0,patternbuttons[id].drawarea.getWidth(),patternbuttons[id].drawarea.getHeight(), 5);
-    ofSetColor(255);
-    mFont->drawString(patternbuttons[id].name, 5, patternbuttons[id].drawarea.getHeight() - 2);
-    patternbuttons[id].fbo.end();
-}
-
-void PatternGenerator::setPatternButton(int id, bool value)
-{
-    //get the last pressed
-    int lastID = -1;
-    for (int i = 0; i < patternbuttons.size(); i++)
-    {
-        if(patternbuttons[i].pressed)
-        {
-            lastID = i;
-        }
-    }
-    //only update the two
-    if(lastID >= 0)
-    {
-        patternbuttons[lastID].pressed = false;
-        patternbuttons[lastID].color = c[false];
-        patternbuttons[lastID].fbo.begin();
-        ofClear(0,0,0);
-        ofSetColor(patternbuttons[lastID].color);
-        ofDrawRectRounded(0,0,patternbuttons[lastID].drawarea.getWidth(),patternbuttons[lastID].drawarea.getHeight(), 5);
-        ofSetColor(255);
-        mFont->drawString(patternbuttons[lastID].name, 5, patternbuttons[lastID].drawarea.getHeight() - 2);
-        patternbuttons[lastID].fbo.end();
-    }
-    patternbuttons[id].pressed = value;
-    patternbuttons[id].color = c[value];
-    setPattern(id);
-    patternbuttons[id].fbo.begin();
-    ofClear(0,0,0);
-    ofSetColor(patternbuttons[id].color);
-    ofDrawRectRounded(0,0,patternbuttons[id].drawarea.getWidth(),patternbuttons[id].drawarea.getHeight(), 5);
-    ofSetColor(255);
-    mFont->drawString(patternbuttons[id].name, 5, patternbuttons[id].drawarea.getHeight() - 2);
-    patternbuttons[id].fbo.end();
 }
 
 void PatternGenerator::setInverseButton(bool pressed)
@@ -544,7 +462,10 @@ void PatternGenerator::setInverseButton(bool pressed)
     ofSetColor(invPattern.color);
     ofDrawRectRounded(0,0,invPattern.drawarea.getWidth(),invPattern.drawarea.getHeight(), 5);
     ofSetColor(255);
-    mFont->drawString(invPattern.name, 5, invPattern.drawarea.getHeight() - 2);
+    ofRectangle fBbox = mFont->getStringBoundingBox(invPattern.name, 0, 0);
+    mFont->drawString(invPattern.name, invPattern.fbo.getWidth()/2 - fBbox.getWidth()/2, invPattern.fbo.getHeight()/2 + fBbox.getHeight()/2);
+    
+//    mFont->drawString(invPattern.name, 5, invPattern.drawarea.getHeight() - 2);
     invPattern.fbo.end();
 }
 

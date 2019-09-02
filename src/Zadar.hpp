@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "ofMain.h"
+#include "RotaryEncoder.hpp"
 
 #define RES 100
 
@@ -62,8 +63,6 @@ public:
     void setInverse(bool i){inverse = i;};
     void setReverse(bool r){reverse = r;};
     
-    void addListener();
-    void removeListener();
     void setModeButton(int id,bool value);
     void setCurveButton(int id, bool value);
     void mousePressed(ofMouseEventArgs & args);
@@ -74,9 +73,15 @@ public:
     bool &getReverse(){return reverse;};
     int &getCurveID(){return curveID;};
     
+    void newEncoderID(int & id);
+    
     ofPixels &getPixels(){return curvePixels;};
     ofTexture &getCurveTex(){return curveImage.getTexture();};
-    int getRightBorder(){return curvebuttons[curvebuttons.size()-1].drawarea.getRight();};
+    
+    void setActive(bool value);
+    bool & getActive(){return isActive;};
+
+//    int getRightBorder(){return curvebuttons[curvebuttons.size()-1].drawarea.getRight();};
 
 private:
     void                createCurves();
@@ -96,15 +101,17 @@ private:
     ofImage             curveImage;
     //gui
     vector<BUTTON>      modebuttons;//invert reverse
-    vector<BUTTON>      curvebuttons;// the curves
+//    vector<BUTTON>      curvebuttons;// the curves
     ofColor             c[2] = {ofColor(0,0,255),ofColor(255,0,0)};
 
     ofTrueTypeFont      *mFont;
-    string              curvenames[17] = {"OFF","ON","LINEAR","PWM","SAW","TRI","SINE","HALFSINE",
+    string              curvenames[16] = {"OFF","ON","LINEAR","PWM","SAW","TRI","SINE","HALFSINE",
                                         "ADSR","EASE","RANDOM1","RANDOM2",
                                         "RANDOM3","ZIGZAG","ZIGZAG1","STAIRS"};
     
         //add ratio button for selct and two toggle sfor reverse and invert
+    RotaryEncoder       *curveSelect;
+    bool                isActive;
 };
 
 #endif /* Zadar_hpp */

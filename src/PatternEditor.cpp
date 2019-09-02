@@ -38,7 +38,6 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     x = mPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
     mCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"MIRROR SEQUENZER BRIGHTNESS");
-    mCurve->addListener();
 
     /// now the segments elements
     y += h;
@@ -66,7 +65,6 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     x = cPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
     cCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"COLOR CURVE");
-    cCurve->addListener();
 
     // color swatches
     x = drawarea.getLeft();
@@ -231,6 +229,7 @@ void PatternEditor::setActive(bool value)
     rotSequencer[0]->setActive(isActive);
     rotSequencer[1]->setActive(isActive);
     mPatGen->setActive(isActive);
+    mCurve->setActive(isActive);
     for(int i = 0;i < 20;i++)
     {
         mPatSegGen[i]->setActive(isActive);
@@ -239,6 +238,7 @@ void PatternEditor::setActive(bool value)
     {
         mPatTexGen[i]->setActive(isActive);
     }
+    cCurve->setActive(isActive);
     cPatGen->setActive(isActive);
     colors->setActive(isActive);
     colorsB->setActive(isActive);

@@ -19,31 +19,32 @@ Zadar::Zadar(ofRectangle area, ofTrueTypeFont *f,string name) : drawarea(area), 
     dT = 0;
     inverse = false;
     reverse = false;
-    addListener();
     createGUI();
     //now init linear
-    setCurveButton(CURVES::OFF,true);
+//    setCurveButton(CURVES::OFF,true);
+    isActive = false;
+    setCurve(0);
+    ofAddListener(ofEvents().mousePressed, this, &Zadar::mousePressed);
+    ofAddListener(curveSelect->newValue, this, &Zadar::newEncoderID);
 }
 
 Zadar::~Zadar()
 {
-    removeListener();
-}
-
-void Zadar::addListener()
-{
-    ofAddListener(ofEvents().mousePressed, this, &Zadar::mousePressed);
-}
-
-void Zadar::removeListener()
-{
     ofRemoveListener(ofEvents().mousePressed, this, &Zadar::mousePressed);
+    ofRemoveListener(curveSelect->newValue, this, &Zadar::newEncoderID);
 }
+
 
 void Zadar::createGUI()
 {
-    int w = drawarea.getWidth()/4;
-    int h = 12;
+    int w = drawarea.getWidth()/2;
+    int h = drawarea.getHeight()/2;
+    int x = drawarea.getLeft() + w;
+    int y = drawarea.getTop();
+
+    curveSelect = new RotaryEncoder(ofRectangle(drawarea.getCenter().x,drawarea.getTop(),100,100), 0, mFont, "CurveSelect", 0, 15, 15, true,curvenames);
+    ofAddListener(curveSelect->newValue, this, &Zadar::newEncoderID);
+    h = drawarea.getHeight()/4;
 
     modebuttons.clear();
     BUTTON inv;
@@ -51,8 +52,8 @@ void Zadar::createGUI()
     inv.color = c[0];
     inv.pressed = false;
     inv.name = "INVERT";
-    inv.drawarea = ofRectangle(drawarea.getLeft(),drawarea.getCenter().y+2*h,w,h);
-    inv.fbo.allocate(w, h,GL_RGBA);
+    inv.drawarea = ofRectangle(drawarea.getLeft(),drawarea.getBottom()-h,w/2,h);
+    inv.fbo.allocate(w/2, h,GL_RGBA);
     inv.fbo.begin();
     ofClear(0,0,0);
     ofSetColor(inv.color);
@@ -67,8 +68,8 @@ void Zadar::createGUI()
     rev.color = c[0];
     rev.pressed = false;
     rev.name = "REVERSE";
-    rev.drawarea = ofRectangle(inv.drawarea.getRight(),inv.drawarea.getTop(),w,h);
-    rev.fbo.allocate(w, h,GL_RGBA);
+    rev.drawarea = ofRectangle(inv.drawarea.getLeft()+w/2,inv.drawarea.getBottom()-h,w/2,h);
+    rev.fbo.allocate(w/2, h,GL_RGBA);
     rev.fbo.begin();
     ofClear(0,0,0);
     ofSetColor(rev.color);
@@ -80,6 +81,7 @@ void Zadar::createGUI()
     //w = 80;
     h = 12;
 
+    /*
     curvebuttons.clear();
     int maxH = floor(drawarea.getHeight()/20);
     for (int i = 0; i < CURVES::END; i++)
@@ -101,6 +103,7 @@ void Zadar::createGUI()
         mFont->drawString(curvebuttons.back().name, 5, h - 2);
         curvebuttons.back().fbo.end();
     }
+     */
 }
 
 float Zadar::update()
@@ -127,6 +130,7 @@ float Zadar::update(float &dt)
 
 void Zadar::draw()
 {
+    if(!isActive) return;
     ofSetColor(255);
     preview.draw(drawarea.x,drawarea.y);
     ofSetColor(0);
@@ -154,17 +158,21 @@ void Zadar::drawGUI()
         ofSetColor(255);
         modebuttons[i].fbo.draw(modebuttons[i].drawarea);
     }
+    /*
     for (int i = 0; i < curvebuttons.size(); i++)
     {
         ofSetColor(255);
         curvebuttons[i].fbo.draw(curvebuttons[i].drawarea);
-    }
+    }*/
+    curveSelect->draw();
     curveImage.draw(drawarea.getLeft(),drawarea.getCenter().y + 2,drawarea.getWidth()/2,20);
     
 }
 
 void Zadar::mousePressed(ofMouseEventArgs & args)
 {
+    if(!isActive) return;
+
     for (int i = 0; i < modebuttons.size();i++)
     {
         if(modebuttons[i].drawarea.inside(args.x, args.y))
@@ -173,7 +181,7 @@ void Zadar::mousePressed(ofMouseEventArgs & args)
             return;
         }
     }
-
+    /*
     for (int i = 0; i < curvebuttons.size();i++)
     {
         if(curvebuttons[i].drawarea.inside(args.x, args.y))
@@ -181,7 +189,7 @@ void Zadar::mousePressed(ofMouseEventArgs & args)
             setCurveButton(i, !curvebuttons[i].pressed);
             return;
         }
-    }
+    }*/
 }
 
 void Zadar::setModeButton(int id,bool value)
@@ -202,6 +210,7 @@ void Zadar::setModeButton(int id,bool value)
 
 void Zadar::setCurveButton(int id, bool value)
 {
+    /*
     //get the last pressed
     int lastID = -1;
     for (int i = 0; i < curvebuttons.size(); i++)
@@ -236,6 +245,7 @@ void Zadar::setCurveButton(int id, bool value)
     ofSetColor(255);
     mFont->drawString(curvebuttons[id].name, 5, curvebuttons[id].drawarea.getHeight() - 2);
     curvebuttons[id].fbo.end();
+     */
 
 }
 
@@ -467,4 +477,15 @@ void Zadar::createCurves()
     //make function which shifts this on
     // like shiftedCurve[100],, shift the array till 100
 
+}
+void Zadar::newEncoderID(int & id)
+{
+    setCurve(curveSelect->getValue());
+}
+
+
+void Zadar::setActive(bool value)
+{
+    isActive = value;
+    curveSelect->setActive(isActive);
 }
