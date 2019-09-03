@@ -10,6 +10,8 @@ void ofApp::setup(){
     editSelect = 0;
     liveSelect = 0;
     preview.allocate(100, 100);
+    texA.allocate(100, 100);
+    texB.allocate(100, 100);
     
     for(int i = 0;i < 16 ;i++)
     {
@@ -90,8 +92,13 @@ void ofApp::update()
         patEditors[editSelect]->update();
         //LIVE->update();
     }
-    
+    ofFbo liveTex;
+    int liveSelect = editSelect;
     gfx.drawToFbo(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA(),masterBrightness->getValue());
+    gfx.drawToFbo(texA,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA(),masterBrightness->getValue());
+    gfx.drawToFbo(texB,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA(),masterBrightness->getValue());
+    
+    gfx.drawToFbo(liveTex,patEditors[liveSelect]->getCurve(),patEditors[liveSelect]->getValueC(),patEditors[liveSelect]->getValueA(),masterBrightness->getValue());
     
     // now write to artnet
     
@@ -99,6 +106,9 @@ void ofApp::update()
     {
         //send to artnet
         mirrors[i].update(preview.getTexture());
+        mirrors[i].update(texA.getTexture());
+        //here comes he sequencer in
+        mirrors[i].update(texB.getTexture());
         int n = floor(i/4);
         
 //        artnet->sendTest2(mirrors[i].getPixelsA());
@@ -127,6 +137,7 @@ void ofApp::draw(){
     for(int i = 0;i < mirrors.size();i++)
     {
         mirrors[i].drawPreview(preview.getTexture());
+        mirrors[i].drawPreview(texA.getTexture());
     }
     uMapper->draw();
     
@@ -154,7 +165,7 @@ void ofApp::setLiveID(int index)
 
 void ofApp::isTrigger(int &triggerIndex)
 {
-    cout << "trigger" << endl;
+//    cout << "trigger" << endl;
     if(triggerIndex == 0) // the pattern for segments 1= color
     {
         for(int i = 0;i < mirrors.size();i++)
@@ -179,6 +190,21 @@ void ofApp::isTrigger(int &triggerIndex)
     else if(triggerIndex == 1)
     {
         //we have color trigger
+        /*
+        for(int i = 0;i < mirrors.size();i++)
+        {
+            
+            if(patEditors[editSelect]->getMirrorTexturePattern()[i] == true)
+            {
+              //  mirrors[i].setColors(1,1,1,1);
+              //  mirrors[i].setColors(1,1,1,1);
+            }
+            else
+            {
+               // mirrors[i].setColors(0,0,0,0);
+                //cout << "mirror" << i << " FALSE " << endl;
+            }
+        }*/
     }
 }
 

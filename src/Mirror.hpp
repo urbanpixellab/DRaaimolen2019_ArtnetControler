@@ -39,6 +39,7 @@ public:
     void setTextureMapping(int mappingID);
     ofPixels &getPixelsA(){return outPixelsA;};
     ofPixels &getPixelsB(){return outPixelsB;};
+    ofPixels &getAllBlack(){return allBlack;};
     int &getUniverseIDA(){return myUniverses[0];};
     int &getUniverseIDB(){return myUniverses[1];};
     
@@ -61,7 +62,7 @@ private:
     ofImage     outImgA;
     ofImage     outImgB;
     ofMesh      preview[4];//left top right bottom
-    ofMesh      render[4];
+    ofMesh      render[4];//for the linear fbo
     //left top right bottom //every render heas 3 coordinates, and the shifted texture coordinates based on the mapping and inverse
     
     

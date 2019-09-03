@@ -46,7 +46,7 @@ public:
     
     vector<bool> &getMirrorPattern(){return mPatGen->getPattern();};
     vector<bool> &getMirrorSubPattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
-    vector<bool> &getMirrorTexturePattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
+    vector<bool> &getMirrorTexturePattern(int &spiegelID){return cPatGen->getPattern();};//this returns all 4 segments per mirror
 
     
     void setActive(bool value);
@@ -62,10 +62,11 @@ private:
 
     PatternGenerator    *mPatGen;
     PatternGenerator    *mPatSegGen[20];
+    PatternGenerator    *cPatGen;// the cilor pattern
+    
     //for every mirror we have a 4 pattern generator
     Zadar               *mCurve;
 
-    PatternGenerator    *cPatGen;///who two colors applied
     Zadar               *cCurve;
 
     ColorSwatch         *colors;//primary

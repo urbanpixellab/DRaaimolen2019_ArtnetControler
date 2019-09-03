@@ -21,12 +21,13 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     w = drawarea.getWidth() * 0.125;
     mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont,"MIROR SELECT");
     mPatGen->addListener();
+    cPatGen = new PatternGenerator(ofRectangle(x,drawarea.getHeight() - h,w,h),MIRRORS,mFont,"MIROR COLOR");
+    cPatGen->addListener();
     //pattern  segment generator
     for (int i = 0; i < 20; i++)
     {
         mPatSegGen[i] = new PatternGenerator(ofRectangle(x,y+h *1.1,w,h),4,mFont,"MIROR SUBSEGMENT");
         mPatSegGen[i]->addListener();
-
     }
     
     
@@ -68,10 +69,10 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     h = drawarea.getHeight();
     float s = 100;
     float rad = (w/2)*0.65;
-    rotSequencer[0] = new RotarySequencer(ofRectangle(x,y,w,h),rad,16,0);
+    rotSequencer[0] = new RotarySequencer(ofRectangle(x,y,w,h),rad,16,0,ofColor::wheat);
     rad *=0.65;
     s = 80;
-    rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16,1);
+    rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16,1,ofColor::paleGoldenRod);
     ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
     ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
 
@@ -147,7 +148,7 @@ void PatternEditor::colorPressed(int &id)
 
 void PatternEditor::sequenzerHit(int & index)
 {
-    cout << "pat trigger " << index << endl;
+//    cout << "pat trigger " << index << endl;
     if(index < 0 || isActive == false) return;
     //cout << "sequenzer hit " << index <<   endl;
     if(index == 0)
@@ -160,6 +161,7 @@ void PatternEditor::sequenzerHit(int & index)
         {
             mPatSegGen[i]->updatePattern();
         }
+        rotSequencer[0]->shiftSelect(1);
     }
     else if(index == 1)
     {
@@ -183,6 +185,8 @@ void PatternEditor::sequenzerHit(int & index)
                 segments[m*4 + 3] = false;
             }
         }*/
+        cPatGen->updatePattern();
+
     }
     else if(index == 2)
     {

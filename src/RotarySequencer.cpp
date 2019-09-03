@@ -8,8 +8,9 @@
 
 #include "RotarySequencer.hpp"
 
-RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id)
+RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id,ofColor color)
 {
+    baseColor = color;
     myID = id;
     drawarea = area;
     initSteps = count;
@@ -82,6 +83,35 @@ void RotarySequencer::nextStep()
     }
 }
 
+void RotarySequencer::shiftSelect(int direction)
+{
+    for (int i = 0; i < 15; i++)
+    {
+        steps[i].pressed = steps[(i+1)].pressed;
+    }
+    steps[0].pressed = steps[15].pressed;
+    updateFbo();
+    /*
+    if(direction == 0)
+    {
+        for (int fw = 0; fw < 16; fw++)
+        {
+            if(fw == 0 && steps[steps.size()-1].pressed == true)
+            {
+                steps[fw].pressed = true;
+            }
+            
+            {
+               
+            }
+        }
+    }
+    else
+    {
+        
+    }*/
+}
+
 void RotarySequencer::updateFbo()
 {
     
@@ -89,12 +119,12 @@ void RotarySequencer::updateFbo()
     ofClear(0,0,0);
     for (int i = 0; i < steps.size(); i++)
     {
-        ofSetColor(255, 0, 0,128);
-        if(i == stepID) ofSetColor(255, 0, 0,230);
-        if(steps[i].pressed) ofSetColor(170, 147, 43,230);
+        ofSetColor(baseColor,128);
+        if(i == stepID) ofSetColor(baseColor,230);
+        if(steps[i].pressed) ofSetColor(baseColor.r*(170/255.), baseColor.g*(147/255.), baseColor.b*(43/255.),230);
         if(steps[i].pressed && i == stepID)
         {
-            ofSetColor(231, 200, 120,255);
+            ofSetColor(baseColor.r*(231/255.), baseColor.g*(200/255.), baseColor.b*(120/255.),255);
         }
         ofDrawCircle(steps[i].position.x,steps[i].position.y,steps[i].radius);
         ofNoFill();

@@ -49,6 +49,8 @@ private:
     float seqDelta;
   
     ofFbo                   preview;
+    ofFbo                   texA;
+    ofFbo                   texB;/// the second color
     GraphicGenerator        gfx;
   
     vector<Mirror>          mirrors;

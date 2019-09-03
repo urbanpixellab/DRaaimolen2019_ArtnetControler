@@ -156,6 +156,16 @@ void Mirror::setTextureMapping(int mappingID)
 {
     //sets on the meshes the texture coordinats to the mapping
     //also a fucked up version
+    switch (mappingID) {
+        case MAPPING::CW:
+            
+            
+            break;
+            
+        default:
+            break;
+    }
+    
     
 }
 

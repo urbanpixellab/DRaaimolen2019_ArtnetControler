@@ -25,7 +25,7 @@ public:
         int drawColorID;
     };
     
-    RotarySequencer(ofRectangle area,float radius,int count,int id);
+    RotarySequencer(ofRectangle area,float radius,int count,int id,ofColor baseColor);
     ~RotarySequencer();
     
     void nextStep();
@@ -35,6 +35,7 @@ public:
     void update();
     void draw();
     
+    void shiftSelect(int direction);
     
     void mousePressed(ofMouseEventArgs & args);
     ofEvent<int> trigger; //think about adding a listener
@@ -54,6 +55,7 @@ private:
     int             initSteps;
     vector<Knop>    steps;//later anothert struct with more options
     int             stepID;
+    ofColor         baseColor;
     
     //new
     float lastStepTime;
