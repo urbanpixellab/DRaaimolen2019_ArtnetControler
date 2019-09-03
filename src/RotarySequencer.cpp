@@ -83,34 +83,6 @@ void RotarySequencer::nextStep()
     }
 }
 
-void RotarySequencer::shiftSelect(int direction)
-{
-    for (int i = 0; i < 15; i++)
-    {
-        steps[i].pressed = steps[(i+1)].pressed;
-    }
-    steps[0].pressed = steps[15].pressed;
-    updateFbo();
-    /*
-    if(direction == 0)
-    {
-        for (int fw = 0; fw < 16; fw++)
-        {
-            if(fw == 0 && steps[steps.size()-1].pressed == true)
-            {
-                steps[fw].pressed = true;
-            }
-            
-            {
-               
-            }
-        }
-    }
-    else
-    {
-        
-    }*/
-}
 
 void RotarySequencer::updateFbo()
 {

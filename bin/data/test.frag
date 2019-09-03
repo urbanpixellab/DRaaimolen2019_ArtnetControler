@@ -1,4 +1,4 @@
-uniform float freq;/// repetitions
+uniform float freq;//the frequency or repetition of the pattern
 uniform float shift;
 uniform sampler2DRect tex;
 varying vec2 texcoord;

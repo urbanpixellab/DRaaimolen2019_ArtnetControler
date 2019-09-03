@@ -73,11 +73,11 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     //to pixels not normalized!!!!!
     
     preview[0].addTexCoord(ofVec2f(0,0));
-    preview[0].addTexCoord(ofVec2f(0.125*l,0));
-    preview[0].addTexCoord(ofVec2f(0.25*l,0));
+    preview[0].addTexCoord(ofVec2f(0.2*l,0));
+    preview[0].addTexCoord(ofVec2f(0.4*l,0));
     
-    preview[1].addTexCoord(ofVec2f(0.25*l,0));
-    preview[1].addTexCoord(ofVec2f(0.375*l,0));
+    preview[1].addTexCoord(ofVec2f(0.4*l,0));
+    preview[1].addTexCoord(ofVec2f(0.45*l,0));
     preview[1].addTexCoord(ofVec2f(0.5*l,0));
     
     preview[2].addTexCoord(ofVec2f(0.5*l,0));

@@ -161,7 +161,6 @@ void PatternEditor::sequenzerHit(int & index)
         {
             mPatSegGen[i]->updatePattern();
         }
-        rotSequencer[0]->shiftSelect(1);
     }
     else if(index == 1)
     {

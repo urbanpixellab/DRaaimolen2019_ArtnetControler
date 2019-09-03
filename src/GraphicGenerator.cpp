@@ -28,7 +28,7 @@ void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float
     screen.begin();
     ofClear(0, 0, 0);
     shader.begin();
-    shader.setUniform1f("freq",0.25);
+    shader.setUniform1f("freq",10);
     shader.setUniform2f("res",ofVec2f(100,100));
     shader.setUniform1f("bright", bright);
     shader.setUniform1f("shift",100 * delta);//delta time
@@ -45,7 +45,7 @@ void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float
     screen.begin();
     ofClear(0, 0, 0);
     shader.begin();
-    shader.setUniform1f("freq",0.25);
+    shader.setUniform1f("freq",10);
     shader.setUniform2f("res",ofVec2f(100,100));
     shader.setUniform1f("bright", bright*master);
     shader.setUniform1f("shift",100 * delta);//delta time

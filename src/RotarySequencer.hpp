@@ -35,8 +35,6 @@ public:
     void update();
     void draw();
     
-    void shiftSelect(int direction);
-    
     void mousePressed(ofMouseEventArgs & args);
     ofEvent<int> trigger; //think about adding a listener
     //add, remove listener
