@@ -8,11 +8,11 @@
 
 #include "UniverseMapper.hpp"
 
-UniverseMapper::UniverseMapper(ofRectangle area,int length,ofTrueTypeFont *f):drawarea(area),mFont(f)
+UniverseMapper::UniverseMapper(ofRectangle area,int myID,int length,ofTrueTypeFont *f):drawarea(area),id(myID),mFont(f)
 {
     ofFbo singleButton;
     int perRow = 30;
-    int w = (area.getWidth()-100)/perRow;
+    int w = (area.getWidth())/perRow;
     int h = drawarea.getHeight()/ceil(length/perRow);
     singleButton.allocate(w,h);
     singleButton.begin();
@@ -58,7 +58,7 @@ UniverseMapper::UniverseMapper(ofRectangle area,int length,ofTrueTypeFont *f):dr
     ofAddListener(ofEvents().mousePressed, this, &UniverseMapper::mousePressed);
     ofAddListener(ofEvents().mouseDragged, this, &UniverseMapper::mouseDragged);
     ofAddListener(ofEvents().mouseReleased, this, &UniverseMapper::mouseReleased);
-    
+    isActive = false;
 }
 UniverseMapper::~UniverseMapper()
 {
@@ -80,6 +80,7 @@ void UniverseMapper::updateFbo()
     {
         ofDrawRectangle(areas[mirSeg[0].pixels[i]]);
     }
+    ofSetColor(0,160,0,128);
     for (int i = 0; i < mirSeg[1].pixels.size(); i++)
     {
         ofDrawRectangle(areas[mirSeg[1].pixels[i]]);
@@ -111,12 +112,15 @@ void UniverseMapper::updateSegment(int id,int beginPixel, int endPixel)
 
 void UniverseMapper::draw()
 {
+    if(!isActive) return;
     ofSetColor(255);
     drawFbo.draw(drawarea);
 }
 
 void UniverseMapper::mousePressed(ofMouseEventArgs & args)
 {
+    if(!isActive) return;
+
     //first give me the distance
     if(drawarea.inside(args.x, args.y) == false) return;
     //now the closest ion or out point select
@@ -135,6 +139,8 @@ void UniverseMapper::mousePressed(ofMouseEventArgs & args)
 
 void UniverseMapper::mouseDragged(ofMouseEventArgs & args)
 {
+    if(!isActive) return;
+
     if(drawarea.inside(args.x, args.y) == false || ioPixelSelect < 0)
     {
         ioPixelSelect = -1;
@@ -169,6 +175,8 @@ void UniverseMapper::mouseDragged(ofMouseEventArgs & args)
 
 void UniverseMapper::mouseReleased(ofMouseEventArgs & args)
 {
+    if(!isActive) return;
+
     if(drawarea.inside(args.x, args.y) == false || ioPixelSelect < 0)
     {
         ioPixelSelect = -1;

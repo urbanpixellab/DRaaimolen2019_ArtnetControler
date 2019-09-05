@@ -5,8 +5,9 @@
 #include "ArtnetData.hpp"
 #include "GraphicGenerator.hpp"
 #include "Mirror.hpp"
-#include "UniverseMapper.hpp"
 #include "RotarySequencer.hpp"
+#include "UniverseControler.hpp"
+#include "ofxXmlSettings.h"
 
 class ofApp : public ofBaseApp{
 
@@ -32,13 +33,16 @@ public:
     void isTrigger(int &triggerIndex);
     void exit();
 
+    void loadPixelMapping();
+    
 private:
     
     vector<PatternEditor*>  patEditors;
 //    PatternEditor           *LIVE;
 
     vector<ofRectangle>     previewBTNs;
-    
+    vector<ofRectangle>     liveBTNs;
+
     ArtnetData              *artnet;
     
     ofTrueTypeFont      menueFont;
@@ -48,14 +52,11 @@ private:
     float timer;
     float seqDelta;
   
-    ofFbo                   preview;
-    ofFbo                   texA;
-    ofFbo                   texB;/// the second color
+    ofFbo                   preTex;// the preview tex
     GraphicGenerator        gfx;
   
     vector<Mirror>          mirrors;
     int                     stepcount;//64
-    UniverseMapper          *uMapper;
     
     int                     masterClock;
     RotaryEncoder           *masterBrightness;

@@ -152,6 +152,51 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
 
 Mirror::~Mirror(){}
 
+void Mirror::setUniverses(int &l1, int &l2, int &t1, int &t2,int &r1, int &r2, int &b1, int &b2)
+{
+    //left top right bottom and cw
+    //a1 tx = 0
+    //b2 tx = 1
+    // check the order
+    // generate the texcoords
+    // set the render meshes
+    // set the render end preview textcoords to cw for begin
+    // now the texcoords
+    int l = 100;// the length
+    
+    render[0].getVertices()[0].x = l1;
+    render[0].getVertices()[2].x = l2;
+    render[0].getVertices()[1].x = (l1+l2)/2;
+
+    render[0].getTexCoords()[0].x = 0*l;
+    render[0].getTexCoords()[2].x = 0.5*l;
+    render[0].getTexCoords()[1].x = 0.25*l;
+    
+    render[1].getVertices()[0].x = t1;
+    render[1].getVertices()[2].x = t2;
+    render[1].getVertices()[1].x = (t1+t2)/2;
+
+    render[1].getTexCoords()[0].x = 0.5*l;
+    render[1].getTexCoords()[2].x = 1*l;
+    render[1].getTexCoords()[1].x = 0.75*l;
+
+    render[2].getVertices()[0].x = r1;
+    render[2].getVertices()[2].x = r2;
+    render[2].getVertices()[1].x = (r1+r2)/2;
+    
+    render[2].getTexCoords()[0].x = 0*l;
+    render[2].getTexCoords()[2].x = 0.5*l;
+    render[2].getTexCoords()[1].x = 0.25*l;
+
+    render[3].getVertices()[0].x = b1;
+    render[3].getVertices()[2].x = b2;
+    render[3].getVertices()[1].x = (b1+b2)/2;
+    
+    render[3].getTexCoords()[0].x = 0.5*l;
+    render[3].getTexCoords()[2].x = 1*l;
+    render[3].getTexCoords()[1].x = 0.75*l;
+}
+
 void Mirror::setTextureMapping(int mappingID)
 {
     //sets on the meshes the texture coordinats to the mapping

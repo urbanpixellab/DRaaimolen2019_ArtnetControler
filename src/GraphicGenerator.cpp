@@ -23,15 +23,15 @@ GraphicGenerator::GraphicGenerator()
 
 GraphicGenerator::~GraphicGenerator(){}
 
-void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright,ofColor &a,ofColor &b)
+void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright,ofColor &a,ofColor &b,float &freq,float &shift)
 {
     screen.begin();
     ofClear(0, 0, 0);
     shader.begin();
-    shader.setUniform1f("freq",10);
+    shader.setUniform1f("freq",freq);
     shader.setUniform2f("res",ofVec2f(100,100));
     shader.setUniform1f("bright", bright);
-    shader.setUniform1f("shift",100 * delta);//delta time
+    shader.setUniform1f("shift",shift *delta * 200);//delta time removed delta
     shader.setUniform3f("colA", a.r/255.,a.g/255.,a.b/255.);
     shader.setUniform3f("colB", b.r/255.,b.g/255.,b.b/255.);
     shader.setUniformTexture("tex",tex, 0);
@@ -40,15 +40,15 @@ void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float
     screen.end();
 }
 
-void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright,float &master)
+void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright,float &master,float &freq,float &shift)
 {
     screen.begin();
     ofClear(0, 0, 0);
     shader.begin();
-    shader.setUniform1f("freq",10);
+    shader.setUniform1f("freq",freq);
     shader.setUniform2f("res",ofVec2f(100,100));
     shader.setUniform1f("bright", bright*master);
-    shader.setUniform1f("shift",100 * delta);//delta time
+    shader.setUniform1f("shift",shift *delta * 200);//delta time
     shader.setUniform3f("colA", colorA);
     shader.setUniform3f("colB", colorB);
     shader.setUniformTexture("tex",tex, 0);

@@ -61,7 +61,8 @@ private:
     float               clickValue;// holds the pressed value
     vector<ofVec4f>     lines;
     bool                isActive;
-    string              names[10]={""};
+    bool                hasNames;//no names show value
+    vector<string>      names;
 };
 
 

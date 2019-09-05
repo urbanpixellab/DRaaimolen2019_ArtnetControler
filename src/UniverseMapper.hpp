@@ -25,7 +25,7 @@ public:
         vector<int> pixels;
     };
     
-    UniverseMapper(ofRectangle area,int length,ofTrueTypeFont *f);
+    UniverseMapper(ofRectangle area,int id,int length,ofTrueTypeFont *f);
     ~UniverseMapper();
     
     void draw();
@@ -34,10 +34,14 @@ public:
     void mouseDragged(ofMouseEventArgs & args);
     void mouseReleased(ofMouseEventArgs & args);
     
+    void setActive(bool value){isActive = value;};
+    bool & getActive(){return isActive;};
+
+    
 
 private:
     void updateFbo();
-    
+    int         id;
     ofRectangle drawarea;
     vector<ofRectangle> areas;
     ofFbo       drawFbo;
@@ -45,9 +49,10 @@ private:
     ofTrueTypeFont *mFont;
     
     Segment     mirSeg[2];//hold two segments for thi universe
-    int selectedPointID;//-1 no point, 0=3 in1 out1 in2 out2
+    int         selectedPointID;//-1 no point, 0=3 in1 out1 in2 out2
     int         ioPixelSelect;//is it a ioPixel
     
+    bool        isActive;
 };
 
 #endif /* UniverseMapper_hpp */

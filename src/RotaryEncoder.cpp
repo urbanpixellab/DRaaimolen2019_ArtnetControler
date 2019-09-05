@@ -9,11 +9,12 @@
 
 RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick,string n[10]):drawarea(area),myID(id),mFont(f),myName(name),stepsDrawn(sDraw),isSticking(stick)
 {
-    for(int i = 0;i < 10;i++)
+    names.clear();
+    for(int i = 0;i < sDraw;i++)
     {
-        names[i] = n[i];
+        names.push_back(n[i]);
     }
-    
+    hasNames = true;
     range = ofVec2f(min,max);
     cCenter.x = drawarea.getWidth()*0.5;
     cRadius = drawarea.getWidth()* 0.3;
@@ -37,6 +38,7 @@ RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string n
     }
     
     value = 0;
+    mapValue = 0;
     updateFbo();
     addListener();
     isActive = false;
@@ -44,6 +46,8 @@ RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string n
 
 RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick):drawarea(area),myID(id),mFont(f),myName(name),stepsDrawn(sDraw),isSticking(stick)
 {
+    names.clear();
+    hasNames = false;
     range = ofVec2f(min,max);
     cCenter.x = drawarea.getWidth()*0.5;
     cRadius = drawarea.getWidth()* 0.3;
@@ -105,7 +109,14 @@ void RotaryEncoder::updateFbo()
     ofSetLineWidth(1);
 
     mFont->drawString(myName, fBegin.x,fBegin.y);
-    mFont->drawString(names[int(mapValue)], fBegin.x+10,drawarea.getHeight()-fBegin.y);
+    if(hasNames == true)
+    {
+        mFont->drawString(names[int(mapValue)],fBegin.x+10,drawarea.getHeight()-fBegin.y);
+    }
+    else{
+        mFont->drawString(ofToString(mapValue,2),fBegin.x+10,drawarea.getHeight()-fBegin.y);
+    }
+    
     drawFbo.end();
 }
 

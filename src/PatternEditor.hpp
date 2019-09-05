@@ -35,24 +35,24 @@ public:
     
     ofEvent<int> SequencerIDHit;
     
-    ofColor getColorA(){return colors->getColorA();};
-    ofColor getColorAA(){return colors->getColorB();};
-    ofColor getColorB(){return colorsB->getColorA();};
-    ofColor getColorBB(){return colorsB->getColorB();};
+    ofColor getColorA1(){return colors->getColorA();};
+    ofColor getColorA2(){return colors->getColorB();};
     
     float &getValueA(){return mCurve->getValue();};
     float &getValueC(){return cCurve->getValue();};
-    void colorPressed(int &id);
     
     vector<bool> &getMirrorPattern(){return mPatGen->getPattern();};
     vector<bool> &getMirrorSubPattern(int &spiegelID){return mPatSegGen[spiegelID]->getPattern();};//this returns all 4 segments per mirror
-    vector<bool> &getMirrorTexturePattern(int &spiegelID){return cPatGen->getPattern();};//this returns all 4 segments per mirror
+//    vector<bool> &getMirrorTexturePattern(int &spiegelID){return cPatGen->getPattern();};//this returns all 4 segments per mirror
 
+    float &getColorDelta(){return rotSequencer[1]->getDeltaTIme();};
     
     void setActive(bool value);
     bool & getActive(){return isActive;};
-
     
+    float &getColorFreq(){return cFreq->getValue();};
+    float &getColorShift(){return cShift->getValue();};
+
     ofEvent<int> isTrigger;
     
 
@@ -62,15 +62,15 @@ private:
 
     PatternGenerator    *mPatGen;
     PatternGenerator    *mPatSegGen[20];
-    PatternGenerator    *cPatGen;// the cilor pattern
+//    PatternGenerator    *cPatGen;// the cilor pattern
     
     //for every mirror we have a 4 pattern generator
     Zadar               *mCurve;
 
-    Zadar               *cCurve;
-
+    Zadar               *cCurve; // make a second one later
+    RotaryEncoder       *cFreq;//the frequency for the color curve 1
+    RotaryEncoder       *cShift;//the phaseshift for color c
     ColorSwatch         *colors;//primary
-    ColorSwatch         *colorsB;//secondary
     
     RotarySequencer         *rotSequencer[2];//mirror and color
 

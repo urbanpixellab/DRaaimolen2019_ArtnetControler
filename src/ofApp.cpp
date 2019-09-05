@@ -9,9 +9,7 @@ void ofApp::setup(){
     menueFont.load("verdana.ttf", 8);
     editSelect = 0;
     liveSelect = 0;
-    preview.allocate(100, 100);
-    texA.allocate(100, 100);
-    texB.allocate(100, 100);
+    preTex.allocate(100, 1);
     
     for(int i = 0;i < 16 ;i++)
     {
@@ -20,8 +18,9 @@ void ofApp::setup(){
     }
     //LIVE = new PatternEditor();
     
-    //testwise preview buttons
+    //preview buttons
     previewBTNs.clear();
+    liveBTNs.clear();
     float cx = ofGetWidth()/2;
     float cy = ofGetHeight()/2;
     int w = ofGetWidth() / 32;
@@ -31,6 +30,7 @@ void ofApp::setup(){
         float x = (ofGetWidth() - w*5) + (i%4*w*1.1);
         float y = w + floor(i/4)*w*1.1;
         previewBTNs.push_back(ofRectangle(x-w/2,y-w/2,w,w));
+        liveBTNs.push_back(ofRectangle(x-w/2,250+y-w/2,w,w));
     }
 
     artnet = new ArtnetData();
@@ -46,11 +46,11 @@ void ofApp::setup(){
         cout << startUniversum << endl;
         mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h),startUniversum,&gfx));
     }
-    uMapper = new UniverseMapper(ofRectangle(ofGetWidth()/2,ofGetHeight()-100,ofGetWidth()/2,100),150,&menueFont);
     patEditors[editSelect]->setActive(true);
     masterBrightness = new RotaryEncoder(ofRectangle(10,10,100,100), 20, &menueFont, "BRIGHTNESS", 0, 1, 10, false);
     masterBrightness->setActive(true);
     masterClock = 0;
+    loadPixelMapping();
 }
 
 //--------------------------------------------------------------
@@ -65,7 +65,7 @@ void ofApp::update()
         //set all colors, should been done somewhere else
         for(int i = 0;i < mirrors.size();i++)
         {
-            gfx.setColor(patEditors[editSelect]->getColorA(), patEditors[editSelect]->getColorAA());
+            gfx.setColor(patEditors[editSelect]->getColorA1(), patEditors[editSelect]->getColorA2());
         }
         timer = now + steplength;
         //update all
@@ -94,22 +94,19 @@ void ofApp::update()
     }
     ofFbo liveTex;
     int liveSelect = editSelect;
-    gfx.drawToFbo(preview,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA(),masterBrightness->getValue());
-    gfx.drawToFbo(texA,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA(),masterBrightness->getValue());
-    gfx.drawToFbo(texB,patEditors[editSelect]->getCurve(),patEditors[editSelect]->getValueC(),patEditors[editSelect]->getValueA(),masterBrightness->getValue());
     
-    gfx.drawToFbo(liveTex,patEditors[liveSelect]->getCurve(),patEditors[liveSelect]->getValueC(),patEditors[liveSelect]->getValueA(),masterBrightness->getValue());
+    float d = patEditors[editSelect]->getColorDelta();// the sequenzer delta
+    //order ofFbo &screen,ofTexture &tex,float &delta,float &bright,ofColor &a,ofColor &b,float &freq,float &shift
+    gfx.drawToFbo(preTex,patEditors[editSelect]->getCurve(),d,patEditors[editSelect]->getValueA(),masterBrightness->getValue(),patEditors[editSelect]->getColorFreq(),patEditors[editSelect]->getColorShift());
     
     // now write to artnet
     
     for(int i = 0;i < mirrors.size();i++)
     {
         //send to artnet
-        mirrors[i].update(preview.getTexture());
-        mirrors[i].update(texA.getTexture());
+//        mirrors[i].update(preview.getTexture());
+        mirrors[i].update(preTex.getTexture());
         //here comes he sequencer in
-        mirrors[i].update(texB.getTexture());
-        int n = floor(i/4);
         
 //        artnet->sendTest2(mirrors[i].getPixelsA());
         
@@ -132,19 +129,32 @@ void ofApp::draw(){
         ofSetColor(255);
         menueFont.drawString(ofToString(i+1), previewBTNs[i].getCenter().x,previewBTNs[i].getCenter().y);
     }
+    //the live buttons
+    for(int i = 0;i < liveBTNs.size();i++)
+    {
+        ofSetColor(0,128,255);
+        ofDrawRectangle(liveBTNs[i]);
+        ofSetColor(255);
+        menueFont.drawString(ofToString(i+1), liveBTNs[i].getCenter().x,liveBTNs[i].getCenter().y);
+    }
+
+    // now tghe selected button
+    ofNoFill();
+    ofSetLineWidth(3);
+    ofSetColor(255);
+    ofDrawRectangle(previewBTNs[editSelect]);
+    ofDrawRectangle(liveBTNs[liveSelect]);
+    ofFill();
+    ofSetLineWidth(1);
+    
     ofSetColor(255);
     
     for(int i = 0;i < mirrors.size();i++)
     {
-        mirrors[i].drawPreview(preview.getTexture());
-        mirrors[i].drawPreview(texA.getTexture());
+        mirrors[i].drawPreview(preTex.getTexture());
     }
-    uMapper->draw();
     
-    mirrors[0].getFbo(0).draw(0,0,150,50);
-    ofImage img;
-    img.setFromPixels(mirrors[0].getPixelsA());
-    img.draw(ofGetWidth()/2, ofGetHeight()/2, 150,20);
+    mirrors[0].getFbo(0).draw(ofGetWidth()-150,ofGetHeight()-50,150,50);
     masterBrightness->draw();
     ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,20);
 
@@ -152,6 +162,7 @@ void ofApp::draw(){
 
 void ofApp::setEditorID(int index)
 {
+    // first disable the old selection
     patEditors[editSelect]->setActive(false);
     editSelect = index;
     patEditors[editSelect]->setActive(true);
@@ -189,43 +200,47 @@ void ofApp::isTrigger(int &triggerIndex)
     }
     else if(triggerIndex == 1)
     {
-        //we have color trigger
-        /*
-        for(int i = 0;i < mirrors.size();i++)
-        {
-            
-            if(patEditors[editSelect]->getMirrorTexturePattern()[i] == true)
-            {
-              //  mirrors[i].setColors(1,1,1,1);
-              //  mirrors[i].setColors(1,1,1,1);
-            }
-            else
-            {
-               // mirrors[i].setColors(0,0,0,0);
-                //cout << "mirror" << i << " FALSE " << endl;
-            }
-        }*/
+        //we have color trigger, is been removed
     }
 }
 
+void ofApp::loadPixelMapping()
+{
+    ofxXmlSettings settings;
+    settings.load("PixelMap.xml");
+    cout << "num u " << settings.getNumTags("universe") << endl;
+    
+    for (int i = 0; i < 20; i++)
+    {
+        settings.pushTag("universe",i);
+        int id = settings.getValue("id", 0);
+        int l1 = settings.getValue("l1", 0);
+        int l2 = settings.getValue("l2", 0);
+        int t1 = settings.getValue("t1", 0);
+        int t2 = settings.getValue("t2", 0);
+        int r1 = settings.getValue("r1", 0);
+        int r2 = settings.getValue("r2", 0);
+        int b1 = settings.getValue("b1", 0);
+        int b2 = settings.getValue("b2", 0);
+        cout << "id " << id << " l1 " << l1 << " l2 " << l2 << endl;
+        // depending on the id, set the mirror points
+        mirrors[id].setUniverses(l1,l2,t1,t2,r1,r2,b1,b2);
+        settings.popTag();
+    }
+}
+
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == ' ')
-    {
-        for(int i = 0;i < mirrors.size();i++)
-        {
-            gfx.setColor(patEditors[editSelect]->getColorA(), patEditors[editSelect]->getColorB());
-        }
-    }
     if(key == 'n')
     {
         //send artnet testwise
         artnet->sendTest();
         cout << "artnet sended" << endl;
     }
-    if(key == 'm')
+    if(key == 'u')
     {
-//        patCont.setPatternDirection(1);
+        //uControl->setActive(!uControl->getActive());
     }
 }
 
@@ -235,7 +250,7 @@ void ofApp::exit()
     {
         delete patEditors[i];
     }
-    delete uMapper;
+    //delete uControl;
     delete artnet;
     delete masterBrightness;
 }
@@ -256,12 +271,18 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
     for(int i = 0;i < previewBTNs.size();i++)
     {
         if(previewBTNs[i].inside(x, y))
         {
             setEditorID(i);
+        }
+    }
+    for(int i = 0;i < liveBTNs.size();i++)
+    {
+        if(liveBTNs[i].inside(x, y))
+        {
+            setLiveID(i);
         }
     }
 

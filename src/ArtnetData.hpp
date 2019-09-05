@@ -32,6 +32,8 @@ public:
     void loadNodes();
     void saveNodes();
     
+    
+    
     void send(int &node, int &universum);
     void send(int &node, int &universum, ofPixels &pix);
     

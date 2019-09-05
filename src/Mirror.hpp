@@ -40,11 +40,11 @@ public:
     ofPixels &getPixelsA(){return outPixelsA;};
     ofPixels &getPixelsB(){return outPixelsB;};
     ofPixels &getAllBlack(){return allBlack;};
-    int &getUniverseIDA(){return myUniverses[0];};
-    int &getUniverseIDB(){return myUniverses[1];};
+    int &getUniverseID(int id){return myUniverses[id];};
     
     ofFbo &getFbo(int id){return all[id];};
-    
+    // now the setup by xml
+    void setUniverses(int &l1, int &l2, int &t1, int &t2,int &r1, int &r2, int &b1, int &b2);
     
 private:
     

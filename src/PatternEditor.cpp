@@ -21,8 +21,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     w = drawarea.getWidth() * 0.125;
     mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont,"MIROR SELECT");
     mPatGen->addListener();
-    cPatGen = new PatternGenerator(ofRectangle(x,drawarea.getHeight() - h,w,h),MIRRORS,mFont,"MIROR COLOR");
-    cPatGen->addListener();
+//    cPatGen = new PatternGenerator(ofRectangle(x,drawarea.getHeight() - h,w,h),MIRRORS,mFont,"MIROR COLOR");
+//    cPatGen->addListener();
     //pattern  segment generator
     for (int i = 0; i < 20; i++)
     {
@@ -43,26 +43,29 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     
     x = drawarea.getLeft() + drawarea.getWidth() * 0.5;
     w = drawarea.getWidth() * 125;
+    
     ////////// now the coloring stuff
     x = drawarea.getLeft();
     y = ofGetHeight() - 3*h;
     w = drawarea.getWidth() * 0.125;
-    cPatGen = new PatternGenerator(ofRectangle(x,y,w,h),2,mFont,"COLOR SWAP");
-    cPatGen->addListener();
+//    cPatGen = new PatternGenerator(ofRectangle(x,y,w,h),2,mFont,"COLOR SWAP");
+//    cPatGen->addListener();
 
-    x = cPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
+//    x = cPatGen->getRightBorder() + drawarea.getWidth() * 0.01;
+    x = x+w + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
     cCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"COLOR CURVE");
-
+    //ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick
+    y += h*1.3;
+    cFreq = new RotaryEncoder(ofRectangle(x-w,y,w/2,h),0,mFont,"Freq_C1",1,50,10,false);
+    cShift = new RotaryEncoder(ofRectangle(x-w/2,y,w/2,h),0,mFont,"Shift_C1",-1,1,20,true);
+    //add listeners
+    
     // color swatches
     x = drawarea.getLeft();
-    y += 60;
-    colors = new ColorSwatch(ofRectangle(x+w*1.3,y+60,120,60));
-    ofAddListener(colors->colorPressed,this,&PatternEditor::colorPressed);
+    //y += 60;
+    colors = new ColorSwatch(ofRectangle(x+w*1.3,y,120,60));
 
-    colorsB = new ColorSwatch(ofRectangle(x+w*1.3,y+150,120,60));
-    ofAddListener(colorsB->colorPressed,this,&PatternEditor::colorPressed);
-    
     x = (ofGetWidth()-ofGetHeight())/2.0;
     y = 0;
     w = drawarea.getHeight();
@@ -75,8 +78,7 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     rotSequencer[1] = new RotarySequencer(ofRectangle(x+s,y+s,w-s*2,h-s*2),rad,16,1,ofColor::paleGoldenRod);
     ofAddListener(rotSequencer[0]->trigger, this, &PatternEditor::sequenzerHit);
     ofAddListener(rotSequencer[1]->trigger, this, &PatternEditor::sequenzerHit);
-
-
+    
     setActive(false);
 
 }
@@ -89,12 +91,14 @@ PatternEditor::~PatternEditor()
     delete mPatGen;
     delete mCurve;
     delete cCurve;
+    delete cFreq;
+    delete cShift;
     delete colors;
     for (int i = 0; i < 20; i++)
     {
         delete mPatSegGen[i];
     }
-    delete cPatGen;
+//    delete cPatGen;
     delete rotSequencer[0];
     delete rotSequencer[1];
 
@@ -131,19 +135,16 @@ void PatternEditor::drawGUI()
     mCurve->draw();
     mPatGen->drawGUI();
     mPatSegGen[0]->drawGUI();//zeichne nur einnen sesub selector
-    cPatGen->drawGUI();
+//    cPatGen->drawGUI();
 
     cCurve->draw();
     colors->draw();
-    colorsB->draw();
     rotSequencer[0]->draw();
     rotSequencer[1]->draw();
-
-}
-
-void PatternEditor::colorPressed(int &id)
-{
     
+    cFreq->draw();
+    cShift->draw();
+
 }
 
 void PatternEditor::sequenzerHit(int & index)
@@ -184,7 +185,7 @@ void PatternEditor::sequenzerHit(int & index)
                 segments[m*4 + 3] = false;
             }
         }*/
-        cPatGen->updatePattern();
+//        cPatGen->updatePattern();
 
     }
     else if(index == 2)
@@ -212,7 +213,8 @@ void PatternEditor::setActive(bool value)
         mPatSegGen[i]->setActive(isActive);
     }
     cCurve->setActive(isActive);
-    cPatGen->setActive(isActive);
+    cFreq->setActive(isActive);
+    cShift->setActive(isActive);
+//    cPatGen->setActive(isActive);
     colors->setActive(isActive);
-    colorsB->setActive(isActive);
 }
