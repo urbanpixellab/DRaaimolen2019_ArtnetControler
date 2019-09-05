@@ -59,6 +59,7 @@ void RotarySequencer::nextStep()
     updateFbo();
     stepTime = now - lastStepTime;
     lastStepTime = now;
+//    cout << "steptime mus been checked " << stepTime << endl;
 
     //do delta calculation if we have a hit on the sequencer
     if(steps[stepID].pressed == true)

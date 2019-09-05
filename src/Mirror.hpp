@@ -31,6 +31,7 @@ public:
     Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,GraphicGenerator *gfx);
     ~Mirror();
     
+    void createUniverses();
     void setMappingMode(){};
     void setEnables(bool left,bool top, bool right, bool bottom);//also mapping
     void allOff();
@@ -72,6 +73,7 @@ private:
     ofPixels    allBlack;//for faster sending off black
     //audio amplifier
     GraphicGenerator    *gfx;
+    ofPixels            whitePix;
 };
 
 #endif /* Mirror_hpp */

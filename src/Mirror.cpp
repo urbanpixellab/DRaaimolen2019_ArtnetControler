@@ -23,6 +23,7 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     outPixelsA.allocate(150, 1, 3);
     outPixelsB.allocate(150, 1, 3);
     allBlack.allocate(150, 1, 3);
+    whitePix.allocate(150,1,3);
     for (int i = 0; i < 150; i++)
     {
         //ofColor c = ofColor((i/150.)* 255);
@@ -30,11 +31,24 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
         outPixelsA.setColor(i, 0, c);//ramp
         outPixelsB.setColor(i, 0, c);//ramp
         allBlack.setColor(i, 0, ofColor(0));//ramp
+        whitePix.setColor(i, 0, ofColor(255));//ramp
     }
+    
     outImgA.setFromPixels(outPixelsA);
     outImgB.setFromPixels(outPixelsA);
-    int l = 100; // the textur width;
 
+    createUniverses();
+    
+    setTextureMapping(mappingMode);
+}
+
+Mirror::~Mirror(){}
+
+void Mirror::createUniverses()
+{
+    int l = 100; // the textur width;
+    //preview cersion cw
+    
     //4 segments 5 points
     //reverse is in artnet settet up
     //draw onscreen
@@ -52,18 +66,18 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     preview[0].addVertex(a);
     preview[0].addVertex(ab);
     preview[0].addVertex(b);
-
+    
     preview[1].setMode(OF_PRIMITIVE_LINE_STRIP);
     preview[1].addVertex(b);
     preview[1].addVertex(bc);
     preview[1].addVertex(c);
-
+    
     
     preview[2].setMode(OF_PRIMITIVE_LINE_STRIP);
     preview[2].addVertex(c);
     preview[2].addVertex(cd);
     preview[2].addVertex(d);
-
+    
     preview[3].setMode(OF_PRIMITIVE_LINE_STRIP);
     preview[3].addVertex(d);
     preview[3].addVertex(da);
@@ -88,8 +102,8 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     preview[3].addTexCoord(ofVec2f(0.825*l,0));
     preview[3].addTexCoord(ofVec2f(1.0*l,0));
     
-
-
+    
+    
     //preview.addTexCoord(ofVec2f(1,0));//end
     
     all[0].allocate(150, 1,GL_RGB);//here i draw allways all segments from one universum
@@ -100,7 +114,7 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     all[0].begin();
     ofClear(0,0,0);
     all[0].end();
-
+    
     all[1].begin();
     ofClear(0,0,0);
     all[1].end();
@@ -118,7 +132,7 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     render[1].addVertex(ofVec3f(90,0,0));
     render[1].addVertex(ofVec3f(120,0,0));
     render[1].addVertex(ofVec3f(150,0,0));
-
+    
     render[2].setMode(OF_PRIMITIVE_LINE_STRIP);
     render[2].addVertex(ofVec3f(0,0,0));
     render[2].addVertex(ofVec3f(30,0,0));
@@ -146,11 +160,7 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     render[3].addTexCoord(ofVec2f(0.825*l,0));
     render[3].addTexCoord(ofVec2f(1.0*l,0));
 
-
-    setTextureMapping(mappingMode);
 }
-
-Mirror::~Mirror(){}
 
 void Mirror::setUniverses(int &l1, int &l2, int &t1, int &t2,int &r1, int &r2, int &b1, int &b2)
 {
@@ -262,7 +272,8 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
     ofDrawRectangle(drawarea);
     ofSetColor(255);
     ofSetLineWidth(2);
-    //draw to the artnet fbos
+    
+    //draw to the artnet fbos bestehend aus den 2x2 segmnenten
     all[0].begin();
     ofClear(0,0,0);
     tex.bind();
@@ -296,11 +307,11 @@ void Mirror::drawPreview(ofTexture &tex)
     if(enabled[3])preview[3].draw();
     tex.unbind();
     ofSetLineWidth(1);
-    
+  
+//draw fbos
     all[0].draw(drawarea.getLeft()-50,drawarea.getBottom(),drawarea.getWidth()+100,10);
     all[1].draw(drawarea.getLeft()-50,drawarea.getBottom()+10,drawarea.getWidth()+100,10);
-
-
+    
 }
 
 void Mirror::setEnables(bool left,bool top, bool right, bool bottom)

@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "ofxArtnet.h"
+#include "ofxXmlSettings.h"
 
 class ArtnetData
 {

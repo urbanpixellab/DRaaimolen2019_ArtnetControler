@@ -3,7 +3,9 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetBackgroundColor(31,27,33);
-    steplength = 0.0625;
+    steplength = 0.125;
+    cout << "init steptime " << steplength << endl;
+    
     ofSetFrameRate(30);
     timer = 0;
     menueFont.load("verdana.ttf", 8);
@@ -50,8 +52,66 @@ void ofApp::setup(){
     masterBrightness = new RotaryEncoder(ofRectangle(10,10,100,100), 20, &menueFont, "BRIGHTNESS", 0, 1, 10, false);
     masterBrightness->setActive(true);
     masterClock = 0;
+    loadPatternEditorSettings();
     loadPixelMapping();
+    w = 100;
+    h = 100;
+    ofSetColor(128);
+    buttons[0] = ofRectangle((ofGetWidth()/2)-w*1.1,(ofGetHeight()/2)-h/2,w,h);
+    buttons[1] = ofRectangle((ofGetWidth()/2)+w*0.1,(ofGetHeight()/2)-h/2,w,h);
+    ofSetColor(0);
+    menueFont.drawString("FLASH", buttons[0].getX(),buttons[0].getBottom());
+    menueFont.drawString("INVERT", buttons[1].getX(),buttons[1].getBottom());
+    
+    
+    cout << "load steptime " << steplength << endl;
 }
+
+void ofApp::savePatternEditorSettings()
+{
+    ofxXmlSettings  set;
+    for (int i = 0; i < patEditors.size(); i++)
+    {
+        set.addTag("Editor");
+        set.pushTag("Editor",i);
+        set.addValue("ID", i);
+        set.addValue("mirColorFreq", patEditors[i]->getColorFreq());
+        //patEditors[i]->get
+//        float mirrorSelect = ;
+
+        //now add the interesting items with get and set
+        set.popTag();
+    }
+    set.save("patterns.xml");
+}
+
+
+
+void ofApp::loadPatternEditorSettings()
+{
+    cout << "load patterneditor" << endl;
+    ofxXmlSettings  set;
+    steplength = 0.125;
+    set.load("patterns.xml");
+    int num = set.getNumTags("Editor");
+    
+    for (int i = 0; i < num; i++)
+    {
+        set.pushTag("Editor",i);
+        set.getValue("Editor",i);
+        int id = set.getValue("ID", i);
+        cout << "id " << id << endl;
+        //steplength = 2;
+        float freQ = set.getValue("mirColorFreq", 0.);
+        patEditors[i]->getColorFreq() = freQ;//set.getValue("mirColorFreq", 0.);
+        cout << patEditors[i]->getColorFreq() << endl;
+        
+        patEditors[i]->update();
+        //now add the interesting items with get and set
+        set.popTag();
+    }
+}
+
 
 //--------------------------------------------------------------
 void ofApp::update()
@@ -156,6 +216,9 @@ void ofApp::draw(){
     
     mirrors[0].getFbo(0).draw(ofGetWidth()-150,ofGetHeight()-50,150,50);
     masterBrightness->draw();
+    ofDrawRectangle(buttons[0]);
+    ofDrawRectangle(buttons[1]);
+    
     ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,20);
 
 }
@@ -176,7 +239,7 @@ void ofApp::setLiveID(int index)
 
 void ofApp::isTrigger(int &triggerIndex)
 {
-//    cout << "trigger" << endl;
+    cout << "trigger" << endl;
     if(triggerIndex == 0) // the pattern for segments 1= color
     {
         for(int i = 0;i < mirrors.size();i++)
@@ -238,14 +301,16 @@ void ofApp::keyPressed(int key){
         artnet->sendTest();
         cout << "artnet sended" << endl;
     }
-    if(key == 'u')
+    if(key == 'r')//reload settings
     {
-        //uControl->setActive(!uControl->getActive());
+        loadPixelMapping();
+        artnet->loadNodes();
     }
 }
 
 void ofApp::exit()
 {
+    savePatternEditorSettings();
     for(int i = 0;i < patEditors.size();i++)
     {
         delete patEditors[i];
@@ -284,6 +349,16 @@ void ofApp::mousePressed(int x, int y, int button){
         {
             setLiveID(i);
         }
+    }
+    if(buttons[0].inside(x,y))
+    {
+        //flash
+        cout << "flash" << endl;
+    }
+    if(buttons[1].inside(x,y))
+    {
+        //flash
+        cout << "invert" << endl;
     }
 
 }

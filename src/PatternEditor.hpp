@@ -50,10 +50,14 @@ public:
     void setActive(bool value);
     bool & getActive(){return isActive;};
     
-    float &getColorFreq(){return cFreq->getValue();};
+    float &getColorFreq(){return cFreq->getValueNormalized();};
     float &getColorShift(){return cShift->getValue();};
 
+    void setColorShift(float value){cShift->getValueNormalized() = value;};
     ofEvent<int> isTrigger;
+    float &getCFreq(){return cFreq->getValue();};
+    
+    
     
 
 private:
@@ -73,6 +77,7 @@ private:
     ColorSwatch         *colors;//primary
     
     RotarySequencer         *rotSequencer[2];//mirror and color
+    Zadar               *phaseModCurve; // for phase shift offset by index and curve
 
     
 //    bool    visible;

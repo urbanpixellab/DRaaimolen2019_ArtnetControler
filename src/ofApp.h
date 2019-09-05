@@ -33,6 +33,8 @@ public:
     void isTrigger(int &triggerIndex);
     void exit();
 
+    void loadPatternEditorSettings();
+    void savePatternEditorSettings();
     void loadPixelMapping();
     
 private:
@@ -60,6 +62,10 @@ private:
     
     int                     masterClock;
     RotaryEncoder           *masterBrightness;
+    
+    ofRectangle             buttons[2];//flash, inverse, inverse
+    bool                    isFlash;
+    bool                    isInverse;
 };
 
 // infos

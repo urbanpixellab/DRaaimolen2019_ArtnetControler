@@ -17,7 +17,6 @@ ArtnetData::ArtnetData()
         test.setColor(i, 0, c);//ramp
     }
 
-    loadNodes();
     int nMAX = 5;
     for(int i = 0;i < nMAX;i++)
     {
@@ -35,9 +34,11 @@ ArtnetData::ArtnetData()
         }
         _nodes.push_back(n);
     }
+    loadNodes();
 }
 ArtnetData::~ArtnetData()
 {
+    saveNodes();
     for (int i = 0; i < _nodes.size(); i++)
     {
         for(int u = 0; u < 8;u++)
@@ -54,6 +55,21 @@ ArtnetData::~ArtnetData()
 
 void ArtnetData::loadNodes()
 {
+    ofxXmlSettings set;
+    set.load("artnet.xml");
+    
+    for (int i = 0; i < set.getNumTags("Node"); i++)
+    {
+        set.pushTag("Node",i);
+        string ip = set.getValue("IP", "127.0.0.1");
+        for (int u = 0; u < 8; u++)
+        {
+            _nodes[i]->artnets[u]->setup(ip);
+            cout << "Node " << i << " with ip " << ip << " " << u << " loaded" << endl;
+        }
+        set.popTag();
+        
+    }
 }
 
 void ArtnetData::send(int &node, int &universum)
@@ -87,5 +103,17 @@ void ArtnetData::sendTest2(ofPixels &pix)
 
 void ArtnetData::saveNodes()
 {
+    ofxXmlSettings set;
+    for (int i = 0; i < _nodes.size(); i++)
+    {
+        set.addTag("Node");
+        set.pushTag("Node",i);
+        string ip = "192.168.12." + ofToString(29+floor(i));
+        set.addValue("IP", ip);
+        set.popTag();
+
+    }
+    
+    set.save("artnet.xml");
     
 }
