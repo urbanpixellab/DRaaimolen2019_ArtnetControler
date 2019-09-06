@@ -40,13 +40,12 @@ public:
     
     Node *getNode(int &id){return _nodes[id];};
     
-    void sendTest();
-    void sendTest2(ofPixels &pix);
+    void sendAll(ofPixels &pix);
     
 private:
-    vector<Node*> _nodes;
+    vector<Node*>               _nodes;
     vector<ofxArtnetSender*>     artnets;
-    ofPixels        test;
+    ofPixels                    test;
 };
 
 #endif /* ArtnetData_hpp */

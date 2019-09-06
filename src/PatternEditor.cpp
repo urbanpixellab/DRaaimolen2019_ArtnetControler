@@ -55,8 +55,9 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     x = x+w + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
     cCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"COLOR CURVE");
-    //ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick
     y += h*1.3;
+    phaseModCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"PHASE SHIFT CURVE");
+    //ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick
     cFreq = new RotaryEncoder(ofRectangle(x-w,y,w/2,h),0,mFont,"Freq_C1",1,50,10,false);
     cShift = new RotaryEncoder(ofRectangle(x-w/2,y,w/2,h),0,mFont,"Shift_C1",-1,1,20,true);
     //add listeners
@@ -64,7 +65,8 @@ PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
     // color swatches
     x = drawarea.getLeft();
     //y += 60;
-    colors = new ColorSwatch(ofRectangle(x+w*1.3,y,120,60));
+    y = ofGetHeight() - 3*h;
+    colors = new ColorSwatch(ofRectangle(x,y,200,100));
 
     x = (ofGetWidth()-ofGetHeight())/2.0;
     y = 0;
@@ -91,6 +93,7 @@ PatternEditor::~PatternEditor()
     delete mPatGen;
     delete mCurve;
     delete cCurve;
+    delete phaseModCurve;
     delete cFreq;
     delete cShift;
     delete colors;
@@ -112,6 +115,7 @@ void PatternEditor::update()
     rotSequencer[1]->update();
     seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
     seqDelta[1] = cCurve->update(rotSequencer[1]->getDeltaTIme());
+    phaseModCurve->update(rotSequencer[1]->getDeltaTIme());
 }
                            
 void PatternEditor::nextStep()
@@ -144,6 +148,7 @@ void PatternEditor::drawGUI()
     
     cFreq->draw();
     cShift->draw();
+    phaseModCurve->draw();
 
 }
 
@@ -215,6 +220,7 @@ void PatternEditor::setActive(bool value)
     cCurve->setActive(isActive);
     cFreq->setActive(isActive);
     cShift->setActive(isActive);
-//    cPatGen->setActive(isActive);
+    phaseModCurve->setActive(isActive);
+    //    cPatGen->setActive(isActive);
     colors->setActive(isActive);
 }

@@ -103,10 +103,10 @@ void ofApp::loadPatternEditorSettings()
         cout << "id " << id << endl;
         //steplength = 2;
         float freQ = set.getValue("mirColorFreq", 0.);
-        patEditors[i]->getColorFreq() = freQ;//set.getValue("mirColorFreq", 0.);
-        cout << patEditors[i]->getColorFreq() << endl;
+        //patEditors[i]->getColorFreq() = freQ;//set.getValue("mirColorFreq", 0.);
+        //cout << patEditors[i]->getColorFreq() << endl;
         
-        patEditors[i]->update();
+        //patEditors[i]->update();
         //now add the interesting items with get and set
         set.popTag();
     }
@@ -126,6 +126,7 @@ void ofApp::update()
         for(int i = 0;i < mirrors.size();i++)
         {
             gfx.setColor(patEditors[editSelect]->getColorA1(), patEditors[editSelect]->getColorA2());
+            gfx.setLiveColor(patEditors[liveSelect]->getColorA1(), patEditors[liveSelect]->getColorA2());
         }
         timer = now + steplength;
         //update all
@@ -157,22 +158,29 @@ void ofApp::update()
     
     float d = patEditors[editSelect]->getColorDelta();// the sequenzer delta
     //order ofFbo &screen,ofTexture &tex,float &delta,float &bright,ofColor &a,ofColor &b,float &freq,float &shift
-    gfx.drawToFbo(preTex,patEditors[editSelect]->getCurve(),d,patEditors[editSelect]->getValueA(),masterBrightness->getValue(),patEditors[editSelect]->getColorFreq(),patEditors[editSelect]->getColorShift());
+//    gfx.drawToFbo(preTex,patEditors[editSelect]->getCurve(),d,patEditors[editSelect]->getValueA(),masterBrightness->getValue(),patEditors[editSelect]->getColorFreq(),patEditors[editSelect]->getColorShift());
     
     // now write to artnet
-    
     for(int i = 0;i < mirrors.size();i++)
     {
         //send to artnet
-//        mirrors[i].update(preview.getTexture());
+        
+        //float shift = fmod(patEditors[editSelect]->getColorShift()+ i*0.2,1.); not properly working
+        float shift = patEditors[editSelect]->getColorShift();
+        gfx.drawToFboPreview(preTex,patEditors[editSelect]->getCurve(),d,patEditors[editSelect]->getValueA(),masterBrightness->getValue(),patEditors[editSelect]->getColorFreq(),shift);
+      
         mirrors[i].update(preTex.getTexture());
         //here comes he sequencer in
         
-//        artnet->sendTest2(mirrors[i].getPixelsA());
+//        artnet->sendTest2(mirrors[0].getPixelsA());
         
         //artnet->send(n,mirrors[i].getUniverseIDA() ,mirrors[i].getPixelsA());
         //artnet->send(n,mirrors[i].getUniverseIDB() ,mirrors[i].getPixelsB());
     }
+    
+    //this sending is working
+    artnet->sendAll(mirrors[0].getPixelsA());
+
 }
 
 //--------------------------------------------------------------
@@ -295,12 +303,6 @@ void ofApp::loadPixelMapping()
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == 'n')
-    {
-        //send artnet testwise
-        artnet->sendTest();
-        cout << "artnet sended" << endl;
-    }
     if(key == 'r')//reload settings
     {
         loadPixelMapping();

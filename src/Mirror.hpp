@@ -74,6 +74,7 @@ private:
     //audio amplifier
     GraphicGenerator    *gfx;
     ofPixels            whitePix;
+    ofTexture           previewTex;
 };
 
 #endif /* Mirror_hpp */

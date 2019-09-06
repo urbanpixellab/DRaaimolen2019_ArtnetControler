@@ -26,7 +26,7 @@ ArtnetData::ArtnetData()
         for (int u = 0; u < 8; u++)
         {
             n->artnets[u] = new ofxArtnetSender();
-            n->artnets[u]->setup(ip);// everyone has 8 universes
+            n->artnets[u]->setup(ip,u);// everyone has 8 universes
             //n->artnets[u]->sendArtnet(test);
             ofxArtnetSender *s = new ofxArtnetSender();
             s->setup(ip,u);
@@ -72,33 +72,20 @@ void ArtnetData::loadNodes()
     }
 }
 
-void ArtnetData::send(int &node, int &universum)
-{
-    //_nodes[node].artnets[universum].sendArtnet(_nodes[node].universes[universum]);
-}
-
 void ArtnetData::send(int &node, int &universum,ofPixels & pix)
 {
     cout << "send " << node  << " universum " << universum << endl;
-
     _nodes[node]->artnets[universum]->sendArtnet(pix);
 }
 
-void ArtnetData::sendTest()
+void ArtnetData::sendAll(ofPixels &pix)
 {
     for (int i = 0; i < artnets.size(); i++)
     {
-        //artnets[i]->sendArtnet(test);
+        artnets[i]->sendArtnet(pix);
     }
 }
 
-void ArtnetData::sendTest2(ofPixels &pix)
-{
-    for (int i = 0; i < artnets.size(); i++)
-    {
-        //artnets[i]->sendArtnet(pix);
-    }
-}
 
 
 void ArtnetData::saveNodes()

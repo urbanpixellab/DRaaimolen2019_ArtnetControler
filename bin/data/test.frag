@@ -17,5 +17,13 @@ void main()
 	float g  = max(c.r * colA.g,(1.0-c.r) * colB.g);
 	float b  = max(c.r * colA.b,(1.0-c.r) * colB.b);
 	
-    gl_FragColor = vec4(r*bright,g*bright,b*bright,1.0);
+	r *= bright;
+	g *= bright;
+	b *= bright;
+
+	r = pow(r,3.);
+	g = pow(g,3.);
+	b = pow(b,3.);
+
+    gl_FragColor = vec4(r,g,b,1.0);
 }

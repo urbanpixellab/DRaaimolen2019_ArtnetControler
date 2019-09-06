@@ -259,15 +259,8 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
         // now artnet can send them out
         //but only if they are available!!!
         //if all black
-        //artnet->send(myNode, outPixelsA);
-
-
-        //artnet->send(myNode, myUniverses[0],outPixelsA);
-        //artnet->send(myNode, myUniverses[1],outPixelsB);
-
-        //artnet->send(myNode, myUniverses[0],outPixelsA);
-        //artnet->send(myNode, myUniverses[1],outPixelsB);
     }
+    previewTex = tex;
     ofSetColor(0);
     ofDrawRectangle(drawarea);
     ofSetColor(255);
@@ -276,7 +269,7 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
     //draw to the artnet fbos bestehend aus den 2x2 segmnenten
     all[0].begin();
     ofClear(0,0,0);
-    tex.bind();
+    previewTex.bind();
     if(enabled[0])render[0].draw();
     if(enabled[1])render[1].draw();
     all[0].end();
@@ -289,7 +282,7 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
     ofSetLineWidth(1);
     
     
-    tex.unbind();
+    previewTex.unbind();
 
     //here read to universes the fbos and send
     all[0].readToPixels(outPixelsA);
@@ -300,12 +293,12 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
 void Mirror::drawPreview(ofTexture &tex)
 {
     ofSetLineWidth(3);
-    tex.bind();
+    previewTex.bind();
     if(enabled[0])preview[0].draw();
     if(enabled[1])preview[1].draw();
     if(enabled[2])preview[2].draw();
     if(enabled[3])preview[3].draw();
-    tex.unbind();
+    previewTex.unbind();
     ofSetLineWidth(1);
   
 //draw fbos
