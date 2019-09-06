@@ -9,7 +9,7 @@
 
 PatternEditor::PatternEditor(){}
 
-PatternEditor::PatternEditor(ofRectangle area, ofTrueTypeFont *mFont)
+PatternEditor::PatternEditor(ofRectangle area, int ID,ofTrueTypeFont *mFont):myID(ID)
 {
     drawarea = area;
     int x = drawarea.getLeft();
@@ -118,11 +118,11 @@ void PatternEditor::update()
     phaseModCurve->update(rotSequencer[1]->getDeltaTIme());
 }
                            
-void PatternEditor::nextStep()
+void PatternEditor::nextStep(int masterStepID)
 {
     //add update delta to rotary sequenzer
-    rotSequencer[0]->nextStep();
-    rotSequencer[1]->nextStep();
+    rotSequencer[0]->nextStep(masterStepID);
+    rotSequencer[1]->nextStep(masterStepID);
 
 //    seqDelta[0] = mCurve->update(rotSequencer[0]->updateDelta());
 //    seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
@@ -201,7 +201,7 @@ void PatternEditor::sequenzerHit(int & index)
         // should be on a external button to ink to the sequencer
         //colors->swapColor();
     }
-    ofNotifyEvent(isTrigger, index);
+    ofNotifyEvent(isTrigger, myID);
 
 }
 

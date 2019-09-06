@@ -4,21 +4,23 @@
 void ofApp::setup(){
     ofSetBackgroundColor(31,27,33);
     steplength = 0.125;
-    cout << "init steptime " << steplength << endl;
-    
+    copieID = -1;
     ofSetFrameRate(30);
     timer = 0;
     menueFont.load("verdana.ttf", 8);
     editSelect = 0;
     liveSelect = 0;
     preTex.allocate(100, 1);
-    
+    liveTex.allocate(100, 1);
     for(int i = 0;i < 16 ;i++)
     {
-        patEditors.push_back(new PatternEditor(ofRectangle(0,0,ofGetWidth(),ofGetHeight()),&menueFont));
-        ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isTrigger);
+        patEditors.push_back(new PatternEditor(ofRectangle(0,0,ofGetWidth(),ofGetHeight()),i,&menueFont));
+        ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isMirrorTrigger);
     }
-    //LIVE = new PatternEditor();
+    PREVIEW = new PatternEditor();
+    PREVIEW = patEditors[0];
+    LIVE = new PatternEditor();
+    LIVE = patEditors[0];
     
     //preview buttons
     previewBTNs.clear();
@@ -36,7 +38,7 @@ void ofApp::setup(){
     }
 
     artnet = new ArtnetData();
-    //LIVE = patEditors[liveSelect];
+    LIVE = patEditors[liveSelect];
     
     w = ofGetWidth() / 40;
     int h = 90;//we have max 90 leds in height
@@ -62,9 +64,6 @@ void ofApp::setup(){
     ofSetColor(0);
     menueFont.drawString("FLASH", buttons[0].getX(),buttons[0].getBottom());
     menueFont.drawString("INVERT", buttons[1].getX(),buttons[1].getBottom());
-    
-    
-    cout << "load steptime " << steplength << endl;
 }
 
 void ofApp::savePatternEditorSettings()
@@ -125,41 +124,30 @@ void ofApp::update()
         //set all colors, should been done somewhere else
         for(int i = 0;i < mirrors.size();i++)
         {
-            gfx.setColor(patEditors[editSelect]->getColorA1(), patEditors[editSelect]->getColorA2());
-            gfx.setLiveColor(patEditors[liveSelect]->getColorA1(), patEditors[liveSelect]->getColorA2());
+            gfx.setColor(PREVIEW->getColorA1(), PREVIEW->getColorA2());
+            gfx.setLiveColor(LIVE->getColorA1(), LIVE->getColorA2());
         }
         timer = now + steplength;
         //update all
         for (int i = 0; i < patEditors.size(); i++)
         {
-            patEditors[i]->nextStep();
+            patEditors[i]->nextStep(masterClock);
         }
         //do all
-
-        stepcount++;
-        if(stepcount >= 16)
-        {
-            stepcount = 0;
-        }
 
         //if(editSelect != liveSelect) LIVE->nextStep(); // onl;y if they are not the same update them
     }
     else
     {
+        //update all
         for (int i = 0; i < patEditors.size(); i++)
         {
-        //    patEditors[editSelect]->nextStep();
+            patEditors[i]->update();
         }
-        patEditors[editSelect]->update();
         //LIVE->update();
     }
-    ofFbo liveTex;
-    int liveSelect = editSelect;
-    
+    //int liveSelect = li;
     float d = patEditors[editSelect]->getColorDelta();// the sequenzer delta
-    //order ofFbo &screen,ofTexture &tex,float &delta,float &bright,ofColor &a,ofColor &b,float &freq,float &shift
-//    gfx.drawToFbo(preTex,patEditors[editSelect]->getCurve(),d,patEditors[editSelect]->getValueA(),masterBrightness->getValue(),patEditors[editSelect]->getColorFreq(),patEditors[editSelect]->getColorShift());
-    
     // now write to artnet
     for(int i = 0;i < mirrors.size();i++)
     {
@@ -168,19 +156,17 @@ void ofApp::update()
         //float shift = fmod(patEditors[editSelect]->getColorShift()+ i*0.2,1.); not properly working
         float shift = patEditors[editSelect]->getColorShift();
         gfx.drawToFboPreview(preTex,patEditors[editSelect]->getCurve(),d,patEditors[editSelect]->getValueA(),masterBrightness->getValue(),patEditors[editSelect]->getColorFreq(),shift);
+        gfx.drawToFbo(liveTex,patEditors[liveSelect]->getCurve(),d,patEditors[liveSelect]->getValueA(),masterBrightness->getValue(),patEditors[liveSelect]->getColorFreq(),shift);
       
         mirrors[i].update(preTex.getTexture());
-        //here comes he sequencer in
-        
-//        artnet->sendTest2(mirrors[0].getPixelsA());
-        
-        //artnet->send(n,mirrors[i].getUniverseIDA() ,mirrors[i].getPixelsA());
-        //artnet->send(n,mirrors[i].getUniverseIDB() ,mirrors[i].getPixelsB());
+        //now send all mirrors
+        int artNetID = i * 2;
+        artnet->send(artNetID,mirrors[i].getPixelsA());
+        artnet->send(artNetID,mirrors[i].getPixelsB());
     }
-    
     //this sending is working
-    artnet->sendAll(mirrors[0].getPixelsA());
-
+//    artnet->sendAll(mirrors[0].getPixelsA());
+    
 }
 
 //--------------------------------------------------------------
@@ -216,10 +202,13 @@ void ofApp::draw(){
     ofSetLineWidth(1);
     
     ofSetColor(255);
+
     
     for(int i = 0;i < mirrors.size();i++)
     {
         mirrors[i].drawPreview(preTex.getTexture());
+        mirrors[i].drawLive(preTex.getTexture());
+        mirrors[i].drawFBOs();
     }
     
     mirrors[0].getFbo(0).draw(ofGetWidth()-150,ofGetHeight()-50,150,50);
@@ -242,13 +231,14 @@ void ofApp::setEditorID(int index)
 void ofApp::setLiveID(int index)
 {
     liveSelect = index;
-    //LIVE = patEditors[liveSelect];
+    LIVE = patEditors[liveSelect];
 }
 
-void ofApp::isTrigger(int &triggerIndex)
+void ofApp::isMirrorTrigger(int &triggerIndex)
 {
     cout << "trigger" << endl;
-    if(triggerIndex == 0) // the pattern for segments 1= color
+    
+    if(triggerIndex == editSelect) // the pattern for segments , 1 = color
     {
         for(int i = 0;i < mirrors.size();i++)
         {
@@ -264,14 +254,27 @@ void ofApp::isTrigger(int &triggerIndex)
             else
             {
                 mirrors[i].setEnables(false,false,false,false);
-                //cout << "mirror" << i << " FALSE " << endl;
             }
         }
-
     }
-    else if(triggerIndex == 1)
+    else if(triggerIndex == liveSelect)
     {
-        //we have color trigger, is been removed
+        for(int i = 0;i < mirrors.size();i++)
+        {
+            if(patEditors[editSelect]->getMirrorPattern()[i] == true)
+            {
+                bool left = patEditors[editSelect]->getMirrorSubPattern(i)[0];
+                bool top = patEditors[editSelect]->getMirrorSubPattern(i)[1];
+                bool right = patEditors[editSelect]->getMirrorSubPattern(i)[2];
+                bool bottom = patEditors[editSelect]->getMirrorSubPattern(i)[3];
+                mirrors[i].setEnables(left,top,right,bottom);
+                //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
+            }
+            else
+            {
+                mirrors[i].setEnables(false,false,false,false);
+            }
+        }
     }
 }
 
@@ -333,16 +336,22 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    if(copieID < 0)return;
+    //else we copie a preset
+    
+    //and set on release
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    copieID = -1;
     for(int i = 0;i < previewBTNs.size();i++)
     {
         if(previewBTNs[i].inside(x, y))
         {
             setEditorID(i);
+            copieID = i;
+            
         }
     }
     for(int i = 0;i < liveBTNs.size();i++)
@@ -367,7 +376,20 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    if(copieID < 0)return;
+    bool isCopie = false;
+    for(int i = 0;i < previewBTNs.size();i++)
+    {
+        if(previewBTNs[i].inside(x,y) == true && i != copieID)
+        {
+            //we have a hit the copie if i am not myself
+            patEditors[i] = patEditors[copieID];
+            cout << "copied id " << copieID <<  " to id " << i << endl;
+        }
+    }
+    
+    //check if we are in a new valid field and the copie if valid
+    
 }
 
 //--------------------------------------------------------------

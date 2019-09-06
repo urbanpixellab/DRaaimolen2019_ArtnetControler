@@ -23,10 +23,10 @@ class PatternEditor
 public:
     
     PatternEditor();
-    PatternEditor(ofRectangle area, ofTrueTypeFont *mFont);
+    PatternEditor(ofRectangle area,int ID, ofTrueTypeFont *mFont);
     ~PatternEditor();
     
-    void nextStep();
+    void nextStep(int masterStepID);
     void update();
     void drawGUI();
     void sequenzerHit(int & index);
@@ -54,13 +54,14 @@ public:
     float &getColorShift(){return cShift->getValue();};
 
     void setColorShift(float value){cShift->getValueNormalized() = value;};
-    ofEvent<int> isTrigger;
+    ofEvent<int> isTrigger;//we are giving back the id
     float &getCFreq(){return cFreq->getValue();};
     
     
     
 
 private:
+    int myID;
     ofRectangle         drawarea;
     float               seqDelta[2];
 

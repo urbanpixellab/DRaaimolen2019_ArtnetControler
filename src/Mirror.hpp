@@ -37,6 +37,12 @@ public:
     void allOff();
     void update(ofTexture &tex);//draw the stuff to the arrays
     void drawPreview(ofTexture &tex);
+    //new
+    void drawLive(ofTexture &tex);
+    void drawFBOs();
+    
+    
+    
     void setTextureMapping(int mappingID);
     ofPixels &getPixelsA(){return outPixelsA;};
     ofPixels &getPixelsB(){return outPixelsB;};
@@ -64,7 +70,8 @@ private:
     ofImage     outImgB;
     ofMesh      preview[4];//left top right bottom
     ofMesh      render[4];//for the linear fbo
-    //left top right bottom //every render heas 3 coordinates, and the shifted texture coordinates based on the mapping and inverse
+    //left top right bottom
+    //every render heas 3 coordinates, and the shifted texture coordinates based on the mapping and inverse
     
     
     ArtnetData  *artnet;//direct link to artnet

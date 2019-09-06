@@ -267,6 +267,7 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
     ofSetLineWidth(2);
     
     //draw to the artnet fbos bestehend aus den 2x2 segmnenten
+    /*
     all[0].begin();
     ofClear(0,0,0);
     previewTex.bind();
@@ -282,30 +283,54 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
     ofSetLineWidth(1);
     
     
-    previewTex.unbind();
+    previewTex.unbind();*/
 
     //here read to universes the fbos and send
-    all[0].readToPixels(outPixelsA);
-    all[1].readToPixels(outPixelsB);
 
 }
 
 void Mirror::drawPreview(ofTexture &tex)
 {
     ofSetLineWidth(3);
-    previewTex.bind();
+    tex.bind();
     if(enabled[0])preview[0].draw();
     if(enabled[1])preview[1].draw();
     if(enabled[2])preview[2].draw();
     if(enabled[3])preview[3].draw();
-    previewTex.unbind();
+    tex.unbind();
     ofSetLineWidth(1);
   
-//draw fbos
+}
+
+void Mirror::drawLive(ofTexture &tex)
+{
+    //draw to fbos and pixels
+    all[0].begin();
+    ofClear(0,0,0);
+    tex.bind();
+    if(enabled[0])render[0].draw();
+    if(enabled[1])render[1].draw();
+    all[0].end();
+    
+    all[1].begin();
+    ofClear(0,0,0);
+    if(enabled[2])render[2].draw();
+    if(enabled[3])render[3].draw();
+    all[1].end();
+    tex.unbind();
+
+    //only this we have to do for live
+    all[0].readToPixels(outPixelsA);
+    all[1].readToPixels(outPixelsB);
+
+}
+void Mirror::drawFBOs()
+{
+    //draw fbos
     all[0].draw(drawarea.getLeft()-50,drawarea.getBottom(),drawarea.getWidth()+100,10);
     all[1].draw(drawarea.getLeft()-50,drawarea.getBottom()+10,drawarea.getWidth()+100,10);
-    
 }
+
 
 void Mirror::setEnables(bool left,bool top, bool right, bool bottom)
 {

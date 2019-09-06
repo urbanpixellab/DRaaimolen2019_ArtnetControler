@@ -37,6 +37,7 @@ public:
     
     void send(int &node, int &universum);
     void send(int &node, int &universum, ofPixels &pix);
+    void send(int &uID, ofPixels &pix);
     
     Node *getNode(int &id){return _nodes[id];};
     

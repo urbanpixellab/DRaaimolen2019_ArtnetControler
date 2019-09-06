@@ -49,13 +49,15 @@ RotarySequencer::~RotarySequencer()
     removeListener();
 }
 
-void RotarySequencer::nextStep()
+void RotarySequencer::nextStep(int masterStepID)
 {
+    int myMaxStep = 16;
+    masterStepID = masterStepID%myMaxStep;
     float now = ofGetElapsedTimef();
 
     stepID++;
     //de pends on direction - is forward!!!!
-    if(stepID >= 16 ) stepID = 0;
+    if(stepID >= myMaxStep ) stepID = 0;
     updateFbo();
     stepTime = now - lastStepTime;
     lastStepTime = now;

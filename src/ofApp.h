@@ -30,7 +30,7 @@ public:
 
     void setEditorID(int index);
     void setLiveID(int index);
-    void isTrigger(int &triggerIndex);
+    void isMirrorTrigger(int &triggerIndex);
     void exit();
 
     void loadPatternEditorSettings();
@@ -40,7 +40,8 @@ public:
 private:
     
     vector<PatternEditor*>  patEditors;
-//    PatternEditor           *LIVE;
+    PatternEditor           *PREVIEW;
+    PatternEditor           *LIVE;
 
     vector<ofRectangle>     previewBTNs;
     vector<ofRectangle>     liveBTNs;
@@ -55,6 +56,7 @@ private:
     float seqDelta;
   
     ofFbo                   preTex;// the preview tex
+    ofFbo                   liveTex;// the preview tex
     GraphicGenerator        gfx;
   
     vector<Mirror>          mirrors;
@@ -66,6 +68,7 @@ private:
     ofRectangle             buttons[2];//flash, inverse, inverse
     bool                    isFlash;
     bool                    isInverse;
+    int                     copieID;//the pattern to copy
 };
 
 // infos

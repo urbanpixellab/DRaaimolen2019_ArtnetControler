@@ -28,7 +28,7 @@ public:
     RotarySequencer(ofRectangle area,float radius,int count,int id,ofColor baseColor);
     ~RotarySequencer();
     
-    void nextStep();
+    void nextStep(int masterStepID);
     float &updateDelta();
     void resetToBegin();
     void updateFbo();
