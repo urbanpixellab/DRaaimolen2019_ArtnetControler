@@ -155,7 +155,7 @@ void PatternEditor::drawGUI()
 void PatternEditor::sequenzerHit(int & index)
 {
 //    cout << "pat trigger " << index << endl;
-    if(index < 0 || isActive == false) return;
+//    if(index < 0 || isActive == false) return;
     //cout << "sequenzer hit " << index <<   endl;
     if(index == 0)
     {

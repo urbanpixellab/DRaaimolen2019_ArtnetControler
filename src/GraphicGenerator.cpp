@@ -23,7 +23,7 @@ GraphicGenerator::GraphicGenerator()
 
 GraphicGenerator::~GraphicGenerator(){}
 
-void GraphicGenerator::drawToFboPreview(ofFbo &screen,ofTexture &tex,float &delta,float &bright,float &master,float &freq,float &shift)
+void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright,float &master,float &freq,float &shift,ofColor &ca,ofColor &cb)
 {
     screen.begin();
     ofClear(0, 0, 0);
@@ -32,25 +32,8 @@ void GraphicGenerator::drawToFboPreview(ofFbo &screen,ofTexture &tex,float &delt
     shader.setUniform2f("res",ofVec2f(100,100));
     shader.setUniform1f("bright", bright*master);
     shader.setUniform1f("shift",shift *delta * 200);//delta time removed delta
-    shader.setUniform3f("colA", colorA);
-    shader.setUniform3f("colB", colorB);
-    shader.setUniformTexture("tex",tex, 0);
-    mesh.draw();
-    shader.end();
-    screen.end();
-}
-
-void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float &bright,float &master,float &freq,float &shift)
-{
-    screen.begin();
-    ofClear(0, 0, 0);
-    shader.begin();
-    shader.setUniform1f("freq",freq*10);
-    shader.setUniform2f("res",ofVec2f(100,100));
-    shader.setUniform1f("bright", bright*master);
-    shader.setUniform1f("shift",shift *delta * 200);//delta time
-    shader.setUniform3f("colA", colorA);
-    shader.setUniform3f("colB", colorB);
+    shader.setUniform3f("colA", ca.r,ca.b,ca.b);
+    shader.setUniform3f("colB", cb.r,cb.g,cb.b);
     shader.setUniformTexture("tex",tex, 0);
     mesh.draw();
     shader.end();

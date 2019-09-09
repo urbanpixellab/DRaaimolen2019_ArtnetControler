@@ -109,7 +109,8 @@ void StepSequencer::update()
                 nextTriggerTime = thisTriggerTime+deltaTime;
                 //cout << "next in " << toNextCount << " delta " << deltaTime << endl;
                 //begin with delta
-                if(isActive) ofNotifyEvent(trigger, myID);
+                //if(isActive) ofNotifyEvent(trigger, myID);
+                ofNotifyEvent(trigger, myID);
             }
         }
         else

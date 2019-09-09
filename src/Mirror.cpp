@@ -24,6 +24,8 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     outPixelsB.allocate(150, 1, 3);
     allBlack.allocate(150, 1, 3);
     whitePix.allocate(150,1,3);
+    preFbo.allocate(150,1,3);
+    liveFbo.allocate(150,1,3);
     for (int i = 0; i < 150; i++)
     {
         //ofColor c = ofColor((i/150.)* 255);
@@ -292,18 +294,46 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
 void Mirror::drawPreview(ofTexture &tex)
 {
     ofSetLineWidth(3);
-    tex.bind();
+    preFbo.getTexture().bind();
+//    tex.bind();
     if(enabled[0])preview[0].draw();
     if(enabled[1])preview[1].draw();
     if(enabled[2])preview[2].draw();
     if(enabled[3])preview[3].draw();
-    tex.unbind();
+    preFbo.getTexture().unbind();
+//    tex.unbind();
     ofSetLineWidth(1);
   
 }
 
+void Mirror::updateLive()
+{
+    all[0].begin();
+    ofClear(0,0,0);
+    liveFbo.getTexture().bind();
+    if(enabled[0])render[0].draw();
+    if(enabled[1])render[1].draw();
+    all[0].end();
+    
+    all[1].begin();
+    ofClear(0,0,0);
+    if(enabled[2])render[2].draw();
+    if(enabled[3])render[3].draw();
+    all[1].end();
+    liveFbo.getTexture().unbind();
+    
+    //only this we have to do for live
+    all[0].readToPixels(outPixelsA);
+    all[1].readToPixels(outPixelsB);
+}
+
+
 void Mirror::drawLive(ofTexture &tex)
 {
+    all[0].draw(drawarea.getLeft()-50,drawarea.getBottom(),drawarea.getWidth()+100,10);
+    all[1].draw(drawarea.getLeft()-50,drawarea.getBottom()+10,drawarea.getWidth()+100,10);
+
+    /*
     //draw to fbos and pixels
     all[0].begin();
     ofClear(0,0,0);
@@ -322,6 +352,7 @@ void Mirror::drawLive(ofTexture &tex)
     //only this we have to do for live
     all[0].readToPixels(outPixelsA);
     all[1].readToPixels(outPixelsB);
+     */
 
 }
 void Mirror::drawFBOs()

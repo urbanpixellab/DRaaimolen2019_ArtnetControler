@@ -35,8 +35,8 @@ public:
     
     ofEvent<int> SequencerIDHit;
     
-    ofColor getColorA1(){return colors->getColorA();};
-    ofColor getColorA2(){return colors->getColorB();};
+    ofColor &getColorA1(){return colors->getColorA();};
+    ofColor &getColorA2(){return colors->getColorB();};
     
     float &getValueA(){return mCurve->getValue();};
     float &getValueC(){return cCurve->getValue();};

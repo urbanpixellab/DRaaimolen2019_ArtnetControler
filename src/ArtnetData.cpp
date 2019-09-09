@@ -80,14 +80,14 @@ void ArtnetData::send(int &node, int &universum,ofPixels & pix)
 
 void ArtnetData::send(int &uID,ofPixels & pix)
 {
-    artnets[uID]->sendArtnet(pix);
+//    artnets[uID]->sendArtnet(pix);
 }
 
 void ArtnetData::sendAll(ofPixels &pix)
 {
     for (int i = 0; i < artnets.size(); i++)
     {
-        artnets[i]->sendArtnet(pix);
+//        artnets[i]->sendArtnet(pix);
     }
 }
 

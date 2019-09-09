@@ -50,7 +50,7 @@ void ofApp::setup(){
         cout << startUniversum << endl;
         mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h),startUniversum,&gfx));
     }
-    patEditors[editSelect]->setActive(true);
+    PREVIEW->setActive(true);
     masterBrightness = new RotaryEncoder(ofRectangle(10,10,100,100), 20, &menueFont, "BRIGHTNESS", 0, 1, 10, false);
     masterBrightness->setActive(true);
     masterClock = 0;
@@ -122,20 +122,12 @@ void ofApp::update()
         masterClock++;
         if (masterClock >= 64) masterClock = 0;
         //set all colors, should been done somewhere else
-        for(int i = 0;i < mirrors.size();i++)
-        {
-            gfx.setColor(PREVIEW->getColorA1(), PREVIEW->getColorA2());
-            gfx.setLiveColor(LIVE->getColorA1(), LIVE->getColorA2());
-        }
         timer = now + steplength;
         //update all
         for (int i = 0; i < patEditors.size(); i++)
         {
             patEditors[i]->nextStep(masterClock);
         }
-        //do all
-
-        //if(editSelect != liveSelect) LIVE->nextStep(); // onl;y if they are not the same update them
     }
     else
     {
@@ -144,21 +136,19 @@ void ofApp::update()
         {
             patEditors[i]->update();
         }
-        //LIVE->update();
     }
     //int liveSelect = li;
-    float d = patEditors[editSelect]->getColorDelta();// the sequenzer delta
     // now write to artnet
     for(int i = 0;i < mirrors.size();i++)
     {
-        //send to artnet
+        float shiftPre = PREVIEW->getColorShift();
+        //float shift = fmod(PREVIEW->getColorShift()+ i*0.2,1.); not properly working
+        gfx.drawToFbo(mirrors[i].getPreFbo(),PREVIEW->getCurve(),PREVIEW->getColorDelta(),PREVIEW->getValueA(),masterBrightness->getValue(),PREVIEW->getColorFreq(),shiftPre,PREVIEW->getColorA1(), PREVIEW->getColorA2());
+
+        float shiftLive = LIVE->getColorShift();
+        gfx.drawToFbo(mirrors[i].getLiveFbo(),LIVE->getCurve(),LIVE->getColorDelta(),LIVE->getValueA(),masterBrightness->getValue(),LIVE->getColorFreq(),shiftLive,LIVE->getColorA1(), LIVE->getColorA2());
+        mirrors[i].updateLive();
         
-        //float shift = fmod(patEditors[editSelect]->getColorShift()+ i*0.2,1.); not properly working
-        float shift = patEditors[editSelect]->getColorShift();
-        gfx.drawToFboPreview(preTex,patEditors[editSelect]->getCurve(),d,patEditors[editSelect]->getValueA(),masterBrightness->getValue(),patEditors[editSelect]->getColorFreq(),shift);
-        gfx.drawToFbo(liveTex,patEditors[liveSelect]->getCurve(),d,patEditors[liveSelect]->getValueA(),masterBrightness->getValue(),patEditors[liveSelect]->getColorFreq(),shift);
-      
-        mirrors[i].update(preTex.getTexture());
         //now send all mirrors
         int artNetID = i * 2;
         artnet->send(artNetID,mirrors[i].getPixelsA());
@@ -174,7 +164,7 @@ void ofApp::draw(){
 //    ofSetColor(0);
 //    ofDrawRectangle(0,0, ofGetWidth(), 150);
     ofSetColor(255);
-    patEditors[editSelect]->drawGUI();
+    PREVIEW->drawGUI();
     int id = 0;
     for(int i = 0;i < previewBTNs.size();i++)
     {
@@ -208,7 +198,7 @@ void ofApp::draw(){
     {
         mirrors[i].drawPreview(preTex.getTexture());
         mirrors[i].drawLive(preTex.getTexture());
-        mirrors[i].drawFBOs();
+        //mirrors[i].drawFBOs();
     }
     
     mirrors[0].getFbo(0).draw(ofGetWidth()-150,ofGetHeight()-50,150,50);
@@ -223,9 +213,10 @@ void ofApp::draw(){
 void ofApp::setEditorID(int index)
 {
     // first disable the old selection
-    patEditors[editSelect]->setActive(false);
+    PREVIEW->setActive(false);
     editSelect = index;
-    patEditors[editSelect]->setActive(true);
+    PREVIEW = patEditors[index];
+    PREVIEW->setActive(true);
 }
 
 void ofApp::setLiveID(int index)
@@ -236,18 +227,18 @@ void ofApp::setLiveID(int index)
 
 void ofApp::isMirrorTrigger(int &triggerIndex)
 {
-    cout << "trigger" << endl;
-    
+    cout << "trigger id " << triggerIndex <<  endl;
+    if(triggerIndex != editSelect && triggerIndex != liveSelect) return;
     if(triggerIndex == editSelect) // the pattern for segments , 1 = color
     {
         for(int i = 0;i < mirrors.size();i++)
         {
-            if(patEditors[editSelect]->getMirrorPattern()[i] == true)
+            if(PREVIEW->getMirrorPattern()[i] == true)
             {
-                bool left = patEditors[editSelect]->getMirrorSubPattern(i)[0];
-                bool top = patEditors[editSelect]->getMirrorSubPattern(i)[1];
-                bool right = patEditors[editSelect]->getMirrorSubPattern(i)[2];
-                bool bottom = patEditors[editSelect]->getMirrorSubPattern(i)[3];
+                bool left = PREVIEW->getMirrorSubPattern(i)[0];
+                bool top = PREVIEW->getMirrorSubPattern(i)[1];
+                bool right = PREVIEW->getMirrorSubPattern(i)[2];
+                bool bottom = PREVIEW->getMirrorSubPattern(i)[3];
                 mirrors[i].setEnables(left,top,right,bottom);
                 //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
             }
@@ -261,12 +252,12 @@ void ofApp::isMirrorTrigger(int &triggerIndex)
     {
         for(int i = 0;i < mirrors.size();i++)
         {
-            if(patEditors[editSelect]->getMirrorPattern()[i] == true)
+            if(PREVIEW->getMirrorPattern()[i] == true)
             {
-                bool left = patEditors[editSelect]->getMirrorSubPattern(i)[0];
-                bool top = patEditors[editSelect]->getMirrorSubPattern(i)[1];
-                bool right = patEditors[editSelect]->getMirrorSubPattern(i)[2];
-                bool bottom = patEditors[editSelect]->getMirrorSubPattern(i)[3];
+                bool left = PREVIEW->getMirrorSubPattern(i)[0];
+                bool top = PREVIEW->getMirrorSubPattern(i)[1];
+                bool right = PREVIEW->getMirrorSubPattern(i)[2];
+                bool bottom = PREVIEW->getMirrorSubPattern(i)[3];
                 mirrors[i].setEnables(left,top,right,bottom);
                 //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
             }

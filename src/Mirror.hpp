@@ -36,6 +36,7 @@ public:
     void setEnables(bool left,bool top, bool right, bool bottom);//also mapping
     void allOff();
     void update(ofTexture &tex);//draw the stuff to the arrays
+    void updateLive();
     void drawPreview(ofTexture &tex);
     //new
     void drawLive(ofTexture &tex);
@@ -52,6 +53,9 @@ public:
     ofFbo &getFbo(int id){return all[id];};
     // now the setup by xml
     void setUniverses(int &l1, int &l2, int &t1, int &t2,int &r1, int &r2, int &b1, int &b2);
+    
+    ofFbo &getPreFbo(){return preFbo;};
+    ofFbo &getLiveFbo(){return liveFbo;};
     
 private:
     
@@ -82,6 +86,8 @@ private:
     GraphicGenerator    *gfx;
     ofPixels            whitePix;
     ofTexture           previewTex;
+    ofFbo               preFbo;
+    ofFbo               liveFbo;
 };
 
 #endif /* Mirror_hpp */
