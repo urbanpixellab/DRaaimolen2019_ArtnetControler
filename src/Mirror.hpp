@@ -33,14 +33,13 @@ public:
     
     void createUniverses();
     void setMappingMode(){};
-    void setEnables(bool left,bool top, bool right, bool bottom);//also mapping
+    void setEnablesPre(bool left,bool top, bool right, bool bottom);
+    void setEnablesLive(bool left,bool top, bool right, bool bottom);//also mapping
     void allOff();
-    void update(ofTexture &tex);//draw the stuff to the arrays
+    void setMappingMode(int mode);
     void updateLive();
-    void drawPreview(ofTexture &tex);
-    //new
-    void drawLive(ofTexture &tex);
-    void drawFBOs();
+    void drawPreview();
+    void drawLive();
     
     
     
@@ -65,8 +64,8 @@ private:
     int     myNode; //which artnet node to write
     int     myUniverses[2];// can i calculate by the mirror id
 
-    bool    enabled[4]={true}; //for every segment the enable, first all off
-    //think about the segments, which universes
+    bool    enPre[4]={true};
+    bool    enLive[4]={true};
     
     ofPixels    outPixelsA;
     ofPixels    outPixelsB;

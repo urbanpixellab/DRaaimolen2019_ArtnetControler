@@ -82,14 +82,15 @@ void RotarySequencer::nextStep(int masterStepID)
         }
         deltaTime = stepTime*float(toNextCount+1);//+1 my own length
         nextTriggerTime = thisTriggerTime+deltaTime;
-        if(isActive) ofNotifyEvent(trigger, myID);
+        ofNotifyEvent(trigger, myID);
     }
 }
 
 
 void RotarySequencer::updateFbo()
 {
-    
+    if(isActive == false) return;
+
     drawFbo.begin();
     ofClear(0,0,0);
     for (int i = 0; i < steps.size(); i++)
@@ -112,7 +113,7 @@ void RotarySequencer::updateFbo()
 
 void RotarySequencer::update()
 {
-    if(isActive == false) return;
+//    if(isActive == false) return;
 
     float now = ofGetElapsedTimef();
     delta = (now - thisTriggerTime)/(deltaTime);

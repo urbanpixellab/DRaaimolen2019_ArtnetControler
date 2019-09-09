@@ -10,17 +10,15 @@ void ofApp::setup(){
     menueFont.load("verdana.ttf", 8);
     editSelect = 0;
     liveSelect = 0;
-    preTex.allocate(100, 1);
-    liveTex.allocate(100, 1);
     for(int i = 0;i < 16 ;i++)
     {
         patEditors.push_back(new PatternEditor(ofRectangle(0,0,ofGetWidth(),ofGetHeight()),i,&menueFont));
         ofAddListener(patEditors.back()->isTrigger, this, &ofApp::isMirrorTrigger);
     }
     PREVIEW = new PatternEditor();
-    PREVIEW = patEditors[0];
+    PREVIEW = patEditors[editSelect];
     LIVE = new PatternEditor();
-    LIVE = patEditors[0];
+    LIVE = patEditors[liveSelect];
     
     //preview buttons
     previewBTNs.clear();
@@ -38,7 +36,6 @@ void ofApp::setup(){
     }
 
     artnet = new ArtnetData();
-    LIVE = patEditors[liveSelect];
     
     w = ofGetWidth() / 40;
     int h = 90;//we have max 90 leds in height
@@ -51,6 +48,7 @@ void ofApp::setup(){
         mirrors.push_back(Mirror(i, artnet,ofRectangle(x-w/2,y-h/2,w,h),startUniversum,&gfx));
     }
     PREVIEW->setActive(true);
+
     masterBrightness = new RotaryEncoder(ofRectangle(10,10,100,100), 20, &menueFont, "BRIGHTNESS", 0, 1, 10, false);
     masterBrightness->setActive(true);
     masterClock = 0;
@@ -142,11 +140,13 @@ void ofApp::update()
     for(int i = 0;i < mirrors.size();i++)
     {
         float shiftPre = PREVIEW->getColorShift();
-        //float shift = fmod(PREVIEW->getColorShift()+ i*0.2,1.); not properly working
         gfx.drawToFbo(mirrors[i].getPreFbo(),PREVIEW->getCurve(),PREVIEW->getColorDelta(),PREVIEW->getValueA(),masterBrightness->getValue(),PREVIEW->getColorFreq(),shiftPre,PREVIEW->getColorA1(), PREVIEW->getColorA2());
 
         float shiftLive = LIVE->getColorShift();
         gfx.drawToFbo(mirrors[i].getLiveFbo(),LIVE->getCurve(),LIVE->getColorDelta(),LIVE->getValueA(),masterBrightness->getValue(),LIVE->getColorFreq(),shiftLive,LIVE->getColorA1(), LIVE->getColorA2());
+        
+//        cout << "live " << LIVE->getColorDelta() << " " << LIVE->getValueA() << " " <<  LIVE->getColorFreq() << " " << shiftLive << " " << LIVE->getColorA1() << " " <<  LIVE->getColorA2() << endl;
+
         mirrors[i].updateLive();
         
         //now send all mirrors
@@ -154,15 +154,10 @@ void ofApp::update()
         artnet->send(artNetID,mirrors[i].getPixelsA());
         artnet->send(artNetID,mirrors[i].getPixelsB());
     }
-    //this sending is working
-//    artnet->sendAll(mirrors[0].getPixelsA());
-    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-//    ofSetColor(0);
-//    ofDrawRectangle(0,0, ofGetWidth(), 150);
     ofSetColor(255);
     PREVIEW->drawGUI();
     int id = 0;
@@ -172,10 +167,7 @@ void ofApp::draw(){
         ofDrawRectangle(previewBTNs[i]);
         ofSetColor(255);
         menueFont.drawString(ofToString(i+1), previewBTNs[i].getCenter().x,previewBTNs[i].getCenter().y);
-    }
-    //the live buttons
-    for(int i = 0;i < liveBTNs.size();i++)
-    {
+        //the live buttons
         ofSetColor(0,128,255);
         ofDrawRectangle(liveBTNs[i]);
         ofSetColor(255);
@@ -196,12 +188,10 @@ void ofApp::draw(){
     
     for(int i = 0;i < mirrors.size();i++)
     {
-        mirrors[i].drawPreview(preTex.getTexture());
-        mirrors[i].drawLive(preTex.getTexture());
-        //mirrors[i].drawFBOs();
+        mirrors[i].drawPreview();
+        mirrors[i].drawLive();
     }
     
-    mirrors[0].getFbo(0).draw(ofGetWidth()-150,ofGetHeight()-50,150,50);
     masterBrightness->draw();
     ofDrawRectangle(buttons[0]);
     ofDrawRectangle(buttons[1]);
@@ -227,7 +217,6 @@ void ofApp::setLiveID(int index)
 
 void ofApp::isMirrorTrigger(int &triggerIndex)
 {
-    cout << "trigger id " << triggerIndex <<  endl;
     if(triggerIndex != editSelect && triggerIndex != liveSelect) return;
     if(triggerIndex == editSelect) // the pattern for segments , 1 = color
     {
@@ -239,12 +228,12 @@ void ofApp::isMirrorTrigger(int &triggerIndex)
                 bool top = PREVIEW->getMirrorSubPattern(i)[1];
                 bool right = PREVIEW->getMirrorSubPattern(i)[2];
                 bool bottom = PREVIEW->getMirrorSubPattern(i)[3];
-                mirrors[i].setEnables(left,top,right,bottom);
+                mirrors[i].setEnablesPre(left,top,right,bottom);
                 //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
             }
             else
             {
-                mirrors[i].setEnables(false,false,false,false);
+                mirrors[i].setEnablesPre(false,false,false,false);
             }
         }
     }
@@ -252,18 +241,18 @@ void ofApp::isMirrorTrigger(int &triggerIndex)
     {
         for(int i = 0;i < mirrors.size();i++)
         {
-            if(PREVIEW->getMirrorPattern()[i] == true)
+            if(LIVE->getMirrorPattern()[i] == true)
             {
-                bool left = PREVIEW->getMirrorSubPattern(i)[0];
-                bool top = PREVIEW->getMirrorSubPattern(i)[1];
-                bool right = PREVIEW->getMirrorSubPattern(i)[2];
-                bool bottom = PREVIEW->getMirrorSubPattern(i)[3];
-                mirrors[i].setEnables(left,top,right,bottom);
+                bool left = LIVE->getMirrorSubPattern(i)[0];
+                bool top = LIVE->getMirrorSubPattern(i)[1];
+                bool right = LIVE->getMirrorSubPattern(i)[2];
+                bool bottom = LIVE->getMirrorSubPattern(i)[3];
+                mirrors[i].setEnablesLive(left,top,right,bottom);
                 //cout << "mirror" << i << " : " << left << " " << top << " " << right << " " << bottom << endl;
             }
             else
             {
-                mirrors[i].setEnables(false,false,false,false);
+                mirrors[i].setEnablesLive(false,false,false,false);
             }
         }
     }
@@ -311,7 +300,6 @@ void ofApp::exit()
     {
         delete patEditors[i];
     }
-    //delete uControl;
     delete artnet;
     delete masterBrightness;
 }

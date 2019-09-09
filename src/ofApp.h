@@ -51,12 +51,10 @@ private:
     ofTrueTypeFont      menueFont;
     int liveSelect,editSelect = 0;
     
-    float steplength;
-    float timer;
-    float seqDelta;
-  
-    ofFbo                   preTex;// the preview tex
-    ofFbo                   liveTex;// the preview tex
+    float                   steplength;
+    float                   timer;
+    float                   seqDelta;
+
     GraphicGenerator        gfx;
   
     vector<Mirror>          mirrors;

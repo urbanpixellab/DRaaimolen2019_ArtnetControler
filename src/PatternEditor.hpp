@@ -9,7 +9,6 @@
 #define PatternEditor_hpp
 
 #include <stdio.h>
-#include "StepSequencer.hpp"
 #include "PatternGenerator.hpp"
 #include "Zadar.hpp"
 #include "ColorSwatch.hpp"

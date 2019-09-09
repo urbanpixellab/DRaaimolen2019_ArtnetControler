@@ -47,12 +47,13 @@ private:
     
 
     ofColor colors[16] = {ofColor(0),ofColor(128),ofColor(255)
-        ,ofColor(255,0,0),ofColor(255,128,0),ofColor(255,255,0)
-        ,ofColor(128,255,0),ofColor(0,255,0),ofColor(0,255,128)
-        ,ofColor(0,255,255),ofColor(0,128,255),ofColor(0,0,255)
-        ,ofColor(128,0,255),ofColor(255,0,255),ofColor(255,0,128),ofColor(255,127,128)};
+        ,ofColor(255,0,0),ofColor(0,255,0),ofColor(0,0,255)
+        ,ofColor(255,0,255),ofColor(0,252,250),ofColor(0,115,0)
+        ,ofColor(57,2,113),ofColor(255,3,138),ofColor(0,255,200)
+        ,ofColor(55,100,0),ofColor(245,100,160),ofColor(15,94,140),ofColor(232,44,12)};
 
     bool    isActive;
+    
 };
 
 #endif /* ColorSwatch_hpp */

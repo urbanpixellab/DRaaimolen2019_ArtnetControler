@@ -18,16 +18,9 @@ public:
     ~GraphicGenerator();
     
     void drawToFbo(ofFbo &screen,ofTexture &tex, float &delta,float &bright,float &master,float &freq,float &shift,ofColor &ca,ofColor &cb);
-    void setColor(ofColor a, ofColor b);
-    void setLiveColor(ofColor a, ofColor b);
-    
 private:
     ofShader        shader;
     ofMesh          mesh;
-    ofVec3f         colorA;
-    ofVec3f         colorB;
-    ofVec3f         colorALive;
-    ofVec3f         colorBLive;
 };
 
 #endif /* GraphicGenerator_hpp */

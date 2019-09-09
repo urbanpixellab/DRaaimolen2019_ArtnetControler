@@ -24,8 +24,8 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     outPixelsB.allocate(150, 1, 3);
     allBlack.allocate(150, 1, 3);
     whitePix.allocate(150,1,3);
-    preFbo.allocate(150,1,3);
-    liveFbo.allocate(150,1,3);
+    preFbo.allocate(100,1,3);
+    liveFbo.allocate(100,1,3);
     for (int i = 0; i < 150; i++)
     {
         //ofColor c = ofColor((i/150.)* 255);
@@ -227,7 +227,7 @@ void Mirror::setTextureMapping(int mappingID)
 }
 
 
-void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and then to pixels
+void Mirror::setMappingMode(int mode)//get shader values and draw the fbo and then to pixels
 //or if to heavy calculation get the texture and write it to array
 {
     //update draws the graphics to artnet->nodes->universes
@@ -262,46 +262,17 @@ void Mirror::update(ofTexture & tex)//get shader values and draw the fbo and the
         //but only if they are available!!!
         //if all black
     }
-    previewTex = tex;
-    ofSetColor(0);
-    ofDrawRectangle(drawarea);
-    ofSetColor(255);
-    ofSetLineWidth(2);
-    
-    //draw to the artnet fbos bestehend aus den 2x2 segmnenten
-    /*
-    all[0].begin();
-    ofClear(0,0,0);
-    previewTex.bind();
-    if(enabled[0])render[0].draw();
-    if(enabled[1])render[1].draw();
-    all[0].end();
-    
-    all[1].begin();
-    ofClear(0,0,0);
-    if(enabled[2])render[2].draw();
-    if(enabled[3])render[3].draw();
-    all[1].end();
-    ofSetLineWidth(1);
-    
-    
-    previewTex.unbind();*/
-
-    //here read to universes the fbos and send
-
 }
 
-void Mirror::drawPreview(ofTexture &tex)
+void Mirror::drawPreview()
 {
     ofSetLineWidth(3);
     preFbo.getTexture().bind();
-//    tex.bind();
-    if(enabled[0])preview[0].draw();
-    if(enabled[1])preview[1].draw();
-    if(enabled[2])preview[2].draw();
-    if(enabled[3])preview[3].draw();
+    if(enPre[0])preview[0].draw();
+    if(enPre[1])preview[1].draw();
+    if(enPre[2])preview[2].draw();
+    if(enPre[3])preview[3].draw();
     preFbo.getTexture().unbind();
-//    tex.unbind();
     ofSetLineWidth(1);
   
 }
@@ -311,63 +282,43 @@ void Mirror::updateLive()
     all[0].begin();
     ofClear(0,0,0);
     liveFbo.getTexture().bind();
-    if(enabled[0])render[0].draw();
-    if(enabled[1])render[1].draw();
+    if(enLive[0])render[0].draw();
+    if(enLive[1])render[1].draw();
     all[0].end();
     
     all[1].begin();
     ofClear(0,0,0);
-    if(enabled[2])render[2].draw();
-    if(enabled[3])render[3].draw();
+    if(enLive[2])render[2].draw();
+    if(enLive[3])render[3].draw();
     all[1].end();
     liveFbo.getTexture().unbind();
     
     //only this we have to do for live
     all[0].readToPixels(outPixelsA);
     all[1].readToPixels(outPixelsB);
+//    cout << "update live enabled" << enabled[0] << " " << enabled[1] << endl;
 }
 
 
-void Mirror::drawLive(ofTexture &tex)
+void Mirror::drawLive()
 {
     all[0].draw(drawarea.getLeft()-50,drawarea.getBottom(),drawarea.getWidth()+100,10);
     all[1].draw(drawarea.getLeft()-50,drawarea.getBottom()+10,drawarea.getWidth()+100,10);
 
-    /*
-    //draw to fbos and pixels
-    all[0].begin();
-    ofClear(0,0,0);
-    tex.bind();
-    if(enabled[0])render[0].draw();
-    if(enabled[1])render[1].draw();
-    all[0].end();
-    
-    all[1].begin();
-    ofClear(0,0,0);
-    if(enabled[2])render[2].draw();
-    if(enabled[3])render[3].draw();
-    all[1].end();
-    tex.unbind();
-
-    //only this we have to do for live
-    all[0].readToPixels(outPixelsA);
-    all[1].readToPixels(outPixelsB);
-     */
-
-}
-void Mirror::drawFBOs()
-{
-    //draw fbos
-    all[0].draw(drawarea.getLeft()-50,drawarea.getBottom(),drawarea.getWidth()+100,10);
-    all[1].draw(drawarea.getLeft()-50,drawarea.getBottom()+10,drawarea.getWidth()+100,10);
 }
 
-
-void Mirror::setEnables(bool left,bool top, bool right, bool bottom)
+void Mirror::setEnablesPre(bool left,bool top, bool right, bool bottom)
 {
-    enabled[0] = left;
-    enabled[1] = top;
-    enabled[2] = right;
-    enabled[3] = bottom;
-    //calculate the fbo or pixels
+    enPre[0] = left;
+    enPre[1] = top;
+    enPre[2] = right;
+    enPre[3] = bottom;
+}
+
+void Mirror::setEnablesLive(bool left,bool top, bool right, bool bottom)
+{
+    enLive[0] = left;
+    enLive[1] = top;
+    enLive[2] = right;
+    enLive[3] = bottom;
 }

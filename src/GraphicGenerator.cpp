@@ -39,25 +39,3 @@ void GraphicGenerator::drawToFbo(ofFbo &screen,ofTexture &tex,float &delta,float
     shader.end();
     screen.end();
 }
-
-void GraphicGenerator::setColor(ofColor a, ofColor b)
-{
-    colorA.x = (a.r/255.);
-    colorA.y = (a.g/255.);
-    colorA.z = (a.b/255.);
-    
-    colorB.x = b.r/255.;
-    colorB.y = b.g/255.;
-    colorB.z = b.b/255.;
-}
-
-void GraphicGenerator::setLiveColor(ofColor a, ofColor b)
-{
-    colorALive.x = (a.r/255.);
-    colorALive.y = (a.g/255.);
-    colorALive.z = (a.b/255.);
-    
-    colorBLive.x = b.r/255.;
-    colorBLive.y = b.g/255.;
-    colorBLive.z = b.b/255.;
-}
