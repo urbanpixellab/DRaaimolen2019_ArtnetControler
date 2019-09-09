@@ -19,9 +19,11 @@ RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id,ofC
     hasTrigger = false;
     lastStepTime = 0;
     stepTime = 0.0625;
-
+    drawFbo.allocate(drawarea.getWidth(), drawarea.getHeight(),GL_RGBA);
+    drawFbo.begin();
+    ofClear(0,0,0);
+    drawFbo.end();
     
-    drawFbo.allocate(area.getWidth(),area.getHeight());
     float radius = rad;
     float cx = drawarea.getWidth()/2.;
     float cy = drawarea.getHeight()/2.;
@@ -41,6 +43,7 @@ RotarySequencer::RotarySequencer(ofRectangle area,float rad,int count,int id,ofC
     lastStepTime = 0;
     addListener();
     update();
+    updateFbo();
     isActive = false;;
 }
 

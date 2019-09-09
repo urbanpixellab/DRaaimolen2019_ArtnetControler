@@ -204,8 +204,8 @@ void ofApp::draw(){
     ofSetLineWidth(1);
     
     ofSetColor(255);
+    ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,20);
 
-    
     for(int i = 0;i < mirrors.size();i++)
     {
         mirrors[i].drawPreview();
@@ -213,10 +213,30 @@ void ofApp::draw(){
     }
     
     masterBrightness->draw();
-    ofDrawRectangle(buttons[0]);
-    ofDrawRectangle(buttons[1]);
     
-    ofDrawBitmapString("fps " + ofToString(ofGetFrameRate()),0,20);
+    if(!isFlash)
+    {
+        ofSetColor(255);
+        ofDrawRectangle(buttons[0]);
+    }
+    else{
+        ofSetColor(255,0,0);
+        ofDrawRectangle(buttons[0]);
+    }
+    if(!isInverse)
+    {
+        ofSetColor(255);
+        ofDrawRectangle(buttons[1]);
+    }
+    else
+    {
+        ofSetColor(255,0,0);
+        ofDrawRectangle(buttons[1]);
+    }
+    ofSetColor(0);
+    menueFont.drawString("FLASH", buttons[0].getLeft(),buttons[0].getBottom());
+    menueFont.drawString("INVERT", buttons[1].getLeft(),buttons[1].getBottom());
+    
 
 }
 
@@ -363,18 +383,21 @@ void ofApp::mousePressed(int x, int y, int button){
     if(buttons[0].inside(x,y))
     {
         //flash
-        cout << "flash" << endl;
+        isFlash = true;
     }
     if(buttons[1].inside(x,y))
     {
         //flash
-        cout << "invert" << endl;
+        isInverse = true;
     }
 
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+    isFlash = false;
+    isInverse = false;
+
     if(copieID < 0)return;
     bool isCopie = false;
     for(int i = 0;i < previewBTNs.size();i++)
@@ -386,6 +409,7 @@ void ofApp::mouseReleased(int x, int y, int button){
             cout << "copied id " << copieID <<  " to id " << i << endl;
         }
     }
+
     
     //check if we are in a new valid field and the copie if valid
     
