@@ -157,7 +157,6 @@ void RotarySequencer::mousePressed(ofMouseEventArgs & args)
             if(ofDist(steps[i].position.x+drawarea.getLeft(),steps[i].position.y+drawarea.getTop(),args.x,args.y) < steps[i].radius)
             {
                 steps[i].pressed = !steps[i].pressed;
-                cout << "pressed step" << i << endl;
                 break;
             }
         }

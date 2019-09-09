@@ -72,11 +72,31 @@ void ofApp::savePatternEditorSettings()
         set.addTag("Editor");
         set.pushTag("Editor",i);
         set.addValue("ID", i);
-        set.addValue("mirColorFreq", patEditors[i]->getColorFreq());
-        //patEditors[i]->get
-//        float mirrorSelect = ;
+        //mirror enables
+        set.addValue("mirrorSegmentID", patEditors[i]->getMirrorSegmentSelect());
+        set.addValue("mirrorSubSegmentID", patEditors[i]->getMirrorSubSegmentSelect());
+        set.addValue("mirrorCurveID", patEditors[i]->getMirrorCurveID());// the mirror curve
+        //color
+        set.addValue("colorA", patEditors[i]->getColorAID());
+        set.addValue("colorB", patEditors[i]->getColorBID());
+        set.addValue("mirColorFreq", patEditors[i]->getColorFreqNorm());
+        set.addValue("mirColorShift", patEditors[i]->getCShiftNorm());
+        set.addValue("colorCurveID", patEditors[i]->getColorCurveID());
+        set.addTag("SeqA");
+        set.pushTag("SeqA",0);
+        for(int s = 0;s < patEditors[i]->getSequenzer(0).getSteps().size();s++)
+        {
+            set.addValue("step", patEditors[i]->getSequenzer(0).getSteps()[s].pressed);
+        }
+        set.popTag();
+        set.addTag("SeqB");
+        set.pushTag("SeqB",0);
+        for(int s = 0;s < patEditors[i]->getSequenzer(0).getSteps().size();s++)
+        {
+            set.addValue("step", patEditors[i]->getSequenzer(1).getSteps()[s].pressed);
+        }
+        set.popTag();
 
-        //now add the interesting items with get and set
         set.popTag();
     }
     set.save("patterns.xml");
@@ -140,10 +160,10 @@ void ofApp::update()
     for(int i = 0;i < mirrors.size();i++)
     {
         float shiftPre = PREVIEW->getColorShift();
-        gfx.drawToFbo(mirrors[i].getPreFbo(),PREVIEW->getCurve(),PREVIEW->getColorDelta(),PREVIEW->getValueA(),masterBrightness->getValue(),PREVIEW->getColorFreq(),shiftPre,PREVIEW->getColorA1(), PREVIEW->getColorA2());
+        gfx.drawToFbo(mirrors[i].getPreFbo(),PREVIEW->getCurve(),PREVIEW->getColorDelta(),PREVIEW->getValueA(),masterBrightness->getValue(),PREVIEW->getColorFreqNorm(),shiftPre,PREVIEW->getColorA1(), PREVIEW->getColorA2());
 
         float shiftLive = LIVE->getColorShift();
-        gfx.drawToFbo(mirrors[i].getLiveFbo(),LIVE->getCurve(),LIVE->getColorDelta(),LIVE->getValueA(),masterBrightness->getValue(),LIVE->getColorFreq(),shiftLive,LIVE->getColorA1(), LIVE->getColorA2());
+        gfx.drawToFbo(mirrors[i].getLiveFbo(),LIVE->getCurve(),LIVE->getColorDelta(),LIVE->getValueA(),masterBrightness->getValue(),LIVE->getColorFreqNorm(),shiftLive,LIVE->getColorA1(), LIVE->getColorA2());
         
 //        cout << "live " << LIVE->getColorDelta() << " " << LIVE->getValueA() << " " <<  LIVE->getColorFreq() << " " << shiftLive << " " << LIVE->getColorA1() << " " <<  LIVE->getColorA2() << endl;
 
@@ -237,7 +257,7 @@ void ofApp::isMirrorTrigger(int &triggerIndex)
             }
         }
     }
-    else if(triggerIndex == liveSelect)
+    if(triggerIndex == liveSelect)
     {
         for(int i = 0;i < mirrors.size();i++)
         {

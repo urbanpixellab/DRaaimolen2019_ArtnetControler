@@ -24,8 +24,8 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     outPixelsB.allocate(150, 1, 3);
     allBlack.allocate(150, 1, 3);
     whitePix.allocate(150,1,3);
-    preFbo.allocate(100,1,3);
-    liveFbo.allocate(100,1,3);
+    preFbo.allocate(100,1,GL_RGBA);
+    liveFbo.allocate(100,1,GL_RGBA);
     for (int i = 0; i < 150; i++)
     {
         //ofColor c = ofColor((i/150.)* 255);
@@ -266,7 +266,7 @@ void Mirror::setMappingMode(int mode)//get shader values and draw the fbo and th
 
 void Mirror::drawPreview()
 {
-    ofSetLineWidth(3);
+    ofSetLineWidth(5);
     preFbo.getTexture().bind();
     if(enPre[0])preview[0].draw();
     if(enPre[1])preview[1].draw();
@@ -274,7 +274,6 @@ void Mirror::drawPreview()
     if(enPre[3])preview[3].draw();
     preFbo.getTexture().unbind();
     ofSetLineWidth(1);
-  
 }
 
 void Mirror::updateLive()
@@ -284,19 +283,20 @@ void Mirror::updateLive()
     liveFbo.getTexture().bind();
     if(enLive[0])render[0].draw();
     if(enLive[1])render[1].draw();
+    liveFbo.getTexture().unbind();
     all[0].end();
     
     all[1].begin();
     ofClear(0,0,0);
+    liveFbo.getTexture().bind();
     if(enLive[2])render[2].draw();
     if(enLive[3])render[3].draw();
-    all[1].end();
     liveFbo.getTexture().unbind();
+    all[1].end();
     
     //only this we have to do for live
     all[0].readToPixels(outPixelsA);
     all[1].readToPixels(outPixelsB);
-//    cout << "update live enabled" << enabled[0] << " " << enabled[1] << endl;
 }
 
 

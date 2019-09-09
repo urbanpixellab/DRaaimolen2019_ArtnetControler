@@ -49,14 +49,23 @@ public:
     void setActive(bool value);
     bool & getActive(){return isActive;};
     
-    float &getColorFreq(){return cFreq->getValueNormalized();};
     float &getColorShift(){return cShift->getValue();};
 
     void setColorShift(float value){cShift->getValueNormalized() = value;};
     ofEvent<int> isTrigger;//we are giving back the id
+    
+    //getters
+    float &getColorFreqNorm(){return cFreq->getValueNormalized();};
     float &getCFreq(){return cFreq->getValue();};
+    int getMirrorCurveID(){return mCurve->getCurveID();};
+    int getMirrorSegmentSelect(){return mPatGen->getPatternID();};
+    int getMirrorSubSegmentSelect(){return mPatSegGen[0]->getPatternID();};
+    float &getCShiftNorm(){return cShift->getValueNormalized();};
+    int getColorAID(){return colors->getColorAID();};
+    int getColorBID(){return colors->getColorBID();};
+    int getColorCurveID(){return cCurve->getCurveID();};
     
-    
+    RotarySequencer getSequenzer(int id){return *rotSequencer[id];};
     
 
 private:
@@ -76,7 +85,7 @@ private:
     RotaryEncoder       *cShift;//the phaseshift for color c
     ColorSwatch         *colors;//primary
     
-    RotarySequencer         *rotSequencer[2];//mirror and color
+    RotarySequencer     *rotSequencer[2];//mirror and color
     Zadar               *phaseModCurve; // for phase shift offset by index and curve
 
     

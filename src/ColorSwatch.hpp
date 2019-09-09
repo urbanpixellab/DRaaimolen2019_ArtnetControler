@@ -28,7 +28,8 @@ public:
     void setActive(bool value){isActive = value;};
     bool & getActive(){return isActive;};
 
-    
+    int getColorAID(){return colorIDA;};
+    int getColorBID(){return colorIDB;};
     ofEvent<int> colorPressed;
     
 private:

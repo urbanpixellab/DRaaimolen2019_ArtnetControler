@@ -39,7 +39,7 @@ public:
     ofEvent<int> trigger; //think about adding a listener
     //add, remove listener
     float &getDeltaTIme(){return delta;};
-    vector<bool> &getSteps();
+    vector<Knop> getSteps(){return steps;};
     void addListener(){ofAddListener(ofEvents().mousePressed, this, &RotarySequencer::mousePressed);};
     void removeListener(){ofRemoveListener(ofEvents().mousePressed, this, &RotarySequencer::mousePressed);};
     

@@ -79,7 +79,7 @@ public:
     
     void setActive(bool value);
     bool & getActive(){return isActive;};
-
+    
 //    int getRightBorder(){return curvebuttons[curvebuttons.size()-1].drawarea.getRight();};
 
 private:

@@ -123,12 +123,6 @@ void PatternEditor::nextStep(int masterStepID)
     //add update delta to rotary sequenzer
     rotSequencer[0]->nextStep(masterStepID);
     rotSequencer[1]->nextStep(masterStepID);
-
-//    seqDelta[0] = mCurve->update(rotSequencer[0]->updateDelta());
-//    seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
-    
-//    seqDelta[1] = sCurve->update(sSequenzer->updateDelta());
-//    seqDelta[1] = cCurve->update(rotSequencer[1]->getDeltaTIme());
 }
 
 
@@ -156,50 +150,14 @@ void PatternEditor::sequenzerHit(int & index)
 {
 //    cout << "pat trigger " << index << endl;
 //    if(index < 0 || isActive == false) return;
-    //cout << "sequenzer hit " << index <<   endl;
     if(index == 0)
     {
         //we have a mirror sequenzer  hit
-        //update the mirrors
-        
         mPatGen->updatePattern();
         for (int i = 0; i < 20; i++)
         {
             mPatSegGen[i]->updatePattern();
         }
-    }
-    else if(index == 1)
-    {
-        /*
-        sPatGen->updatePattern();
-        // get the enables of the segments based on the mirrors
-        for (int m =0; m < mPatGen->getPattern().size(); m++) // tot 20
-        {
-            if(mPatGen->getPattern()[m] == true)
-            {
-                for (int s = 0; s < sPatGen->getPattern().size(); s++)
-                {
-                    segments[m*4 + s] = sPatGen->getPattern()[s];
-                }
-            }
-            else
-            {
-                segments[m*4 + 0] = false;
-                segments[m*4 + 1] = false;
-                segments[m*4 + 2] = false;
-                segments[m*4 + 3] = false;
-            }
-        }*/
-//        cPatGen->updatePattern();
-
-    }
-    else if(index == 2)
-    {
-        /// is comming
-        //swap colors on demand
-        
-        // should be on a external button to ink to the sequencer
-        //colors->swapColor();
     }
     ofNotifyEvent(isTrigger, myID);
 

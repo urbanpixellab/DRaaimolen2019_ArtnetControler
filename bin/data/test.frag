@@ -13,17 +13,19 @@ void main()
 	float val = mod((s.x * freq) + shift,res.x);
 	s.x = val;
 	vec4 c = texture2DRect(tex,s);
-	float r  = max(c.r * colA.r,(1.0-c.r) * colB.r);
-	float g  = max(c.r * colA.g,(1.0-c.r) * colB.g);
-	float b  = max(c.r * colA.b,(1.0-c.r) * colB.b);
+	vec3 ca = colA/255.;
+	vec3 cb = colA/255.;
+	float r  = max(c.r * ca.r,(1.0-c.r) * cb.r);
+	float g  = max(c.r * ca.g,(1.0-c.r) * cb.g);
+	float b  = max(c.r * ca.b,(1.0-c.r) * cb.b);
 	
 	r *= bright;
 	g *= bright;
 	b *= bright;
 
-	r = pow(r,3.);
-	g = pow(g,3.);
-	b = pow(b,3.);
+//	r = pow(r,4.);
+//	g = pow(g,4.);
+//	b = pow(b,4.);
 
     gl_FragColor = vec4(r,g,b,1.0);
 }
