@@ -5,14 +5,10 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
-        <step>1</step>
-        <step>0</step>
-        <step>0</step>
-        <step>1</step>
         <step>0</step>
         <step>0</step>
         <step>0</step>
@@ -22,7 +18,11 @@
         <step>0</step>
         <step>0</step>
         <step>0</step>
-        <step>1</step>
+        <step>0</step>
+        <step>0</step>
+        <step>0</step>
+        <step>0</step>
+        <step>0</step>
         <step>0</step>
         <step>0</step>
     </SeqA>
@@ -33,11 +33,11 @@
         <step>0</step>
         <step>0</step>
         <step>0</step>
-        <step>1</step>
         <step>0</step>
-        <step>1</step>
         <step>0</step>
-        <step>1</step>
+        <step>0</step>
+        <step>0</step>
+        <step>0</step>
         <step>0</step>
         <step>0</step>
         <step>0</step>
@@ -52,8 +52,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -62,11 +62,11 @@
         <step>0</step>
         <step>0</step>
         <step>0</step>
-        <step>1</step>
         <step>0</step>
-        <step>1</step>
         <step>0</step>
-        <step>1</step>
+        <step>0</step>
+        <step>0</step>
+        <step>0</step>
         <step>0</step>
         <step>0</step>
         <step>0</step>
@@ -74,9 +74,6 @@
         <step>0</step>
     </SeqA>
     <SeqB>
-        <step>1</step>
-        <step>0</step>
-        <step>1</step>
         <step>0</step>
         <step>0</step>
         <step>0</step>
@@ -88,7 +85,10 @@
         <step>0</step>
         <step>0</step>
         <step>0</step>
-        <step>1</step>
+        <step>0</step>
+        <step>0</step>
+        <step>0</step>
+        <step>0</step>
         <step>0</step>
     </SeqB>
 </Editor>
@@ -99,8 +99,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -146,8 +146,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -193,8 +193,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -240,8 +240,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -287,8 +287,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -334,8 +334,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -381,8 +381,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -428,8 +428,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -475,8 +475,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -522,8 +522,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -569,8 +569,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -616,8 +616,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -663,8 +663,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>
@@ -710,8 +710,8 @@
     <mirrorCurveID>0</mirrorCurveID>
     <colorA>0</colorA>
     <colorB>0</colorB>
-    <mirColorFreq>0.000000000</mirColorFreq>
-    <mirColorShift>0.000000000</mirColorShift>
+    <ColorFreq>0.000000000</ColorFreq>
+    <ColorShift>0.000000000</ColorShift>
     <colorCurveID>0</colorCurveID>
     <SeqA>
         <step>0</step>

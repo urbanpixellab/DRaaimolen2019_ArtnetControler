@@ -10,6 +10,8 @@
 ColorSwatch::ColorSwatch(ofRectangle draw)
 {
     drawarea = draw;
+    colorIDA,colorIDB = 0;
+
     fbo.allocate(draw.getWidth(),draw.getHeight());
     int xdim = draw.getWidth()/9;
     int ydim = draw.getHeight()/5;
@@ -34,7 +36,6 @@ ColorSwatch::ColorSwatch(ofRectangle draw)
     swap = ofRectangle(drawarea.getLeft()+3*xdim,drawarea.getTop(),xdim*3,ydim);
     swapSeq = ofRectangle(swap.getRight() - 0.2*swap.getWidth(),swap.getTop(),swap.getWidth()*0.2,swap.getHeight());
     
-    colorIDA,colorIDB = 0;
     isSeq = false;
     isActive = false;
     setColorA(0);
@@ -45,6 +46,23 @@ ColorSwatch::ColorSwatch(ofRectangle draw)
 ColorSwatch::~ColorSwatch()
 {
     ofRemoveListener(ofEvents().mousePressed, this, &ColorSwatch::mousePressed);
+}
+
+void ColorSwatch::loadColors()
+{
+    ofxXmlSettings settings;
+    settings.load("ColorLut.xml");
+    int num = settings.getNumTags("Color");
+    for (int i = 0; i < num; i++)
+    {
+        settings.pushTag("Color",i);
+        colors[i].r = settings.getValue("r", 255);
+        colors[i].g = settings.getValue("g", 255);
+        colors[i].b = settings.getValue("b", 255);
+        settings.popTag();
+    }
+    updateFBO();
+    cout << "done color loading " << endl;
 }
 
 void ColorSwatch::draw()

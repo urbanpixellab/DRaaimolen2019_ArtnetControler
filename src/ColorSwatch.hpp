@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
 
 class ColorSwatch
 {
@@ -27,6 +28,7 @@ public:
     ofColor &getColorB(){return colors[colorIDB];};
     void setActive(bool value){isActive = value;};
     bool & getActive(){return isActive;};
+    void loadColors();
 
     int getColorAID(){return colorIDA;};
     int getColorBID(){return colorIDB;};

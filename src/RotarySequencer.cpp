@@ -57,7 +57,7 @@ void RotarySequencer::nextStep(int masterStepID)
     int myMaxStep = 16;
     masterStepID = masterStepID%myMaxStep;
     float now = ofGetElapsedTimef();
-
+    //delta = 0;
     stepID++;
     //de pends on direction - is forward!!!!
     if(stepID >= myMaxStep ) stepID = 0;
@@ -120,7 +120,7 @@ void RotarySequencer::update()
 
     float now = ofGetElapsedTimef();
     delta = (now - thisTriggerTime)/(deltaTime);
-    if(delta > 1.0) delta = 1;
+    if(delta > 1.0) delta = 0;
 //    cout << "d " << delta << endl;
 }
 
@@ -131,7 +131,7 @@ float &RotarySequencer::updateDelta()
     float now = ofGetElapsedTimef();
     delta = (now - thisTriggerTime)/(deltaTime);
     //cout << "d " << delta << endl;
-    if(delta > 1) delta = 1;
+    if(delta > 1) delta = 0;
     return delta;
 }
 

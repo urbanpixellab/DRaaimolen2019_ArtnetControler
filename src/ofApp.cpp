@@ -2,6 +2,16 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    /*  todo
+        texture mapping
+        color flash, black flash, freeze, invert,trace, sparkles
+        color shift by index multiplied/add by curve and freq
+        color freq shift by curve, id and freq
+        midi controler
+    */
+    isFlickering = false;
+    autoMode = false;
+    isNewLIveSelect = false;
     ofSetBackgroundColor(31,27,33);
     steplength = 0.125;
     copieID = -1;
@@ -52,7 +62,6 @@ void ofApp::setup(){
     masterBrightness = new RotaryEncoder(ofRectangle(10,10,100,100), 20, &menueFont, "BRIGHTNESS", 0, 1, 10, false);
     masterBrightness->setActive(true);
     masterClock = 0;
-    loadPatternEditorSettings();
     loadPixelMapping();
     w = 100;
     h = 100;
@@ -60,8 +69,12 @@ void ofApp::setup(){
     buttons[0] = ofRectangle((ofGetWidth()/2)-w*1.1,(ofGetHeight()/2)-h/2,w,h);
     buttons[1] = ofRectangle((ofGetWidth()/2)+w*0.1,(ofGetHeight()/2)-h/2,w,h);
     ofSetColor(0);
-    menueFont.drawString("FLASH", buttons[0].getX(),buttons[0].getBottom());
-    menueFont.drawString("INVERT", buttons[1].getX(),buttons[1].getBottom());
+//    menueFont.drawString("FLASH", buttons[0].getX(),buttons[0].getBottom());
+//    menueFont.drawString("FREEZE", buttons[1].getX(),buttons[1].getBottom());
+    TapTempo = new Tap(ofRectangle(210,10,100,100),&menueFont);
+    ofAddListener(TapTempo->newTimer, this, &ofApp::newTapTempo);
+    loadPatternEditorSettings();
+    autoBtn = ofRectangle(800,20,100,100);
 }
 
 void ofApp::savePatternEditorSettings()
@@ -73,15 +86,15 @@ void ofApp::savePatternEditorSettings()
         set.pushTag("Editor",i);
         set.addValue("ID", i);
         //mirror enables
-        set.addValue("mirrorSegmentID", patEditors[i]->getMirrorSegmentSelect());
-        set.addValue("mirrorSubSegmentID", patEditors[i]->getMirrorSubSegmentSelect());
-        set.addValue("mirrorCurveID", patEditors[i]->getMirrorCurveID());// the mirror curve
+        set.addValue("mirrorSegmentID", patEditors[i]->getMirrorPatternGen().getPatternID());
+        set.addValue("mirrorSubSegmentID", patEditors[i]->getMirrorSubPatternGen().getPatternID());
+        set.addValue("mirrorCurveID", patEditors[i]->getMirrorCurve().getCurveID());// the mirror curve
         //color
-        set.addValue("colorA", patEditors[i]->getColorAID());
-        set.addValue("colorB", patEditors[i]->getColorBID());
-        set.addValue("mirColorFreq", patEditors[i]->getColorFreqNorm());
-        set.addValue("mirColorShift", patEditors[i]->getCShiftNorm());
-        set.addValue("colorCurveID", patEditors[i]->getColorCurveID());
+        set.addValue("colorA", patEditors[i]->getColorSwatch().getColorAID());
+        set.addValue("colorB", patEditors[i]->getColorSwatch().getColorBID());
+        set.addValue("ColorFreq", patEditors[i]->getColorFreqEncoder().getValueNormalized());
+        set.addValue("ColorShift", patEditors[i]->getColorShiftEncoder().getValueNormalized());
+        set.addValue("colorCurveID", patEditors[i]->getColorCurve().getCurveID());
         set.addTag("SeqA");
         set.pushTag("SeqA",0);
         for(int s = 0;s < patEditors[i]->getSequenzer(0).getSteps().size();s++)
@@ -117,16 +130,60 @@ void ofApp::loadPatternEditorSettings()
         set.pushTag("Editor",i);
         set.getValue("Editor",i);
         int id = set.getValue("ID", i);
-        cout << "id " << id << endl;
-        //steplength = 2;
-        float freQ = set.getValue("mirColorFreq", 0.);
-        //patEditors[i]->getColorFreq() = freQ;//set.getValue("mirColorFreq", 0.);
-        //cout << patEditors[i]->getColorFreq() << endl;
-        
-        //patEditors[i]->update();
-        //now add the interesting items with get and set
+        //cout << "id " << id << endl;
+        int colorA = set.getValue("colorA", 0);
+        int colorB = set.getValue("colorB", 0);
+        patEditors[id]->getColorSwatch().setColorA(colorA);
+        patEditors[id]->getColorSwatch().setColorB(colorB);
+//        int mSubPatID = set.getValue("mirrorSubSegmentID", 0);
+//        patEditors[id]->getMirrorSubPatternGen().getEncoder().setValue(mSubPatID);
         set.popTag();
     }
+    /*
+     ofxXmlSettings  set;
+     for (int i = 0; i < patEditors.size(); i++)
+     {
+     set.addTag("Editor");
+     set.pushTag("Editor",i);
+     set.addValue("ID", i);
+     //mirror enables
+     set.addValue("mirrorSegmentID", patEditors[i]->getMirrorPatternGen().getPatternID());
+     set.addValue("mirrorSubSegmentID", patEditors[i]->getMirrorSubPatternGen().getPatternID());
+     set.addValue("mirrorCurveID", patEditors[i]->getMirrorCurve().getCurveID());// the mirror curve
+     //color
+     set.addValue("colorA", patEditors[i]->getColorSwatch().getColorAID());
+     set.addValue("colorB", patEditors[i]->getColorSwatch().getColorBID());
+     set.addValue("ColorFreq", patEditors[i]->getColorFreqEncoder().getValueNormalized());
+     set.addValue("ColorShift", patEditors[i]->getColorShiftEncoder().getValueNormalized());
+     set.addValue("colorCurveID", patEditors[i]->getColorCurve().getCurveID());
+     set.addTag("SeqA");
+     set.pushTag("SeqA",0);
+     for(int s = 0;s < patEditors[i]->getSequenzer(0).getSteps().size();s++)
+     {
+     set.addValue("step", patEditors[i]->getSequenzer(0).getSteps()[s].pressed);
+     }
+     set.popTag();
+     set.addTag("SeqB");
+     set.pushTag("SeqB",0);
+     for(int s = 0;s < patEditors[i]->getSequenzer(0).getSteps().size();s++)
+     {
+     set.addValue("step", patEditors[i]->getSequenzer(1).getSteps()[s].pressed);
+     }
+     set.popTag();
+     
+     set.popTag();
+     }
+     set.save("patterns.xml");
+
+    */
+}
+
+void ofApp::newTapTempo(float & newT)
+{
+    masterClock = 0;
+    steplength = newT;
+    timer = ofGetElapsedTimef();
+    //aslo add a reset 
 }
 
 
@@ -159,21 +216,45 @@ void ofApp::update()
     // now write to artnet
     for(int i = 0;i < mirrors.size();i++)
     {
-        float shiftPre = PREVIEW->getColorShift();
-        gfx.drawToFbo(mirrors[i].getPreFbo(),PREVIEW->getCurve(),PREVIEW->getColorDelta(),PREVIEW->getValueA(),masterBrightness->getValue(),PREVIEW->getColorFreqNorm(),shiftPre,PREVIEW->getColorA1(), PREVIEW->getColorA2());
+        if (isFlickering)
+        {
+            mirrors[i].flickeringLights(LIVE->getColorA1());
+        }
+        else if(isFlash == false)
+        {
+            float shiftPre = PREVIEW->getColorShift();
+            gfx.drawToPreviewFbo(mirrors[i].getPreFbo(),PREVIEW->getCurve(),PREVIEW->getColorDelta(),PREVIEW->getValueA(),masterBrightness->getValue(),PREVIEW->getColorFreqNorm(),shiftPre,PREVIEW->getColorA1(), PREVIEW->getColorA2());
+            
+            float f = LIVE->getColorFreqNorm()+fmod(i*LIVE->getColorFreqOff()*0.2,1.0);
+            float shiftLive = LIVE->getColorShift() + (0.5 + sin(i*TWO_PI)*0.5);
+            gfx.drawToFbo(mirrors[i].getLiveFbo(),LIVE->getCurve(),LIVE->getColorDelta(),LIVE->getValueA(),masterBrightness->getValue(),f,shiftLive,LIVE->getColorA1(), LIVE->getColorA2());
+        }
+        else
+        {
+            float shiftPre = PREVIEW->getColorShift();
+            gfx.drawToPreviewFbo(mirrors[i].getPreFbo(),PREVIEW->getWhite(),PREVIEW->getColorDelta(),PREVIEW->getValueA(),masterBrightness->getValue(),PREVIEW->getColorFreqNorm(),shiftPre,PREVIEW->getColorA1(), PREVIEW->getColorA2());
+            
+            float shiftLive = LIVE->getColorShift();
+            gfx.drawToFbo(mirrors[i].getLiveFbo(),LIVE->getWhite(),LIVE->getColorDelta(),LIVE->getValueA(),masterBrightness->getValue(),LIVE->getColorFreqNorm(),shiftLive,LIVE->getColorA1(), LIVE->getColorA2());
 
-        float shiftLive = LIVE->getColorShift();
-        gfx.drawToFbo(mirrors[i].getLiveFbo(),LIVE->getCurve(),LIVE->getColorDelta(),LIVE->getValueA(),masterBrightness->getValue(),LIVE->getColorFreqNorm(),shiftLive,LIVE->getColorA1(), LIVE->getColorA2());
-        
-//        cout << "live " << LIVE->getColorDelta() << " " << LIVE->getValueA() << " " <<  LIVE->getColorFreq() << " " << shiftLive << " " << LIVE->getColorA1() << " " <<  LIVE->getColorA2() << endl;
-
+        }
         mirrors[i].updateLive();
-        
-        //now send all mirrors
-        int artNetID = i * 2;
-        artnet->send(artNetID,mirrors[i].getPixelsA());
-        artnet->send(artNetID,mirrors[i].getPixelsB());
+        if(!isFreeze)
+        {
+            artnet->send((i*2)+0,mirrors[i].getPixelsA());
+            artnet->send((i*2)+1,mirrors[i].getPixelsB());
+        }
     }
+    if(autoMode)
+    {
+        if (masterClock == 0 && isNewLIveSelect == false)
+        {
+            setLiveID(ofRandom(patEditors.size()));
+            isNewLIveSelect = true;
+        }
+    }
+    
+//    artnet->sendAll(mirrors[0].getAllWhite());
 }
 
 //--------------------------------------------------------------
@@ -223,7 +304,8 @@ void ofApp::draw(){
         ofSetColor(255,0,0);
         ofDrawRectangle(buttons[0]);
     }
-    if(!isInverse)
+    
+    if(!isFreeze)
     {
         ofSetColor(255);
         ofDrawRectangle(buttons[1]);
@@ -233,10 +315,22 @@ void ofApp::draw(){
         ofSetColor(255,0,0);
         ofDrawRectangle(buttons[1]);
     }
+    if(!autoMode)
+    {
+        ofSetColor(255);
+        ofDrawRectangle(autoBtn);
+    }
+    else
+    {
+        ofSetColor(255,0,0);
+        ofDrawRectangle(autoBtn);
+    }
+    
     ofSetColor(0);
     menueFont.drawString("FLASH", buttons[0].getLeft(),buttons[0].getBottom());
-    menueFont.drawString("INVERT", buttons[1].getLeft(),buttons[1].getBottom());
-    
+    menueFont.drawString("FREEZE", buttons[1].getLeft(),buttons[1].getBottom());
+    menueFont.drawString("BEER", autoBtn.getLeft(),autoBtn.getBottom());
+    TapTempo->draw();
 
 }
 
@@ -316,9 +410,10 @@ void ofApp::loadPixelMapping()
         int r2 = settings.getValue("r2", 0);
         int b1 = settings.getValue("b1", 0);
         int b2 = settings.getValue("b2", 0);
-        cout << "id " << id << " l1 " << l1 << " l2 " << l2 << endl;
+        //cout << "id " << id << " l1 " << l1 << " l2 " << l2 << endl;
         // depending on the id, set the mirror points
-        mirrors[id].setUniverses(l1,l2,t1,t2,r1,r2,b1,b2);
+        cout << l1 << ":" << l2 << ":" << t1 << ":" << t2 << ":" << r1 << ":" << r2 << ":" << b1 << ":" << b2 << endl;
+        mirrors[id].setUniverses(l1,l2,t1,t2,b1,b2,r1,r2);
         settings.popTag();
     }
 }
@@ -330,6 +425,21 @@ void ofApp::keyPressed(int key){
     {
         loadPixelMapping();
         artnet->loadNodes();
+        gfx.reloadShader();
+        for (int i = 0; i < patEditors.size(); i++)
+        {
+            patEditors[i]->getColorSwatch().loadColors();
+        }
+    }
+    if(key == ' ')//reload settings
+    {
+        mirrors[4].deb();
+        cout << "debug" << endl;
+    }
+    if(key == 'f')//reload settings
+    {
+        isFlickering = !isFlickering;
+        cout << "flickering" << endl;
     }
 }
 
@@ -342,6 +452,7 @@ void ofApp::exit()
     }
     delete artnet;
     delete masterBrightness;
+    delete TapTempo;
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
@@ -388,7 +499,14 @@ void ofApp::mousePressed(int x, int y, int button){
     if(buttons[1].inside(x,y))
     {
         //flash
-        isInverse = true;
+        isFreeze = true;
+    }
+    if(autoBtn.inside(x,y))
+    {
+        //flash
+        autoMode = !autoMode;
+        autoSteps = ofRandom(10);
+        if (autoMode == false) isNewLIveSelect = false;
     }
 
 }
@@ -396,7 +514,7 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     isFlash = false;
-    isInverse = false;
+    isFreeze = false;
 
     if(copieID < 0)return;
     bool isCopie = false;

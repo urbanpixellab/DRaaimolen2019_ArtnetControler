@@ -7,6 +7,7 @@
 #include "Mirror.hpp"
 #include "RotarySequencer.hpp"
 #include "UniverseControler.hpp"
+#include "Tap.hpp"
 #include "ofxXmlSettings.h"
 
 class ofApp : public ofBaseApp{
@@ -36,6 +37,8 @@ public:
     void loadPatternEditorSettings();
     void savePatternEditorSettings();
     void loadPixelMapping();
+    void newTapTempo(float & newT);
+    
     
 private:
     
@@ -65,8 +68,15 @@ private:
     
     ofRectangle             buttons[2];//flash, inverse, inverse
     bool                    isFlash;
-    bool                    isInverse;
+    bool                    isFreeze;
+    bool                    isFlickering;
     int                     copieID;//the pattern to copy
+    Tap                     *TapTempo;
+    ofRectangle             autoBtn;
+    bool                    autoMode;
+    int                     autoSteps;
+    bool                    isNewLIveSelect;
+    
 };
 
 // infos

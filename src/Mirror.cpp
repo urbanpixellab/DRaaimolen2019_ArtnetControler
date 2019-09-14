@@ -24,6 +24,7 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
     outPixelsB.allocate(150, 1, 3);
     allBlack.allocate(150, 1, 3);
     whitePix.allocate(150,1,3);
+    redPix.allocate(150,1,3);
     preFbo.allocate(100,1,GL_RGBA);
     liveFbo.allocate(100,1,GL_RGBA);
     for (int i = 0; i < 150; i++)
@@ -34,6 +35,7 @@ Mirror::Mirror(int id, ArtnetData * artnet,ofRectangle area,int startUniversum,G
         outPixelsB.setColor(i, 0, c);//ramp
         allBlack.setColor(i, 0, ofColor(0));//ramp
         whitePix.setColor(i, 0, ofColor(255));//ramp
+        redPix.setColor(i, 0, ofColor(255,0,0));//ramp
     }
     
     outImgA.setFromPixels(outPixelsA);
@@ -123,28 +125,31 @@ void Mirror::createUniverses()
     
     //getht bis 120, later with in and out point per segment, and center of IO
     //draw render linear for mapping
-    
+
+    //left
     render[0].setMode(OF_PRIMITIVE_LINE_STRIP);
     render[0].addVertex(ofVec3f(0,0,0));
     render[0].addVertex(ofVec3f(30,0,0));
-    render[0].addVertex(ofVec3f(60,0,0));
+    render[0].addVertex(ofVec3f(85,0,0));
     
-    
+    //top
     render[1].setMode(OF_PRIMITIVE_LINE_STRIP);
-    render[1].addVertex(ofVec3f(90,0,0));
     render[1].addVertex(ofVec3f(120,0,0));
-    render[1].addVertex(ofVec3f(150,0,0));
-    
+    render[1].addVertex(ofVec3f(135,0,0));
+    render[1].addVertex(ofVec3f(145,0,0));
+
+    //bottom
     render[2].setMode(OF_PRIMITIVE_LINE_STRIP);
     render[2].addVertex(ofVec3f(0,0,0));
-    render[2].addVertex(ofVec3f(30,0,0));
-    render[2].addVertex(ofVec3f(60,0,0));
-    
+    render[2].addVertex(ofVec3f(15,0,0));
+    render[2].addVertex(ofVec3f(25,0,0));
+
+    //right
     render[3].setMode(OF_PRIMITIVE_LINE_STRIP);
-    render[3].addVertex(ofVec3f(90,0,0));
-    render[3].addVertex(ofVec3f(120,0,0));
-    render[3].addVertex(ofVec3f(150,0,0));
-    
+    render[3].addVertex(ofVec3f(70,0,0));
+    render[3].addVertex(ofVec3f(105,0,0));
+    render[3].addVertex(ofVec3f(149,0,0));
+
     render[0].addTexCoord(ofVec2f(0*l,0));
     render[0].addTexCoord(ofVec2f(0.125*l,0));
     render[0].addTexCoord(ofVec2f(0.25*l,0));
@@ -161,10 +166,14 @@ void Mirror::createUniverses()
     render[3].addTexCoord(ofVec2f(0.75*l,0));
     render[3].addTexCoord(ofVec2f(0.825*l,0));
     render[3].addTexCoord(ofVec2f(1.0*l,0));
-
 }
 
-void Mirror::setUniverses(int &l1, int &l2, int &t1, int &t2,int &r1, int &r2, int &b1, int &b2)
+void Mirror::deb()
+{
+    cout << render[2].getVertices()[0] << " " << render[2].getVertices()[1] << " " << render[2].getVertices()[2] << endl;
+}
+
+void Mirror::setUniverses(int &l1, int &l2, int &t1, int &t2, int &b1, int &b2,int &r1, int &r2)
 {
     //left top right bottom and cw
     //a1 tx = 0
@@ -176,37 +185,40 @@ void Mirror::setUniverses(int &l1, int &l2, int &t1, int &t2,int &r1, int &r2, i
     // now the texcoords
     int l = 100;// the length
     
+    //left
     render[0].getVertices()[0].x = l1;
     render[0].getVertices()[2].x = l2;
     render[0].getVertices()[1].x = (l1+l2)/2;
 
     render[0].getTexCoords()[0].x = 0*l;
-    render[0].getTexCoords()[2].x = 0.5*l;
-    render[0].getTexCoords()[1].x = 0.25*l;
+    render[0].getTexCoords()[2].x = 0.75*l;
+    render[0].getTexCoords()[1].x = 0.375*l;
     
+    //top
     render[1].getVertices()[0].x = t1;
     render[1].getVertices()[2].x = t2;
     render[1].getVertices()[1].x = (t1+t2)/2;
 
-    render[1].getTexCoords()[0].x = 0.5*l;
+    render[1].getTexCoords()[0].x = 0.75*l;
     render[1].getTexCoords()[2].x = 1*l;
-    render[1].getTexCoords()[1].x = 0.75*l;
-
-    render[2].getVertices()[0].x = r1;
-    render[2].getVertices()[2].x = r2;
-    render[2].getVertices()[1].x = (r1+r2)/2;
+    render[1].getTexCoords()[1].x = 0.875*l;
+    //bottom
+    render[2].getVertices()[0].x = b1;
+    render[2].getVertices()[2].x = b2;
+    render[2].getVertices()[1].x = (b1+b2)/2;
     
-    render[2].getTexCoords()[0].x = 0*l;
-    render[2].getTexCoords()[2].x = 0.5*l;
-    render[2].getTexCoords()[1].x = 0.25*l;
-
-    render[3].getVertices()[0].x = b1;
-    render[3].getVertices()[2].x = b2;
-    render[3].getVertices()[1].x = (b1+b2)/2;
+    render[2].getTexCoords()[0].x = 1.0*l;
+    render[2].getTexCoords()[2].x = 0.75*l;
+    render[2].getTexCoords()[1].x = 0.875*l;
+    //right
+    render[3].getVertices()[0].x = r2;
+    render[3].getVertices()[2].x = r1;
+    render[3].getVertices()[1].x = (r1+r2)/2;
     
-    render[3].getTexCoords()[0].x = 0.5*l;
-    render[3].getTexCoords()[2].x = 1*l;
-    render[3].getTexCoords()[1].x = 0.75*l;
+    render[3].getTexCoords()[0].x = 0.*l;
+    render[3].getTexCoords()[2].x = 0.75*l;
+    render[3].getTexCoords()[1].x = 0.375*l;
+    
 }
 
 void Mirror::setTextureMapping(int mappingID)
@@ -278,6 +290,7 @@ void Mirror::drawPreview()
 
 void Mirror::updateLive()
 {
+    ofSetLineWidth(3);
     all[0].begin();
     ofClear(0,0,0);
     liveFbo.getTexture().bind();
@@ -293,12 +306,27 @@ void Mirror::updateLive()
     if(enLive[3])render[3].draw();
     liveFbo.getTexture().unbind();
     all[1].end();
+    ofSetLineWidth(1);
     
     //only this we have to do for live
     all[0].readToPixels(outPixelsA);
     all[1].readToPixels(outPixelsB);
 }
 
+void Mirror::flickeringLights(ofColor &colorA)
+{
+    liveFbo.begin();
+    int num = ofRandom(5);
+    ofSetColor(0, 0, 0,27);
+    ofDrawRectangle(0,0,liveFbo.getWidth(),5);
+    ofSetColor(colorA);
+    for (int i = 0; i < num; i++)
+    {
+        int x = ofRandom(0, liveFbo.getWidth());
+        ofDrawRectangle(x, 0, 1, 1);
+    }
+    liveFbo.end();
+}
 
 void Mirror::drawLive()
 {

@@ -31,6 +31,7 @@ public:
     void sequenzerHit(int & index);
     
     ofTexture   &getCurve(){return cCurve->getCurveTex();};
+    ofTexture   &getWhite(){return cCurve->getWhiteTex();};
     
     ofEvent<int> SequencerIDHit;
     
@@ -50,6 +51,8 @@ public:
     bool & getActive(){return isActive;};
     
     float &getColorShift(){return cShift->getValue();};
+    float &getColorFreqOff(){return cFreqOffset->getValue();};
+    float &getColorShiftOff(){return cShiftOffset->getValue();};
 
     void setColorShift(float value){cShift->getValueNormalized() = value;};
     ofEvent<int> isTrigger;//we are giving back the id
@@ -57,15 +60,17 @@ public:
     //getters
     float &getColorFreqNorm(){return cFreq->getValueNormalized();};
     float &getCFreq(){return cFreq->getValue();};
-    int getMirrorCurveID(){return mCurve->getCurveID();};
-    int getMirrorSegmentSelect(){return mPatGen->getPatternID();};
-    int getMirrorSubSegmentSelect(){return mPatSegGen[0]->getPatternID();};
-    float &getCShiftNorm(){return cShift->getValueNormalized();};
-    int getColorAID(){return colors->getColorAID();};
-    int getColorBID(){return colors->getColorBID();};
-    int getColorCurveID(){return cCurve->getCurveID();};
+    
+    
     
     RotarySequencer getSequenzer(int id){return *rotSequencer[id];};
+    RotaryEncoder   getColorFreqEncoder(){return *cFreq;};
+    RotaryEncoder   getColorShiftEncoder(){return *cShift;};
+    ColorSwatch     getColorSwatch(){return *colors;};
+    Zadar           getMirrorCurve(){return *mCurve;};
+    Zadar           getColorCurve(){return *cCurve;};
+    PatternGenerator getMirrorPatternGen(){return *mPatGen;};
+    PatternGenerator getMirrorSubPatternGen(){return *mPatSegGen[0];};
     
 
 private:
@@ -75,7 +80,6 @@ private:
 
     PatternGenerator    *mPatGen;
     PatternGenerator    *mPatSegGen[20];
-//    PatternGenerator    *cPatGen;// the cilor pattern
     
     //for every mirror we have a 4 pattern generator
     Zadar               *mCurve;
@@ -86,10 +90,11 @@ private:
     ColorSwatch         *colors;//primary
     
     RotarySequencer     *rotSequencer[2];//mirror and color
-    Zadar               *phaseModCurve; // for phase shift offset by index and curve
 
-    
-//    bool    visible;
+    RotaryEncoder       *cFreqOffset;//the frequency for the color curve 1
+    RotaryEncoder       *cShiftOffset;//the phaseshift for color c
+
+    //    bool    visible;
     bool    isActive;
 };
 

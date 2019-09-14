@@ -21,8 +21,6 @@ PatternEditor::PatternEditor(ofRectangle area, int ID,ofTrueTypeFont *mFont):myI
     w = drawarea.getWidth() * 0.125;
     mPatGen = new PatternGenerator(ofRectangle(x,y,w,h),MIRRORS,mFont,"MIROR SELECT");
     mPatGen->addListener();
-//    cPatGen = new PatternGenerator(ofRectangle(x,drawarea.getHeight() - h,w,h),MIRRORS,mFont,"MIROR COLOR");
-//    cPatGen->addListener();
     //pattern  segment generator
     for (int i = 0; i < 20; i++)
     {
@@ -55,12 +53,14 @@ PatternEditor::PatternEditor(ofRectangle area, int ID,ofTrueTypeFont *mFont):myI
     x = x+w + drawarea.getWidth() * 0.01;
     w = drawarea.getWidth() * 0.125;
     cCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"COLOR CURVE");
-    y += h*1.3;
-    phaseModCurve = new Zadar(ofRectangle(x,y,w,h),mFont,"PHASE SHIFT CURVE");
-    //ofRectangle area,int id,ofTrueTypeFont *f, string name,float min, float max,int sDraw,bool stick
+    y += h;
     cFreq = new RotaryEncoder(ofRectangle(x-w,y,w/2,h),0,mFont,"Freq_C1",1,50,10,false);
     cShift = new RotaryEncoder(ofRectangle(x-w/2,y,w/2,h),0,mFont,"Shift_C1",-1,1,20,true);
     //add listeners
+    cFreqOffset = new RotaryEncoder(ofRectangle(x-w,y+h,w/2,h),0,mFont,"Freq_OFF",0,1,10,false);//the frequency for the color curve 1
+    cShiftOffset = new RotaryEncoder(ofRectangle(x-w/2,y+h,w/2,h),0,mFont,"Shift_OFF",0,2,10,false);//the frequency for the color curve 1
+
+    
     
     // color swatches
     x = drawarea.getLeft();
@@ -93,10 +93,12 @@ PatternEditor::~PatternEditor()
     delete mPatGen;
     delete mCurve;
     delete cCurve;
-    delete phaseModCurve;
     delete cFreq;
     delete cShift;
     delete colors;
+    delete cFreqOffset;//the frequency for the color curve 1
+    delete cShiftOffset;//the phaseshift for color c
+
     for (int i = 0; i < 20; i++)
     {
         delete mPatSegGen[i];
@@ -115,7 +117,6 @@ void PatternEditor::update()
     rotSequencer[1]->update();
     seqDelta[0] = mCurve->update(rotSequencer[0]->getDeltaTIme());
     seqDelta[1] = cCurve->update(rotSequencer[1]->getDeltaTIme());
-    phaseModCurve->update(rotSequencer[1]->getDeltaTIme());
 }
                            
 void PatternEditor::nextStep(int masterStepID)
@@ -142,7 +143,8 @@ void PatternEditor::drawGUI()
     
     cFreq->draw();
     cShift->draw();
-    phaseModCurve->draw();
+    cFreqOffset->draw();
+    cShiftOffset->draw();
 
 }
 
@@ -178,7 +180,8 @@ void PatternEditor::setActive(bool value)
     cCurve->setActive(isActive);
     cFreq->setActive(isActive);
     cShift->setActive(isActive);
-    phaseModCurve->setActive(isActive);
     //    cPatGen->setActive(isActive);
     colors->setActive(isActive);
+    cFreqOffset->setActive(isActive);//the frequency for the color curve 1
+    cShiftOffset->setActive(isActive);//the phaseshift for color c
 }

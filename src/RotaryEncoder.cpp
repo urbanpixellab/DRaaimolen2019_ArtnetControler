@@ -37,8 +37,8 @@ RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string n
         lines.push_back(ofVec4f(x1,y1,x2,y2));
     }
     
-    value = 0;
-    mapValue = 0;
+    value = min;
+    mapValue = ofMap(value, 0, 1, range.x, range.y);
     updateFbo();
     addListener();
     isActive = false;
@@ -77,7 +77,7 @@ RotaryEncoder::RotaryEncoder(ofRectangle area,int id,ofTrueTypeFont *f, string n
 }
 
 RotaryEncoder::~RotaryEncoder(){
-    removeListener();
+//    removeListener();
 }
 
 void RotaryEncoder::updateFbo()

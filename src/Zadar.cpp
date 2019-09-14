@@ -24,6 +24,14 @@ Zadar::Zadar(ofRectangle area, ofTrueTypeFont *f,string name) : drawarea(area), 
 //    setCurveButton(CURVES::OFF,true);
     isActive = false;
     setCurve(0);
+    ofPixels whitePix;
+    whitePix.allocate(150, 1, 3);
+    for(int i = 0; i < RES;i++)
+    {
+        whitePix.setColor(i,0,ofColor(255));
+    }
+    whiteImage.setFromPixels(whitePix);
+
     ofAddListener(ofEvents().mousePressed, this, &Zadar::mousePressed);
     ofAddListener(curveSelect->newValue, this, &Zadar::newEncoderID);
 }

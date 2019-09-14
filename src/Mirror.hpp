@@ -40,13 +40,15 @@ public:
     void updateLive();
     void drawPreview();
     void drawLive();
-    
+    void deb();
     
     
     void setTextureMapping(int mappingID);
     ofPixels &getPixelsA(){return outPixelsA;};
     ofPixels &getPixelsB(){return outPixelsB;};
     ofPixels &getAllBlack(){return allBlack;};
+    ofPixels &getAllWhite(){return whitePix;};
+    ofPixels &getAllRed(){return redPix;};
     int &getUniverseID(int id){return myUniverses[id];};
     
     ofFbo &getFbo(int id){return all[id];};
@@ -55,6 +57,7 @@ public:
     
     ofFbo &getPreFbo(){return preFbo;};
     ofFbo &getLiveFbo(){return liveFbo;};
+    void flickeringLights(ofColor &colorA);
     
 private:
     
@@ -84,6 +87,7 @@ private:
     //audio amplifier
     GraphicGenerator    *gfx;
     ofPixels            whitePix;
+    ofPixels            redPix;
     ofTexture           previewTex;
     ofFbo               preFbo;
     ofFbo               liveFbo;

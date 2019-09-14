@@ -76,6 +76,7 @@ public:
     
     ofPixels &getPixels(){return curvePixels;};
     ofTexture &getCurveTex(){return curveImage.getTexture();};
+    ofTexture &getWhiteTex(){return whiteImage.getTexture();};
     
     void setActive(bool value);
     bool & getActive(){return isActive;};
@@ -98,6 +99,7 @@ private:
     float               curveValues[100];//holds the
     ofPixels            curvePixels;//the gray texture of the image;
     ofImage             curveImage;
+    ofImage             whiteImage;
     //gui
     vector<BUTTON>      modebuttons;//invert reverse
 //    vector<BUTTON>      curvebuttons;// the curves

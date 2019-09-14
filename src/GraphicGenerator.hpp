@@ -18,8 +18,11 @@ public:
     ~GraphicGenerator();
     
     void drawToFbo(ofFbo &screen,ofTexture &tex, float &delta,float &bright,float &master,float &freq,float &shift,ofColor &ca,ofColor &cb);
+    void drawToPreviewFbo(ofFbo &screen,ofTexture &tex, float &delta,float &bright,float &master,float &freq,float &shift,ofColor &ca,ofColor &cb);
+    void reloadShader();
 private:
     ofShader        shader;
+    ofShader        previewShader;
     ofMesh          mesh;
 };
 

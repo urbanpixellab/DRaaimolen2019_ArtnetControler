@@ -76,7 +76,7 @@ public:
     void newEncoderID(int & id);
     void setActive(bool value);
     bool & getActive(){return isActive;};
-
+    RotaryEncoder getEncoder(){return *patternSelect;};
     
 private:
     string myName;

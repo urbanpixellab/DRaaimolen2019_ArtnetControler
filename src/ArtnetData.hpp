@@ -35,16 +35,13 @@ public:
     
     
     
-    void send(int &node, int &universum);
-    void send(int &node, int &universum, ofPixels &pix);
-    void send(int &uID, ofPixels &pix);
-    
-    Node *getNode(int &id){return _nodes[id];};
+    void send(int uID, ofPixels &pix);
+    void sendMirror(int &uID, ofPixels &pixA,ofPixels &pixB);
     
     void sendAll(ofPixels &pix);
     
+    
 private:
-    vector<Node*>               _nodes;
     vector<ofxArtnetSender*>     artnets;
     ofPixels                    test;
 };
